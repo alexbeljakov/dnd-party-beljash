@@ -61,7 +61,6 @@
       letter-spacing: 0.04em;
     }
 
-    /* Layout & Cards */
     .container {
       max-width: 540px;
       margin: 0 auto;
@@ -119,6 +118,7 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
+      gap: 8px;
       margin-bottom: 10px;
       padding-bottom: 6px;
       border-bottom: 1px solid rgba(212, 175, 55, 0.14);
@@ -126,22 +126,21 @@
 
     .card-title {
       font-family: 'Cinzel', serif;
-      font-size: 0.95rem;
+      font-size: 0.92rem;
       font-weight: 700;
       color: var(--gold);
       text-transform: uppercase;
     }
 
-    /* Inputs & Buttons */
     input, select, textarea {
       width: 100%;
       background: var(--bg-card-alt);
       border: 1px solid rgba(212, 175, 55, 0.25);
       border-radius: 10px;
-      padding: 10px 12px;
+      padding: 9px 11px;
       color: var(--text-main);
       font-family: inherit;
-      font-size: 0.95rem;
+      font-size: 0.92rem;
       outline: none;
     }
     input:focus, select:focus, textarea:focus {
@@ -156,16 +155,16 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 6px;
-      padding: 10px 14px;
+      gap: 5px;
+      padding: 9px 12px;
       border-radius: 10px;
       border: 1px solid var(--border-gold-strong);
       background: linear-gradient(180deg, rgba(212, 175, 55, 0.22), rgba(212, 175, 55, 0.08));
       color: var(--gold);
       font-weight: 600;
-      font-size: 0.9rem;
+      font-size: 0.88rem;
       cursor: pointer;
-      transition: transform 0.08s ease, background 0.15s ease;
+      transition: transform 0.08s ease;
     }
     .btn:active {
       transform: scale(0.97);
@@ -181,10 +180,20 @@
       background: rgba(185, 28, 28, 0.22);
       color: #fca5a5;
     }
+    .btn-heal {
+      border-color: rgba(16, 185, 129, 0.5);
+      background: rgba(5, 150, 105, 0.22);
+      color: #6ee7b7;
+    }
     .btn-sm {
-      padding: 6px 10px;
-      font-size: 0.8rem;
+      padding: 5px 9px;
+      font-size: 0.78rem;
       border-radius: 8px;
+    }
+    .btn-xs {
+      padding: 4px 7px;
+      font-size: 0.74rem;
+      border-radius: 7px;
     }
     .btn-block {
       width: 100%;
@@ -192,7 +201,7 @@
 
     .row {
       display: flex;
-      gap: 8px;
+      gap: 6px;
       align-items: center;
     }
     .grid-2 {
@@ -220,10 +229,6 @@
       padding: 12px 10px;
       text-align: center;
       cursor: pointer;
-      transition: border-color 0.15s;
-    }
-    .char-select-card:active {
-      border-color: var(--gold);
     }
     .avatar-circle {
       width: 60px;
@@ -355,7 +360,7 @@
     }
     .name-text {
       font-family: 'Cinzel', serif;
-      font-size: 1.05rem;
+      font-size: 1.02rem;
       font-weight: 700;
       color: var(--gold);
     }
@@ -405,23 +410,65 @@
       text-overflow: ellipsis;
     }
 
-    /* Initiative Tracker */
-    .init-row {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding: 9px 10px;
-      border-radius: 10px;
+    /* Combat Tracker & Log */
+    .combatant-card {
       background: var(--bg-card-alt);
-      margin-bottom: 6px;
-      border-left: 3px solid transparent;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-left: 3px solid rgba(212, 175, 55, 0.35);
+      border-radius: 11px;
+      padding: 10px;
+      margin-bottom: 8px;
     }
-    .init-row.active-turn {
-      border-left-color: var(--gold);
-      background: rgba(212, 175, 55, 0.14);
+    .combatant-card.active-turn {
+      border-color: var(--gold);
+      border-left: 4px solid var(--gold);
+      background: linear-gradient(90deg, rgba(212, 175, 55, 0.16), var(--bg-card-alt));
+    }
+    .combatant-card.is-dead {
+      opacity: 0.58;
+      border-left-color: var(--crimson);
+    }
+    .hp-bar-track {
+      width: 100%;
+      height: 6px;
+      background: rgba(0, 0, 0, 0.55);
+      border-radius: 999px;
+      overflow: hidden;
+      margin: 6px 0;
+    }
+    .hp-bar-fill {
+      height: 100%;
+      background: #10b981;
+      transition: width 0.2s ease, background-color 0.2s ease;
+    }
+    .cond-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 0.7rem;
+      padding: 2px 7px;
+      border-radius: 999px;
+      background: rgba(185, 28, 28, 0.28);
+      border: 1px solid rgba(239, 68, 68, 0.45);
+      color: #fca5a5;
+      cursor: pointer;
+    }
+    .combat-log-box {
+      max-height: 210px;
+      overflow-y: auto;
+      background: #0f0c13;
+      border: 1px solid rgba(212, 175, 55, 0.16);
+      border-radius: 10px;
+      padding: 8px 10px;
+      font-size: 0.8rem;
+    }
+    .combat-log-line {
+      padding: 4px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+      line-height: 1.35;
     }
 
-    /* Floating Dice Button & Drawer */
+    /* Floating Dice Button & Bottom Nav */
     .dice-fab {
       position: fixed;
       right: 16px;
@@ -443,7 +490,6 @@
       z-index: 90;
     }
 
-    /* Bottom Navigation */
     .bottom-nav {
       position: fixed;
       bottom: 0;
@@ -522,7 +568,7 @@
     .roll-fumble { color: #f87171; font-weight: 800; }
 
     .hidden { display: none !important; }
-    .muted { color: var(--text-muted); font-size: 0.82rem; }
+    .muted { color: var(--text-muted); font-size: 0.8rem; }
     .mt-8 { margin-top: 8px; }
     .mt-12 { margin-top: 12px; }
   </style>
@@ -560,7 +606,6 @@
         </div>
       </div>
 
-      <!-- Quick Name Generator access even before login -->
       <div class="card">
         <div class="card-header">
           <span class="card-title">Быстрый генератор имён</span>
@@ -698,7 +743,6 @@
 
     <!-- ================= TAB 3: SHARED HUB (DOCS + CHRONICLE) ================= -->
     <section id="tabShared" class="hidden">
-      <!-- Shared Documents & Handouts with Image Preview -->
       <div class="card">
         <div class="card-header">
           <span class="card-title">Общие документы и Карты</span>
@@ -715,7 +759,6 @@
         <div id="sharedDocsGrid" class="doc-grid"></div>
       </div>
 
-      <!-- Shared Party Chronicle -->
       <div class="card">
         <div class="card-header">
           <span class="card-title">Летопись и Квесты партии</span>
@@ -733,27 +776,47 @@
       <!-- Live Party Status -->
       <div class="card">
         <div class="card-header">
-          <span class="card-title">Сводка по партии (Live)</span>
+          <span class="card-title">Сводка по партии</span>
+          <button class="btn btn-xs" onclick="changeDmPin()">🔑 PIN</button>
         </div>
         <div id="dmPartyOverview"></div>
       </div>
 
-      <!-- Initiative Tracker -->
+      <!-- Full Combat Tracker (Initiative + HP + Damage + Conditions) -->
       <div class="card">
         <div class="card-header">
-          <span class="card-title">Трекер Инициативы • Раунд <span id="roundCounter">1</span></span>
+          <span class="card-title">Бой • Раунд <span id="roundCounter">1</span></span>
           <div class="row">
             <button class="btn btn-sm" onclick="addPartyToInitiative()">+ Партия</button>
             <button class="btn btn-primary btn-sm" onclick="nextTurn()">Ход ➔</button>
           </div>
         </div>
-        <div class="row" style="margin-bottom:10px;">
-          <input type="text" id="initNameInput" placeholder="Имя врага / NPC" style="flex:2;" />
-          <input type="number" id="initValInput" placeholder="Иниц." style="flex:1;" />
-          <button class="btn btn-sm" onclick="addInitiativeCombatant()">+</button>
+
+        <!-- Add Enemy / NPC Form -->
+        <div style="background:rgba(0,0,0,0.25); padding:8px; border-radius:10px; margin-bottom:10px;">
+          <div class="row">
+            <input type="text" id="initNameInput" placeholder="Враг / NPC (напр. Гоблин)" style="flex:2.2;" />
+            <input type="number" id="initValInput" placeholder="Иниц." style="flex:1;" />
+          </div>
+          <div class="row mt-8">
+            <input type="number" id="initHpInput" placeholder="ОЗ (HP)" style="flex:1;" />
+            <input type="number" id="initAcInput" placeholder="КД (AC)" style="flex:1;" />
+            <button class="btn btn-primary btn-sm" style="flex:1.2;" onclick="addInitiativeCombatant()">+ В бой</button>
+          </div>
         </div>
+
+        <!-- Combatants List -->
         <div id="initiativeList"></div>
-        <button class="btn btn-danger btn-sm btn-block mt-8" onclick="clearInitiative()">Очистить бой</button>
+
+        <!-- Combat Log -->
+        <div class="card-header mt-12">
+          <span class="card-title" style="font-size:0.8rem;">📜 Журнал боя</span>
+          <div class="row">
+            <button class="btn btn-xs" onclick="exportCombatToChronicle()" title="Сохранить итоги боя в общую летопись">В летопись</button>
+            <button class="btn btn-danger btn-xs" onclick="clearInitiative()">Сброс боя</button>
+          </div>
+        </div>
+        <div id="combatLogBox" class="combat-log-box"></div>
       </div>
 
       <!-- DM Secret Notes & Saved NPCs -->
@@ -910,7 +973,7 @@ const firebaseConfig = {
   messagingSenderId: "799802669624",
   appId: "1:799802669624:web:23eb1868428dc1ee0004cd"
 };
-    // State
+
     let db = null;
     let isOnline = false;
     let state = {
@@ -923,16 +986,16 @@ const firebaseConfig = {
         notes: 'NPC и заметки Мастера:\n',
         round: 1,
         turnIndex: 0,
-        initiative: []
+        initiative: [],
+        combatLog: []
       }
     };
 
     let session = {
-      role: null, // 'hero' | 'dm' | 'guest'
+      role: null,
       heroId: null
     };
 
-    // Initialize Firebase if configured
     if (firebaseConfig.apiKey && firebaseConfig.projectId) {
       try {
         const app = initializeApp(firebaseConfig);
@@ -995,7 +1058,6 @@ const firebaseConfig = {
       });
     }
 
-    // Image Compression Helper (Client-side Canvas so images fit Firestore free tier)
     function compressImage(file, maxSize = 1100, quality = 0.76) {
       return new Promise((resolve, reject) => {
         const reader = new FileReader();
@@ -1082,7 +1144,7 @@ const firebaseConfig = {
     };
 
     window.promptDmLogin = () => {
-      const entered = prompt('Введите PIN Мастера (по умолчанию 0000):');
+      const entered = prompt('Введите PIN Мастера:');
       if (entered === null) return;
       if (entered !== (state.dm.pin || '0000')) {
         return alert('Неверный пароль Мастера');
@@ -1143,8 +1205,7 @@ const firebaseConfig = {
     };
 
     // ================= CHARACTER SHEET =================
-    async function saveHeroPatch(patch) {
-      const id = session.heroId;
+    async function saveHeroPatchById(id, patch) {
       if (!id || !state.heroes[id]) return;
       state.heroes[id] = { ...state.heroes[id], ...patch };
       if (isOnline) {
@@ -1152,6 +1213,10 @@ const firebaseConfig = {
       } else {
         saveLocalState();
       }
+    }
+
+    function saveHeroPatch(patch) {
+      return saveHeroPatchById(session.heroId, patch);
     }
 
     window.handleAvatarUpload = async (e) => {
@@ -1295,13 +1360,13 @@ const firebaseConfig = {
         male: ['Алдрик', 'Бран', 'Вейн', 'Гаррет', 'Дарион', 'Йорик', 'Каэл', 'Лотар', 'Маркус', 'Рован', 'Седрик', 'Талин'],
         female: ['Алиса', 'Брианна', 'Вера', 'Гвен', 'Элейн', 'Изольда', 'Клара', 'Лира', 'Мира', 'Розалинд', 'Селена', 'Фрейя'],
         surnames: ['Ворон', 'Железнорук', 'Терновый', 'Светлый', 'Хмурый', 'из Вестгейта', 'Северный', 'Ястреб', 'Коваль', 'Речной'],
-        noble: ['фон Валлен', 'де Монфор', 'Золотой Грифон', 'Серебряный Клинок', 'Аркライト', 'Рейвенкрофт']
+        noble: ['фон Валлен', 'де Монфор', 'Золотой Грифон', 'Серебряный Клинок', 'Арклайт', 'Рейвенкрофт']
       },
       elf: {
         male: ['Аэлар', 'Варис', 'Гален', 'Ивеллиос', 'Кайлен', 'Лауциан', 'Миндартис', 'Сильвир', 'Тарион', 'Фенрис', 'Эреван'],
         female: ['Адриель', 'Валентиа', 'Йеления', 'Кейлет', 'Лиа', 'Мериэль', 'Наэла', 'Силакви', 'Тиара', 'Фэйрин', 'Шава'],
         surnames: ['Лунный Шёпот', 'Звёздный Лист', 'Серебряная Роса', 'Тихий Ветер', 'Золотая Ветвь', 'Рассветный Луч'],
-        noble: ['Амастасия', 'Галанодель', 'Ильфелкиир', 'Лиадон', 'Найло', 'Сиаnodel']
+        noble: ['Амастасия', 'Галанодель', 'Ильфелкиир', 'Лиадон', 'Найло', 'Сианодель']
       },
       drow: {
         male: ['Дриззт', 'Закнафейн', 'Джарлаксл', 'Валкрас', 'Малорн', 'Риззен', 'Солун', 'Фараун', 'Ксавьер', 'Зеке'],
@@ -1322,7 +1387,7 @@ const firebaseConfig = {
         noble: ['Брендибак', 'Тук', 'Бэггинс', 'Подгорный', 'Яблоневый Сад']
       },
       tiefling: {
-        male: ['Акменос', 'Амнон', 'Баракас', 'Дамакос', 'Иадос', 'Кайрон', 'Леуцис', 'Мелех', 'Мордай', 'Пелайος', 'Тера'],
+        male: ['Акменос', 'Амнон', 'Баракас', 'Дамакос', 'Иадос', 'Кайрон', 'Леуцис', 'Мелех', 'Мордай', 'Пелайос', 'Тера'],
         female: ['Акта', 'Анакис', 'Брисеис', 'Дамайя', 'Каллиста', 'Лерисса', 'Макария', 'Немея', 'Орионна', 'Фелайя'],
         surnames: ['Добродетель: Слава', 'Добродетель: Наслаждение', 'Добродетель: Искупление', 'Пепельный', 'Багровый Рог'],
         noble: ['из Девяти Преисподних', 'Адское Пламя', 'Зловещий', 'Сумрачный Огонь']
@@ -1508,7 +1573,7 @@ const firebaseConfig = {
       `).join('') || '<p class="muted">Летопись пока пуста.</p>';
     }
 
-    // ================= DM SCREEN =================
+    // ================= DM SCREEN & FULL COMBAT LOG =================
     async function saveDmPatch(patch) {
       state.dm = { ...state.dm, ...patch };
       if (isOnline) {
@@ -1518,44 +1583,177 @@ const firebaseConfig = {
       }
     }
 
+    function appendCombatLog(message) {
+      const round = state.dm.round || 1;
+      const line = `[Р${round}] ${message}`;
+      const log = [line, ...(state.dm.combatLog || [])].slice(0, 60);
+      return log;
+    }
+
+    window.changeDmPin = () => {
+      const nextPin = prompt('Введите новый PIN-код Мастера (минимум 4 символа):');
+      if (!nextPin || nextPin.trim().length < 4) return alert('PIN должен содержать минимум 4 символа');
+      saveDmPatch({ pin: nextPin.trim() });
+      alert('PIN Мастера обновлён!');
+    };
+
     window.addInitiativeCombatant = () => {
       const name = document.getElementById('initNameInput').value.trim();
-      const init = parseInt(document.getElementById('initValInput').value) || 10;
+      const initVal = document.getElementById('initValInput').value;
+      const hpMax = parseInt(document.getElementById('initHpInput').value) || 15;
+      const ac = parseInt(document.getElementById('initAcInput').value) || 12;
       if (!name) return;
-      const list = [...(state.dm.initiative || []), { name, init }];
-      list.sort((a, b) => b.init - a.init);
-      saveDmPatch({ initiative: list });
+
+      const init = initVal !== '' ? parseInt(initVal) : (Math.floor(Math.random() * 20) + 1);
+      const list = [
+        ...(state.dm.initiative || []),
+        { type: 'npc', name, init, hpCur: hpMax, hpMax, ac, conditions: [] }
+      ].sort((a, b) => b.init - a.init);
+
+      const combatLog = appendCombatLog(`➕ В бой вступает ${name} (Иниц. ${init}, ОЗ ${hpMax}, КД ${ac})`);
+      saveDmPatch({ initiative: list, combatLog });
+
       document.getElementById('initNameInput').value = '';
       document.getElementById('initValInput').value = '';
+      document.getElementById('initHpInput').value = '';
+      document.getElementById('initAcInput').value = '';
+    };
+
+    window.cloneCombatant = (idx) => {
+      const list = [...(state.dm.initiative || [])];
+      const src = list[idx];
+      if (!src || src.type === 'hero') return;
+      const copyName = `${src.name} (копия)`;
+      list.splice(idx + 1, 0, {
+        ...src,
+        name: copyName,
+        hpCur: src.hpMax,
+        conditions: []
+      });
+      const combatLog = appendCombatLog(`➕ Добавлен ${copyName} (ОЗ ${src.hpMax})`);
+      saveDmPatch({ initiative: list, combatLog });
     };
 
     window.addPartyToInitiative = () => {
-      const existing = new Set((state.dm.initiative || []).map((i) => i.name));
+      const existingHeroIds = new Set(
+        (state.dm.initiative || []).filter((i) => i.type === 'hero').map((i) => i.heroId)
+      );
       const added = Object.values(state.heroes)
-        .filter((h) => !existing.has(h.name))
+        .filter((h) => !existingHeroIds.has(h.id))
         .map((h) => {
           const dexMod = Math.floor(((h.stats?.DEX ?? 10) - 10) / 2);
           const roll = Math.floor(Math.random() * 20) + 1 + dexMod;
-          return { name: h.name, init: roll };
+          return { type: 'hero', heroId: h.id, name: h.name, init: roll, conditions: [] };
         });
+      if (!added.length) return;
       const list = [...(state.dm.initiative || []), ...added].sort((a, b) => b.init - a.init);
-      saveDmPatch({ initiative: list });
+      const combatLog = appendCombatLog(`🛡️ Партия вступила в бой (${added.map((a) => `${a.name}: ${a.init}`).join(', ')})`);
+      saveDmPatch({ initiative: list, combatLog });
     };
 
     window.nextTurn = () => {
-      const len = (state.dm.initiative || []).length;
-      if (!len) return;
+      const list = state.dm.initiative || [];
+      if (!list.length) return;
       let nextIdx = (state.dm.turnIndex || 0) + 1;
       let round = state.dm.round || 1;
-      if (nextIdx >= len) {
+      if (nextIdx >= list.length) {
         nextIdx = 0;
         round += 1;
       }
-      saveDmPatch({ turnIndex: nextIdx, round });
+      const active = list[nextIdx];
+      const activeName = active.type === 'hero' ? (state.heroes[active.heroId]?.name || active.name) : active.name;
+      const line = `[Р${round}] ▶ Ход: ${activeName}`;
+      const combatLog = [line, ...(state.dm.combatLog || [])].slice(0, 60);
+      saveDmPatch({ turnIndex: nextIdx, round, combatLog });
+    };
+
+    window.applyCombatHp = async (idx, delta) => {
+      const list = [...(state.dm.initiative || [])];
+      const c = list[idx];
+      if (!c) return;
+
+      if (c.type === 'hero') {
+        const h = state.heroes[c.heroId];
+        if (!h) return;
+        const nextHp = Math.max(0, Math.min(h.hpMax + 20, (h.hpCur || 0) + delta));
+        await saveHeroPatchById(h.id, { hpCur: nextHp });
+        const actionText = delta < 0
+          ? `💥 ${h.name} получает ${Math.abs(delta)} урона (${nextHp}/${h.hpMax} ОЗ)`
+          : `💚 ${h.name} восстанавливает ${delta} ОЗ (${nextHp}/${h.hpMax} ОЗ)`;
+        const combatLog = appendCombatLog(actionText);
+        await saveDmPatch({ combatLog });
+      } else {
+        const nextHp = Math.max(0, Math.min(c.hpMax + 50, (c.hpCur ?? c.hpMax) + delta));
+        list[idx] = { ...c, hpCur: nextHp };
+        const fallen = nextHp === 0 && delta < 0 ? ' — ПОВЕРЖЕН!' : '';
+        const actionText = delta < 0
+          ? `💥 ${c.name} получает ${Math.abs(delta)} урона (${nextHp}/${c.hpMax} ОЗ)${fallen}`
+          : `💚 ${c.name} восстанавливает ${delta} ОЗ (${nextHp}/${c.hpMax} ОЗ)`;
+        const combatLog = appendCombatLog(actionText);
+        await saveDmPatch({ initiative: list, combatLog });
+      }
+    };
+
+    window.promptCustomCombatHp = (idx, mode) => {
+      const label = mode === 'dmg' ? 'Сколько урона нанести?' : 'Сколько ОЗ вылечить?';
+      const raw = prompt(label);
+      const val = parseInt(raw);
+      if (!val || val <= 0) return;
+      applyCombatHp(idx, mode === 'dmg' ? -val : val);
+    };
+
+    window.addCombatCondition = (idx) => {
+      const list = [...(state.dm.initiative || [])];
+      const c = list[idx];
+      if (!c) return;
+      const presets = 'Оглушён, Отравлен, Сбит с ног, Концентрация, Слепота, Испуг';
+      const cond = prompt(`Введите состояние (напр. ${presets}):`);
+      if (!cond || !cond.trim()) return;
+      const clean = cond.trim();
+      const conds = [...(c.conditions || [])];
+      if (!conds.includes(clean)) conds.push(clean);
+      list[idx] = { ...c, conditions: conds };
+      const cName = c.type === 'hero' ? (state.heroes[c.heroId]?.name || c.name) : c.name;
+      const combatLog = appendCombatLog(`✨ ${cName}: +${clean}`);
+      saveDmPatch({ initiative: list, combatLog });
+    };
+
+    window.removeCombatCondition = (idx, condIdx) => {
+      const list = [...(state.dm.initiative || [])];
+      const c = list[idx];
+      if (!c) return;
+      const conds = [...(c.conditions || [])];
+      const removed = conds.splice(condIdx, 1)[0];
+      list[idx] = { ...c, conditions: conds };
+      const cName = c.type === 'hero' ? (state.heroes[c.heroId]?.name || c.name) : c.name;
+      const combatLog = appendCombatLog(`✨ ${cName}: снято «${removed}»`);
+      saveDmPatch({ initiative: list, combatLog });
+    };
+
+    window.removeCombatant = (idx) => {
+      const list = [...(state.dm.initiative || [])];
+      list.splice(idx, 1);
+      const turnIndex = Math.min(state.dm.turnIndex || 0, Math.max(0, list.length - 1));
+      saveDmPatch({ initiative: list, turnIndex });
     };
 
     window.clearInitiative = () => {
-      saveDmPatch({ initiative: [], turnIndex: 0, round: 1 });
+      if (!confirm('Завершить бой и очистить трекер с журналом?')) return;
+      saveDmPatch({ initiative: [], turnIndex: 0, round: 1, combatLog: [] });
+    };
+
+    window.exportCombatToChronicle = async () => {
+      const logs = state.dm.combatLog || [];
+      if (!logs.length) return alert('Журнал боя пуст');
+      const summary = `⚔️ Итоги сражения (${state.dm.round || 1} раунд.): ` + [...logs].reverse().slice(-8).join(' | ');
+      const entry = { text: summary, author: 'Мастер (Журнал боя)', createdAt: Date.now() };
+      if (isOnline) {
+        await addDoc(collection(db, 'chronicle'), entry);
+      } else {
+        state.chronicle.unshift({ id: 'chr_' + Date.now(), ...entry });
+        saveLocalState();
+      }
+      alert('Сводка боя сохранена в общую Летопись партии!');
     };
 
     window.saveDmNotes = () => {
@@ -1566,11 +1764,11 @@ const firebaseConfig = {
       const heroes = Object.values(state.heroes);
       document.getElementById('dmPartyOverview').innerHTML = heroes.length
         ? heroes.map((h) => `
-            <div class="init-row">
+            <div class="row" style="justify-content:space-between; padding:6px 8px; background:var(--bg-card-alt); border-radius:8px; margin-bottom:5px;">
               <div>
                 <strong>${h.name}</strong> <span class="muted">(${h.heroClass})</span>
               </div>
-              <div style="font-size:0.85rem;">
+              <div style="font-size:0.84rem;">
                 ❤️ <strong>${h.hpCur}/${h.hpMax}</strong> • 🛡️ <strong>${h.ac}</strong>
               </div>
             </div>
@@ -1580,14 +1778,62 @@ const firebaseConfig = {
       document.getElementById('roundCounter').textContent = state.dm.round || 1;
       const initList = state.dm.initiative || [];
       const curIdx = state.dm.turnIndex || 0;
+
       document.getElementById('initiativeList').innerHTML = initList.length
-        ? initList.map((c, idx) => `
-            <div class="init-row ${idx === curIdx ? 'active-turn' : ''}">
-              <span>${idx === curIdx ? '▶ ' : ''}<strong>${c.name}</strong></span>
-              <span style="color:var(--gold); font-weight:700;">${c.init}</span>
-            </div>
-          `).join('')
-        : '<p class="muted">Добавьте участников боя или нажмите «+ Партия».</p>';
+        ? initList.map((c, idx) => {
+            const isHero = c.type === 'hero';
+            const heroData = isHero ? state.heroes[c.heroId] : null;
+            const name = heroData ? heroData.name : c.name;
+            const hpCur = heroData ? heroData.hpCur : (c.hpCur ?? c.hpMax ?? 10);
+            const hpMax = heroData ? heroData.hpMax : (c.hpMax ?? 10);
+            const ac = heroData ? heroData.ac : (c.ac ?? 12);
+            const pct = Math.max(0, Math.min(100, Math.round((hpCur / Math.max(1, hpMax)) * 100)));
+            const barColor = pct > 50 ? '#10b981' : pct > 25 ? '#f59e0b' : '#ef4444';
+            const conds = (c.conditions || []).map((cond, cIdx) =>
+              `<span class="cond-pill" onclick="removeCombatCondition(${idx}, ${cIdx})">${cond} ✕</span>`
+            ).join(' ');
+
+            return `
+              <div class="combatant-card ${idx === curIdx ? 'active-turn' : ''} ${hpCur === 0 ? 'is-dead' : ''}">
+                <div class="row" style="justify-content:space-between;">
+                  <div>
+                    <span>${idx === curIdx ? '▶ ' : ''}<strong style="color:${isHero ? 'var(--gold)' : 'var(--text-main)'};">${name}</strong></span>
+                    <span class="muted" style="margin-left:6px;">🛡️ ${ac}</span>
+                  </div>
+                  <div class="row">
+                    <span style="color:var(--gold); font-weight:700; font-size:0.85rem;">Иниц: ${c.init}</span>
+                    ${!isHero ? `<button class="btn btn-xs" onclick="cloneCombatant(${idx})" title="Клонировать врага">+Копия</button>` : ''}
+                    <button class="btn btn-danger btn-xs" onclick="removeCombatant(${idx})">✕</button>
+                  </div>
+                </div>
+
+                <div class="hp-bar-track">
+                  <div class="hp-bar-fill" style="width:${pct}%; background:${barColor};"></div>
+                </div>
+
+                <div class="row" style="justify-content:space-between; flex-wrap:wrap;">
+                  <span style="font-size:0.84rem; font-weight:700; color:${hpCur === 0 ? '#f87171' : '#fca5a5'};">
+                    ❤️ ${hpCur} / ${hpMax}
+                  </span>
+                  <div class="row">
+                    <button class="btn btn-danger btn-xs" onclick="applyCombatHp(${idx}, -5)">-5</button>
+                    <button class="btn btn-danger btn-xs" onclick="applyCombatHp(${idx}, -1)">-1</button>
+                    <button class="btn btn-danger btn-xs" onclick="promptCustomCombatHp(${idx}, 'dmg')">⚔️ Урон</button>
+                    <button class="btn btn-heal btn-xs" onclick="promptCustomCombatHp(${idx}, 'heal')">💚 Леч</button>
+                    <button class="btn btn-xs" onclick="addCombatCondition(${idx})">+ Эффект</button>
+                  </div>
+                </div>
+
+                ${conds ? `<div class="row mt-8" style="flex-wrap:wrap;">${conds}</div>` : ''}
+              </div>
+            `;
+          }).join('')
+        : '<p class="muted">Добавьте противников или нажмите «+ Партия».</p>';
+
+      const logs = state.dm.combatLog || [];
+      document.getElementById('combatLogBox').innerHTML = logs.length
+        ? logs.map((line) => `<div class="combat-log-line">${line}</div>`).join('')
+        : '<div class="muted">События боя будут записываться сюда автоматически...</div>';
 
       document.getElementById('dmSecretNotes').value = state.dm.notes || '';
     }
@@ -1704,7 +1950,6 @@ const firebaseConfig = {
       renderRollLog();
     }
 
-    // Generate initial names batch & register Service Worker
     generateNamesBatch();
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('./sw.js').catch(() => {});
