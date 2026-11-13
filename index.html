@@ -546,7 +546,14 @@
       text-overflow: ellipsis;
     }
 
-    /* Combat Tracker & Log */
+    /* Combat Tracker & Bestiary */
+    .bestiary-box {
+      background: rgba(212, 175, 55, 0.06);
+      border: 1px solid rgba(212, 175, 55, 0.25);
+      border-radius: 10px;
+      padding: 8px;
+      margin-bottom: 8px;
+    }
     .combatant-card {
       background: var(--bg-card-alt);
       border: 1px solid rgba(255, 255, 255, 0.08);
@@ -980,7 +987,7 @@
         <div id="dmPartyOverview"></div>
       </div>
 
-      <!-- Full Combat Tracker (Initiative + HP + Damage + Conditions + Death Saves) -->
+      <!-- Full Combat Tracker (Bestiary + Initiative + HP + Damage + Conditions + Death Saves) -->
       <div class="card">
         <div class="card-header">
           <span class="card-title">Бой • Раунд <span id="roundCounter">1</span></span>
@@ -991,20 +998,28 @@
           </div>
         </div>
 
-        <!-- Add Enemy / NPC Form -->
+        <!-- Quick Bestiary 5e -->
+        <div class="bestiary-box">
+          <div class="muted" style="font-size:0.72rem; margin-bottom:5px; color:var(--gold);">🐉 Быстрый бестиарий (автобросок инициативы, ОЗ и КД):</div>
+          <div class="row">
+            <select id="bestiarySelect" style="flex:2;" onchange="previewBestiaryMonster()"></select>
+            <button class="btn btn-primary btn-sm" style="flex:1; white-space:nowrap;" onclick="addFromBestiary()">+ В бой</button>
+          </div>
+          <div id="bestiaryHint" class="muted" style="font-size:0.74rem; margin-top:5px;"></div>
+        </div>
+
+        <!-- Custom Enemy / NPC Form -->
         <div style="background:rgba(0,0,0,0.25); padding:8px; border-radius:10px; margin-bottom:10px;">
           <div class="row">
-            <input type="text" id="initNameInput" placeholder="Враг / NPC (напр. Гоблин)" style="flex:2.2;" />
+            <input type="text" id="initNameInput" placeholder="Свой враг / NPC" style="flex:2.2;" />
             <input type="number" id="initValInput" placeholder="Иниц." style="flex:1;" />
           </div>
           <div class="row mt-8">
             <input type="number" id="initHpInput" placeholder="ОЗ (HP)" style="flex:1;" />
             <input type="number" id="initAcInput" placeholder="КД (AC)" style="flex:1;" />
-            <button class="btn btn-primary btn-sm" style="flex:1.2;" onclick="addInitiativeCombatant()">+ В бой</button>
+            <button class="btn btn-sm" style="flex:1.2;" onclick="addInitiativeCombatant()">+ Свой</button>
           </div>
         </div>
-
-        <p class="muted" style="margin-bottom:8px;">При 0 ОЗ у героя открываются отметки спасбросков от смерти (авто-сброс при лечении).</p>
 
         <!-- Combatants List -->
         <div id="initiativeList"></div>
@@ -1172,6 +1187,23 @@
       appId: "1:799802669624:web:23eb1868428dc1ee0004cd"
     };
 
+    const BESTIARY_5E = [
+      { id: 'goblin', name: 'Гоблин', cr: '1/4', hp: 7, ac: 15, initMod: 2, note: 'Ятаган/Лук +4 (1d6+2), Ловкий побег' },
+      { id: 'kobold', name: 'Кобольд', cr: '1/8', hp: 5, ac: 12, initMod: 2, note: 'Кинжал/Праща +4 (1d4+2), Тактика стаи' },
+      { id: 'skeleton', name: 'Скелет', cr: '1/4', hp: 13, ac: 13, initMod: 2, note: 'Короткий меч/Лук +4 (1d6+2), Уязв. дробящему' },
+      { id: 'zombie', name: 'Зомби', cr: '1/4', hp: 22, ac: 8, initMod: -2, note: 'Удар +3 (1d6+1), Стойкость нежити (Спас Тел)' },
+      { id: 'bandit', name: 'Бандит', cr: '1/8', hp: 11, ac: 12, initMod: 1, note: 'Ятаган/Арбалет +3 (1d6+1 / 1d8+1)' },
+      { id: 'wolf', name: 'Волк', cr: '1/4', hp: 11, ac: 13, initMod: 2, note: 'Укус +4 (2d4+2), Сбивание с ног, Тактика стаи' },
+      { id: 'giant_spider', name: 'Гигантский паук', cr: '1', hp: 26, ac: 14, initMod: 3, note: 'Укус +5 (1d8+3 + 2d8 яд), Паутина (Сл 12)' },
+      { id: 'orc', name: 'Орк', cr: '1/2', hp: 15, ac: 13, initMod: 1, note: 'Секира +5 (1d12+3), Агрессивный рывок' },
+      { id: 'hobgoblin', name: 'Хобгоблин', cr: '1/2', hp: 11, ac: 18, initMod: 1, note: 'Длинный меч +3 (1d8+1), Воинское превосходство +2d6' },
+      { id: 'ghoul', name: 'Вурдалак', cr: '1', hp: 22, ac: 12, initMod: 2, note: 'Когти +4 (2d4+2), Паралич (Спас Тел Сл 10)' },
+      { id: 'owlbear', name: 'Медвесыч', cr: '3', hp: 59, ac: 13, initMod: 1, note: 'Мультиатака: Клюв +7 (1d10+5) и Когти +7 (2d8+5)' },
+      { id: 'ogre', name: 'Огр', cr: '2', hp: 59, ac: 11, initMod: -1, note: 'Палица / Метат. копьё +6 (2d8+4)' },
+      { id: 'minotaur', name: 'Минотавр', cr: '3', hp: 76, ac: 14, initMod: 0, note: 'Секира +6 (2d12+4), Разбег (+2d8 и сбивание)' },
+      { id: 'troll', name: 'Тролль', cr: '5', hp: 84, ac: 15, initMod: 1, note: '3 атаки +7 (1d6+4 и 2×2d6+4), Регенерация 10 ОЗ' }
+    ];
+
     const SAVING_THROWS_5E = [
       { key: 'STR', shortName: 'Сила', fullName: 'Сила' },
       { key: 'DEX', shortName: 'Ловк', fullName: 'Ловкость' },
@@ -1224,6 +1256,20 @@
       role: null,
       heroId: null
     };
+
+    // Populate Bestiary dropdown immediately
+    const bestiarySel = document.getElementById('bestiarySelect');
+    bestiarySel.innerHTML = BESTIARY_5E.map((m) => {
+      const modStr = m.initMod >= 0 ? `+${m.initMod}` : `${m.initMod}`;
+      return `<option value="${m.id}">${m.name} (ОЗ ${m.hp}, КД ${m.ac}, Иниц ${modStr})</option>`;
+    }).join('');
+
+    window.previewBestiaryMonster = () => {
+      const m = BESTIARY_5E.find((x) => x.id === bestiarySel.value);
+      if (!m) return;
+      document.getElementById('bestiaryHint').textContent = `CR ${m.cr} • ${m.note}`;
+    };
+    previewBestiaryMonster();
 
     if (firebaseConfig.apiKey && firebaseConfig.projectId) {
       try {
@@ -1477,7 +1523,6 @@
 
       let outcomeText = '';
       if (d20 === 20) {
-        // Натуральная 20: герой приходит в сознание с 1 ОЗ, спасброски сбрасываются
         await saveHeroPatchById(heroId, { hpCur: 1, deathSaves: { success: 0, failure: 0 } });
         outcomeText = 'КРИТ 20! Очнулся с 1 ОЗ!';
       } else if (d20 === 1) {
@@ -1633,7 +1678,6 @@
       const prevHp = h.hpCur || 0;
       const next = Math.max(0, Math.min(h.hpMax + 20, prevHp + delta));
       const patch = { hpCur: next };
-      // Автоматический сброс спасбросков от смерти при любом лечении
       if (delta > 0 && next > 0) {
         patch.deathSaves = { success: 0, failure: 0 };
       }
@@ -1746,7 +1790,6 @@
       document.getElementById('heroHpCur').textContent = h.hpCur;
       document.getElementById('heroHpMax').textContent = h.hpMax;
 
-      // Death Saves Panel (visible when HP === 0)
       const dsPanel = document.getElementById('heroDeathSavesPanel');
       if ((h.hpCur || 0) === 0) {
         dsPanel.classList.remove('hidden');
@@ -1782,7 +1825,6 @@
         `;
       }).join('');
 
-      // Render 6 Saving Throws
       document.getElementById('savingThrowsGrid').innerHTML = SAVING_THROWS_5E.map((st) => {
         const isProf = Boolean(h.saves?.[st.key]);
         const bonus = calcSaveBonus(h, st.key);
@@ -1796,7 +1838,6 @@
         `;
       }).join('');
 
-      // Render 18 Skills
       const profBonus = h.profBonus ?? 2;
       document.getElementById('profBonusDisplay').textContent = `+${profBonus}`;
       const perceptionSkill = SKILLS_5E.find((s) => s.key === 'perception');
@@ -2063,7 +2104,7 @@
       `).join('') || '<p class="muted">Летопись пока пуста.</p>';
     }
 
-    // ================= DM SCREEN & FULL COMBAT LOG =================
+    // ================= DM SCREEN, BESTIARY & FULL COMBAT LOG =================
     function combatantKey(c) {
       if (!c) return '';
       return c.type === 'hero' ? `hero:${c.heroId}` : `npc:${c.uid || c.name}`;
@@ -2104,6 +2145,39 @@
       if (!nextPin || nextPin.trim().length < 4) return alert('PIN должен содержать минимум 4 символа');
       saveDmPatch({ pin: nextPin.trim() });
       alert('PIN Мастера обновлён!');
+    };
+
+    window.addFromBestiary = () => {
+      const monsterId = document.getElementById('bestiarySelect').value;
+      const m = BESTIARY_5E.find((x) => x.id === monsterId);
+      if (!m) return;
+
+      const existing = state.dm.initiative || [];
+      const sameCount = existing.filter((c) => c.type === 'npc' && c.baseMonsterId === m.id).length;
+      const displayName = `${m.name} #${sameCount + 1}`;
+      const d20 = Math.floor(Math.random() * 20) + 1;
+      const init = d20 + m.initMod;
+
+      const list = [
+        ...existing,
+        {
+          uid: 'npc_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6),
+          baseMonsterId: m.id,
+          type: 'npc',
+          name: displayName,
+          note: m.note,
+          init,
+          hpCur: m.hp,
+          hpMax: m.hp,
+          ac: m.ac,
+          conditions: []
+        }
+      ].sort((a, b) => Number(b.init) - Number(a.init));
+
+      const turnIndex = state.dm.combatStarted ? (state.dm.turnIndex || 0) : 0;
+      const modStr = m.initMod >= 0 ? `+${m.initMod}` : `${m.initMod}`;
+      const combatLog = appendCombatLog(`🐉 ${displayName} вступает в бой (Иниц. ${init} [${d20}${modStr}], ОЗ ${m.hp}, КД ${m.ac})`);
+      saveDmPatch({ initiative: list, turnIndex, combatLog });
     };
 
     window.addInitiativeCombatant = () => {
@@ -2258,7 +2332,6 @@
         if (!h) return;
         const nextHp = Math.max(0, Math.min(h.hpMax + 20, (h.hpCur || 0) + delta));
         const heroPatch = { hpCur: nextHp };
-        // Автоматический сброс спасбросков от смерти при лечении героя
         if (delta > 0 && nextHp > 0) {
           heroPatch.deathSaves = { success: 0, failure: 0 };
         }
@@ -2401,6 +2474,8 @@
                   </div>
                 </div>
 
+                ${c.note ? `<div class="muted" style="font-size:0.72rem; margin-top:3px;">⚔️ ${c.note}</div>` : ''}
+
                 <div class="hp-bar-track">
                   <div class="hp-bar-fill" style="width:${pct}%; background:${barColor};"></div>
                 </div>
@@ -2430,7 +2505,7 @@
               </div>
             `;
           }).join('')
-        : '<p class="muted">Добавьте противников или нажмите «+ Партия».</p>';
+        : '<p class="muted">Выберите монстра из бестиария или нажмите «+ Партия».</p>';
 
       const logs = state.dm.combatLog || [];
       document.getElementById('combatLogBox').innerHTML = logs.length
