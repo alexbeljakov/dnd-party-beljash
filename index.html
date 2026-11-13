@@ -444,6 +444,24 @@
     .init-pill:active {
       background: rgba(212, 175, 55, 0.3);
     }
+    .death-save-toggle {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 2px 7px;
+      border-radius: 6px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      background: rgba(255, 255, 255, 0.04);
+      color: var(--text-muted);
+    }
+    .death-save-toggle.on {
+      border-color: rgba(239, 68, 68, 0.55);
+      background: rgba(185, 28, 28, 0.25);
+      color: #fca5a5;
+    }
     .hp-bar-track {
       width: 100%;
       height: 6px;
@@ -822,7 +840,7 @@
           </div>
         </div>
 
-        <p class="muted" style="margin-bottom:8px;">Нажмите на <strong>🎲 Иниц: X</strong>, чтобы ввести реальный бросок игрока — порядок перестроится сам.</p>
+        <p class="muted" style="margin-bottom:8px;">Поверженные враги (0 ОЗ) пропускаются при нажатии <strong>«Ход ➔»</strong>. Для героев можно включить/отключить <strong>💀 Спасброски</strong>.</p>
 
         <!-- Combatants List -->
         <div id="initiativeList"></div>
@@ -992,7 +1010,6 @@ const firebaseConfig = {
   messagingSenderId: "799802669624",
   appId: "1:799802669624:web:23eb1868428dc1ee0004cd"
 };
-
     let db = null;
     let isOnline = false;
     let state = {
@@ -1599,6 +1616,23 @@ const firebaseConfig = {
       return c.type === 'hero' ? `hero:${c.heroId}` : `npc:${c.uid || c.name}`;
     }
 
+    function getCombatantHpCur(c) {
+      if (!c) return 0;
+      if (c.type === 'hero') {
+        return state.heroes[c.heroId]?.hpCur ?? 0;
+      }
+      return c.hpCur ?? c.hpMax ?? 0;
+    }
+
+    // Возвращает true, если ход должен остановиться на этом участнике
+    function shouldTakeTurn(c) {
+      if (!c) return false;
+      const hp = getCombatantHpCur(c);
+      if (hp > 0) return true;
+      // При 0 ОЗ враги всегда пропускаются; герои ходят только если включены спасброски от смерти
+      return c.type === 'hero' && (c.deathSaves !== false);
+    }
+
     async function saveDmPatch(patch) {
       state.dm = { ...state.dm, ...patch };
       if (isOnline) {
@@ -1661,7 +1695,6 @@ const firebaseConfig = {
       list[idx] = { ...target, init: nextInit };
       list.sort((a, b) => Number(b.init) - Number(a.init));
 
-      // Если бой ещё не сдвигался кнопкой "Ход", активным остаётся самый первый в отсортированном списке
       let newTurnIdx = 0;
       if (state.dm.combatStarted && activeKey) {
         const foundIdx = list.findIndex((item) => combatantKey(item) === activeKey);
@@ -1672,13 +1705,28 @@ const firebaseConfig = {
       saveDmPatch({ initiative: list, turnIndex: newTurnIdx, combatLog });
     };
 
+    window.toggleHeroDeathSaves = (idx) => {
+      const list = [...(state.dm.initiative || [])];
+      const c = list[idx];
+      if (!c || c.type !== 'hero') return;
+      const nextVal = c.deathSaves === false ? true : false;
+      list[idx] = { ...c, deathSaves: nextVal };
+      const hName = state.heroes[c.heroId]?.name || c.name;
+      const combatLog = appendCombatLog(
+        nextVal ? `💀 ${hName}: спасброски от смерти включены` : `💤 ${hName}: пропуск хода при 0 ОЗ`
+      );
+      saveDmPatch({ initiative: list, combatLog });
+    };
+
     window.resetCombatTurnToTop = () => {
       const list = [...(state.dm.initiative || [])].sort((a, b) => Number(b.init) - Number(a.init));
       if (!list.length) return;
-      const first = list[0];
+      let startIdx = list.findIndex((c) => shouldTakeTurn(c));
+      if (startIdx < 0) startIdx = 0;
+      const first = list[startIdx];
       const firstName = first.type === 'hero' ? (state.heroes[first.heroId]?.name || first.name) : first.name;
       const combatLog = appendCombatLog(`▶ Ход возвращён лидеру инициативы: ${firstName}`);
-      saveDmPatch({ initiative: list, turnIndex: 0, round: 1, combatStarted: false, combatLog });
+      saveDmPatch({ initiative: list, turnIndex: startIdx, round: 1, combatStarted: false, combatLog });
     };
 
     window.cloneCombatant = (idx) => {
@@ -1706,7 +1754,7 @@ const firebaseConfig = {
         .map((h) => {
           const dexMod = Math.floor(((h.stats?.DEX ?? 10) - 10) / 2);
           const roll = Math.floor(Math.random() * 20) + 1 + dexMod;
-          return { type: 'hero', heroId: h.id, name: h.name, init: roll, conditions: [] };
+          return { type: 'hero', heroId: h.id, name: h.name, init: roll, deathSaves: true, conditions: [] };
         });
       if (!added.length) return;
       const list = [...(state.dm.initiative || []), ...added].sort((a, b) => Number(b.init) - Number(a.init));
@@ -1718,17 +1766,36 @@ const firebaseConfig = {
     window.nextTurn = () => {
       const list = state.dm.initiative || [];
       if (!list.length) return;
-      let nextIdx = (state.dm.turnIndex || 0) + 1;
+
+      let candidateIdx = state.dm.turnIndex || 0;
       let round = state.dm.round || 1;
-      if (nextIdx >= list.length) {
-        nextIdx = 0;
-        round += 1;
+      let foundIdx = -1;
+
+      // Ищем следующего участника, который должен совершать ход
+      for (let step = 0; step < list.length; step++) {
+        candidateIdx += 1;
+        if (candidateIdx >= list.length) {
+          candidateIdx = 0;
+          round += 1;
+        }
+        if (shouldTakeTurn(list[candidateIdx])) {
+          foundIdx = candidateIdx;
+          break;
+        }
       }
-      const active = list[nextIdx];
+
+      if (foundIdx === -1) {
+        return alert('В бою не осталось активных участников (у всех 0 ОЗ).');
+      }
+
+      const active = list[foundIdx];
       const activeName = active.type === 'hero' ? (state.heroes[active.heroId]?.name || active.name) : active.name;
-      const line = `[Р${round}] ▶ Ход: ${activeName}`;
+      const isDeathSaveTurn = active.type === 'hero' && getCombatantHpCur(active) === 0;
+      const line = isDeathSaveTurn
+        ? `[Р${round}] ▶ Ход: ${activeName} (💀 спасбросок от смерти)`
+        : `[Р${round}] ▶ Ход: ${activeName}`;
       const combatLog = [line, ...(state.dm.combatLog || [])].slice(0, 60);
-      saveDmPatch({ turnIndex: nextIdx, round, combatStarted: true, combatLog });
+      saveDmPatch({ turnIndex: foundIdx, round, combatStarted: true, combatLog });
     };
 
     window.applyCombatHp = async (idx, delta) => {
@@ -1741,15 +1808,16 @@ const firebaseConfig = {
         if (!h) return;
         const nextHp = Math.max(0, Math.min(h.hpMax + 20, (h.hpCur || 0) + delta));
         await saveHeroPatchById(h.id, { hpCur: nextHp });
+        const downNote = nextHp === 0 && delta < 0 ? ' — БЕЗ СОЗНАНИЯ!' : '';
         const actionText = delta < 0
-          ? `💥 ${h.name} получает ${Math.abs(delta)} урона (${nextHp}/${h.hpMax} ОЗ)`
+          ? `💥 ${h.name} получает ${Math.abs(delta)} урона (${nextHp}/${h.hpMax} ОЗ)${downNote}`
           : `💚 ${h.name} восстанавливает ${delta} ОЗ (${nextHp}/${h.hpMax} ОЗ)`;
         const combatLog = appendCombatLog(actionText);
         await saveDmPatch({ combatLog });
       } else {
         const nextHp = Math.max(0, Math.min(c.hpMax + 50, (c.hpCur ?? c.hpMax) + delta));
         list[idx] = { ...c, hpCur: nextHp };
-        const fallen = nextHp === 0 && delta < 0 ? ' — ПОВЕРЖЕН!' : '';
+        const fallen = nextHp === 0 && delta < 0 ? ' — ПОВЕРЖЕН (будет пропущен)!' : '';
         const actionText = delta < 0
           ? `💥 ${c.name} получает ${Math.abs(delta)} урона (${nextHp}/${c.hpMax} ОЗ)${fallen}`
           : `💚 ${c.name} восстанавливает ${delta} ОЗ (${nextHp}/${c.hpMax} ОЗ)`;
@@ -1853,6 +1921,8 @@ const firebaseConfig = {
             const ac = heroData ? heroData.ac : (c.ac ?? 12);
             const pct = Math.max(0, Math.min(100, Math.round((hpCur / Math.max(1, hpMax)) * 100)));
             const barColor = pct > 50 ? '#10b981' : pct > 25 ? '#f59e0b' : '#ef4444';
+            const deathSavesOn = isHero && (c.deathSaves !== false);
+            const willSkip = !shouldTakeTurn(c);
             const conds = (c.conditions || []).map((cond, cIdx) =>
               `<span class="cond-pill" onclick="removeCombatCondition(${idx}, ${cIdx})">${cond} ✕</span>`
             ).join(' ');
@@ -1863,6 +1933,7 @@ const firebaseConfig = {
                   <div>
                     <span>${idx === curIdx ? '▶ ' : ''}<strong style="color:${isHero ? 'var(--gold)' : 'var(--text-main)'};">${name}</strong></span>
                     <span class="muted" style="margin-left:6px;">🛡️ ${ac}</span>
+                    ${willSkip ? `<span class="muted" style="margin-left:4px; color:#f87171;">(пропуск)</span>` : ''}
                   </div>
                   <div class="row">
                     <button class="init-pill" onclick="editCombatantInit(${idx})" title="Изменить инициативу">🎲 Иниц: ${c.init}</button>
@@ -1876,9 +1947,16 @@ const firebaseConfig = {
                 </div>
 
                 <div class="row" style="justify-content:space-between; flex-wrap:wrap;">
-                  <span style="font-size:0.84rem; font-weight:700; color:${hpCur === 0 ? '#f87171' : '#fca5a5'};">
-                    ❤️ ${hpCur} / ${hpMax}
-                  </span>
+                  <div class="row">
+                    <span style="font-size:0.84rem; font-weight:700; color:${hpCur === 0 ? '#f87171' : '#fca5a5'};">
+                      ❤️ ${hpCur} / ${hpMax}
+                    </span>
+                    ${isHero ? `
+                      <button class="death-save-toggle ${deathSavesOn ? 'on' : ''}" onclick="toggleHeroDeathSaves(${idx})" title="Останавливать ход на герое при 0 ОЗ для спасбросков от смерти">
+                        ${deathSavesOn ? '💀 Спасброски' : '💤 Пропуск при 0'}
+                      </button>
+                    ` : ''}
+                  </div>
                   <div class="row">
                     <button class="btn btn-danger btn-xs" onclick="applyCombatHp(${idx}, -5)">-5</button>
                     <button class="btn btn-danger btn-xs" onclick="applyCombatHp(${idx}, -1)">-1</button>
