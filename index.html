@@ -803,6 +803,7 @@
         <div class="card-header">
           <span class="card-title">Бой • Раунд <span id="roundCounter">1</span></span>
           <div class="row">
+            <button class="btn btn-xs" onclick="resetCombatTurnToTop()" title="Поставить ход на самого быстрого">1-й ход</button>
             <button class="btn btn-sm" onclick="addPartyToInitiative()">+ Партия</button>
             <button class="btn btn-primary btn-sm" onclick="nextTurn()">Ход ➔</button>
           </div>
@@ -1004,6 +1005,7 @@ const firebaseConfig = {
         notes: 'NPC и заметки Мастера:\n',
         round: 1,
         turnIndex: 0,
+        combatStarted: false,
         initiative: [],
         combatLog: []
       }
@@ -1592,6 +1594,11 @@ const firebaseConfig = {
     }
 
     // ================= DM SCREEN & FULL COMBAT LOG =================
+    function combatantKey(c) {
+      if (!c) return '';
+      return c.type === 'hero' ? `hero:${c.heroId}` : `npc:${c.uid || c.name}`;
+    }
+
     async function saveDmPatch(patch) {
       state.dm = { ...state.dm, ...patch };
       if (isOnline) {
@@ -1624,11 +1631,12 @@ const firebaseConfig = {
       const init = initVal !== '' ? parseInt(initVal) : (Math.floor(Math.random() * 20) + 1);
       const list = [
         ...(state.dm.initiative || []),
-        { type: 'npc', name, init, hpCur: hpMax, hpMax, ac, conditions: [] }
-      ].sort((a, b) => b.init - a.init);
+        { uid: 'npc_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6), type: 'npc', name, init, hpCur: hpMax, hpMax, ac, conditions: [] }
+      ].sort((a, b) => Number(b.init) - Number(a.init));
 
+      const turnIndex = state.dm.combatStarted ? (state.dm.turnIndex || 0) : 0;
       const combatLog = appendCombatLog(`➕ В бой вступает ${name} (Иниц. ${init}, ОЗ ${hpMax}, КД ${ac})`);
-      saveDmPatch({ initiative: list, combatLog });
+      saveDmPatch({ initiative: list, turnIndex, combatLog });
 
       document.getElementById('initNameInput').value = '';
       document.getElementById('initValInput').value = '';
@@ -1644,19 +1652,33 @@ const firebaseConfig = {
       const cName = target.type === 'hero' ? (state.heroes[target.heroId]?.name || target.name) : target.name;
       const raw = prompt(`Новая инициатива для ${cName}:`, target.init);
       if (raw === null || raw.trim() === '') return;
-      const nextInit = parseInt(raw);
+      const nextInit = parseInt(raw, 10);
       if (isNaN(nextInit)) return;
 
-      // Запоминаем того, чей сейчас ход, чтобы указатель не сбился после пересортировки
       const curIdx = state.dm.turnIndex || 0;
-      const activeCombatant = list[curIdx];
+      const activeKey = combatantKey(list[curIdx]);
 
       list[idx] = { ...target, init: nextInit };
-      list.sort((a, b) => b.init - a.init);
+      list.sort((a, b) => Number(b.init) - Number(a.init));
 
-      const newTurnIdx = activeCombatant ? Math.max(0, list.indexOf(activeCombatant)) : 0;
+      // Если бой ещё не сдвигался кнопкой "Ход", активным остаётся самый первый в отсортированном списке
+      let newTurnIdx = 0;
+      if (state.dm.combatStarted && activeKey) {
+        const foundIdx = list.findIndex((item) => combatantKey(item) === activeKey);
+        newTurnIdx = foundIdx >= 0 ? foundIdx : 0;
+      }
+
       const combatLog = appendCombatLog(`🎲 ${cName}: инициатива изменена на ${nextInit}`);
       saveDmPatch({ initiative: list, turnIndex: newTurnIdx, combatLog });
+    };
+
+    window.resetCombatTurnToTop = () => {
+      const list = [...(state.dm.initiative || [])].sort((a, b) => Number(b.init) - Number(a.init));
+      if (!list.length) return;
+      const first = list[0];
+      const firstName = first.type === 'hero' ? (state.heroes[first.heroId]?.name || first.name) : first.name;
+      const combatLog = appendCombatLog(`▶ Ход возвращён лидеру инициативы: ${firstName}`);
+      saveDmPatch({ initiative: list, turnIndex: 0, round: 1, combatStarted: false, combatLog });
     };
 
     window.cloneCombatant = (idx) => {
@@ -1666,6 +1688,7 @@ const firebaseConfig = {
       const copyName = `${src.name} (копия)`;
       list.splice(idx + 1, 0, {
         ...src,
+        uid: 'npc_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6),
         name: copyName,
         hpCur: src.hpMax,
         conditions: []
@@ -1686,9 +1709,10 @@ const firebaseConfig = {
           return { type: 'hero', heroId: h.id, name: h.name, init: roll, conditions: [] };
         });
       if (!added.length) return;
-      const list = [...(state.dm.initiative || []), ...added].sort((a, b) => b.init - a.init);
+      const list = [...(state.dm.initiative || []), ...added].sort((a, b) => Number(b.init) - Number(a.init));
+      const turnIndex = state.dm.combatStarted ? (state.dm.turnIndex || 0) : 0;
       const combatLog = appendCombatLog(`🛡️ Партия вступила в бой (${added.map((a) => `${a.name}: ${a.init}`).join(', ')})`);
-      saveDmPatch({ initiative: list, combatLog });
+      saveDmPatch({ initiative: list, turnIndex, combatLog });
     };
 
     window.nextTurn = () => {
@@ -1704,7 +1728,7 @@ const firebaseConfig = {
       const activeName = active.type === 'hero' ? (state.heroes[active.heroId]?.name || active.name) : active.name;
       const line = `[Р${round}] ▶ Ход: ${activeName}`;
       const combatLog = [line, ...(state.dm.combatLog || [])].slice(0, 60);
-      saveDmPatch({ turnIndex: nextIdx, round, combatLog });
+      saveDmPatch({ turnIndex: nextIdx, round, combatStarted: true, combatLog });
     };
 
     window.applyCombatHp = async (idx, delta) => {
@@ -1779,7 +1803,7 @@ const firebaseConfig = {
 
     window.clearInitiative = () => {
       if (!confirm('Завершить бой и очистить трекер с журналом?')) return;
-      saveDmPatch({ initiative: [], turnIndex: 0, round: 1, combatLog: [] });
+      saveDmPatch({ initiative: [], turnIndex: 0, round: 1, combatStarted: false, combatLog: [] });
     };
 
     window.exportCombatToChronicle = async () => {
