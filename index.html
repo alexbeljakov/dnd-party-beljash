@@ -919,7 +919,7 @@ const firebaseConfig = {
       chronicle: [],
       rolls: [],
       dm: {
-        pin: '0000',
+        pin: '1939',
         notes: 'NPC и заметки Мастера:\n',
         round: 1,
         turnIndex: 0,
@@ -1084,7 +1084,7 @@ const firebaseConfig = {
     window.promptDmLogin = () => {
       const entered = prompt('Введите PIN Мастера (по умолчанию 0000):');
       if (entered === null) return;
-      if (entered !== (state.dm.pin || '0000')) {
+      if (entered !== (state.dm.pin || '1939')) {
         return alert('Неверный пароль Мастера');
       }
       session = { role: 'dm', heroId: null };
