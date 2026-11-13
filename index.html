@@ -785,20 +785,51 @@
       line-height: 1.35;
     }
 
-    /* Secret Notes Search Matches */
-    .notes-search-hits {
+    /* Secret Notes Cards & Attachments */
+    .note-card-thumb {
+      width: 100%;
+      max-height: 170px;
+      object-fit: cover;
+      border-radius: 8px;
       margin-top: 8px;
-      padding: 8px;
-      border-radius: 9px;
-      background: rgba(212, 175, 55, 0.07);
-      border: 1px solid rgba(212, 175, 55, 0.25);
-      font-size: 0.8rem;
+      cursor: pointer;
+      border: 1px solid rgba(212, 175, 55, 0.22);
+    }
+    .note-file-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: 8px;
+      padding: 5px 10px;
+      border-radius: 8px;
+      background: rgba(212, 175, 55, 0.12);
+      border: 1px solid rgba(212, 175, 55, 0.35);
+      color: var(--gold);
+      font-size: 0.78rem;
+      cursor: pointer;
     }
     mark.hl {
       background: rgba(212, 175, 55, 0.38);
       color: #fff7d6;
       padding: 0 2px;
       border-radius: 3px;
+    }
+
+    /* Select Party Modal Row */
+    .party-pick-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 10px;
+      background: var(--bg-card-alt);
+      border: 1px solid rgba(212, 175, 55, 0.2);
+      border-radius: 10px;
+      margin-bottom: 7px;
+      cursor: pointer;
+    }
+    .party-pick-row.disabled {
+      opacity: 0.55;
+      cursor: default;
     }
 
     /* ================= 3D ANIMATED DICE STAGE ================= */
@@ -1392,12 +1423,15 @@
         <button id="dmMainNotesBtn" class="subtab-btn" onclick="switchDmMainTab('notes')">📖 Записи и NPC</button>
       </div>
 
-      <!-- DM SUBTAB 1: COMBAT TRACKER & QUICK PARTY STATUS -->
+      <!-- DM SUBTAB 1: COMBAT TRACKER & SELECTIVE PARTY ADD -->
       <div id="dmMainCombatPanel">
         <div class="card">
           <div class="card-header">
             <span class="card-title">Статус партии</span>
-            <button class="btn btn-xs" onclick="addPartyToInitiative()">+ Всех в бой</button>
+            <div class="row">
+              <button class="btn btn-xs" onclick="openSelectPartyForCombatModal()">+ Выбрать</button>
+              <button class="btn btn-primary btn-xs" onclick="addPartyToInitiative()">+ Всех</button>
+            </div>
           </div>
           <div id="dmCompactPartyStrip"></div>
         </div>
@@ -1460,7 +1494,7 @@
         </div>
       </div>
 
-      <!-- DM SUBTAB 3: SECRET NOTES (WITH SEARCH) & NPC DATABASE -->
+      <!-- DM SUBTAB 3: SECRET NOTES (WITH FILES, PHOTOS, SHARE TO PLAYERS) & NPC DATABASE -->
       <div id="dmMainNotesPanel" class="hidden">
         <div class="card">
           <div class="subtab-bar">
@@ -1468,12 +1502,40 @@
             <button id="dmSubNpcBtn" class="subtab-btn" onclick="switchDmSubtab('npc')">🎭 База NPC</button>
           </div>
 
+          <!-- Subtab A: Structured Secret Notes with Photo/File Upload & Share -->
           <div id="dmSubNotesPanel">
-            <input type="text" id="dmNotesSearchInput" placeholder="🔍 Поиск по тайным записям Мастера..." oninput="renderDmNotesSearch()" />
-            <div id="dmNotesSearchHits" class="notes-search-hits hidden"></div>
-            <textarea id="dmSecretNotes" class="mt-8" style="min-height:220px;" placeholder="Сюжетные повороты, тайны мира, ловушки, загадки и лут..." oninput="renderDmNotesSearch()" onchange="saveDmNotes()"></textarea>
+            <div class="grid-2">
+              <input type="text" id="newDmNoteTitle" placeholder="Заголовок записи / раздатки..." />
+              <input type="text" id="newDmNoteTags" placeholder="Теги (карта, босс, тайна)" />
+            </div>
+            <textarea id="newDmNoteBody" class="mt-8" style="min-height:66px;" placeholder="Текст заметки, загадка, описание сцены или лут..."></textarea>
+
+            <div class="row mt-8" style="justify-content:space-between; flex-wrap:wrap;">
+              <label class="btn btn-sm" style="cursor:pointer;">
+                📎 Прикрепить фото / файл
+                <input type="file" id="dmNoteFileInput" accept="image/*,.txt,.md" class="hidden" onchange="handleDmNoteFileSelect(event)" />
+              </label>
+              <span id="dmNoteFileSelectedBadge" class="muted" style="font-size:0.74rem;"></span>
+              <button class="btn btn-primary btn-sm" onclick="addDmNoteCard()">+ Сохранить запись</button>
+            </div>
+
+            <!-- Search & Tags Filter -->
+            <div style="margin-top:12px; padding-top:10px; border-top:1px solid rgba(212,175,55,0.14);">
+              <input type="text" id="dmNotesSearchInput" placeholder="🔍 Поиск по тайным записям, файлам и тегам..." oninput="renderDmNotesList()" />
+              <div id="dmNotesTagCloud" class="row mt-8" style="flex-wrap:wrap;"></div>
+            </div>
+
+            <!-- List of Structured Secret Notes -->
+            <div id="dmNotesCardsList" class="mt-12"></div>
+
+            <!-- Legacy Quick Scratchpad -->
+            <div style="margin-top:14px; padding-top:10px; border-top:1px dashed rgba(212,175,55,0.22);">
+              <div class="muted" style="font-size:0.74rem; margin-bottom:5px;">Быстрый черновик Мастера:</div>
+              <textarea id="dmSecretNotes" style="min-height:95px;" placeholder="Свободные наброски на ходу..." oninput="renderDmNotesList()" onchange="saveDmNotes()"></textarea>
+            </div>
           </div>
 
+          <!-- Subtab B: Tagged & Searchable NPC Database -->
           <div id="dmSubNpcPanel" class="hidden">
             <div class="grid-2">
               <input type="text" id="newNpcNameInput" placeholder="Имя NPC..." />
@@ -1547,6 +1609,19 @@
     </button>
   </nav>
 
+  <!-- ================= MODAL: SELECT SPECIFIC PLAYERS FOR COMBAT ================= -->
+  <div id="selectCombatPartyModal" class="modal-backdrop" onclick="if(event.target===this) this.classList.remove('open')">
+    <div class="modal-box">
+      <div class="card-header">
+        <span class="card-title">⚔️ Кого добавить в бой?</span>
+        <button class="btn btn-sm" onclick="document.getElementById('selectCombatPartyModal').classList.remove('open')">✕</button>
+      </div>
+      <p class="muted" style="margin-bottom:10px;">Отметьте участников сцены. Инициатива бросится автоматически (`1d20 + Ловк`).</p>
+      <div id="selectCombatPartyList"></div>
+      <button class="btn btn-primary btn-block mt-12" onclick="confirmSelectedPartyToCombat()">Добавить выбранных в бой</button>
+    </div>
+  </div>
+
   <!-- ================= MODAL: 3D ANIMATED DICE ROLLER & LOG ================= -->
   <div id="diceModal" class="modal-backdrop" onclick="if(event.target===this) closeDiceModal()">
     <div class="modal-box">
@@ -1555,7 +1630,6 @@
         <button class="btn btn-sm" onclick="closeDiceModal()">✕</button>
       </div>
 
-      <!-- 3D Animated Polyhedron Stage -->
       <div id="diceStage" class="dice-stage">
         <div id="diePoly" class="die-poly">
           <svg viewBox="0 0 100 100" aria-hidden="true">
@@ -2130,8 +2204,10 @@
     let isOnline = false;
     let activeChronicleTag = '';
     let activeNpcTag = '';
+    let activeDmNoteTag = '';
     let showAllSpellCircles = false;
     let diceAnimTimer = null;
+    let pendingDmNoteAttachment = null; // { fileType: 'image'|'text', fileName, fileContent }
 
     let state = {
       heroes: {},
@@ -2144,6 +2220,7 @@
         xpMode: 'canon',
         customXpTable: [...CANON_XP_5E],
         notes: 'Секретные заметки Мастера:\n',
+        noteCards: [],
         npcs: [],
         round: 1,
         turnIndex: 0,
@@ -2168,7 +2245,6 @@
       const curVal = Math.max(0, Number(hpCur) || 0);
       const ratio = Math.max(0, Math.min(1, curVal / maxVal));
 
-      // Hue: 145 (emerald green) at 100% -> 42 (amber/gold) at 50% -> 0 (crimson red) at 0%
       const hue = Math.round(ratio * 145);
       const hueEnd = Math.max(0, hue - 14);
       const topAlpha = curVal === 0 ? 0.34 : 0.24;
@@ -2717,7 +2793,6 @@
       }, { sides: res.sides, finalDisplay: res.total, caption: detail });
     };
 
-    // Class Resources
     window.addClassResource = async () => {
       const h = state.heroes[session.heroId];
       if (!h) return;
@@ -2749,7 +2824,6 @@
       renderHeroSheet();
     };
 
-    // Spells & Cantrips
     window.changeSpellAbility = async (ab) => {
       await saveHeroPatch({ spellAbility: ab });
       renderHeroSheet();
@@ -3504,7 +3578,6 @@
       document.getElementById('heroHpMax').textContent = h.hpMax;
       document.getElementById('rationsCountDisplay').textContent = h.rations ?? 5;
 
-      // Apply smooth green -> amber -> red gradient background based on HP percentage
       applyHpBoxGradient(h.hpCur, h.hpMax);
 
       const curFloor = xpTable[Math.min(19, lvl - 1)] || 0;
@@ -3922,6 +3995,18 @@
       document.getElementById('previewModal').classList.add('open');
     };
 
+    window.openRawPreview = (title, type, content) => {
+      document.getElementById('previewTitle').textContent = title;
+      document.getElementById('previewRenameBtn').classList.add('hidden');
+      const body = document.getElementById('previewBody');
+      if (type === 'image') {
+        body.innerHTML = `<img src="${content}" style="max-width:100%; border-radius:10px;" />`;
+      } else {
+        body.innerHTML = `<pre style="white-space:pre-wrap; text-align:left; font-family:inherit; line-height:1.5;">${escapeHtml(content)}</pre>`;
+      }
+      document.getElementById('previewModal').classList.add('open');
+    };
+
     window.deleteSharedDoc = async (id) => {
       const d = state.docs.find((x) => x.id === id);
       if (!d || !canModifyDoc(d)) {
@@ -4065,7 +4150,7 @@
         return `
           <div style="padding:9px 0; border-bottom:1px solid rgba(255,255,255,0.06);">
             <div class="row" style="justify-content:space-between; align-items:flex-start;">
-              <div style="font-size:0.9rem; flex:1;">${escapeHtml(c.text)}</div>
+              <div style="font-size:0.9rem; flex:1; white-space:pre-wrap;">${escapeHtml(c.text)}</div>
               ${modControls}
             </div>
             ${tagsHtml ? `<div class="row mt-8" style="flex-wrap:wrap;">${tagsHtml}</div>` : ''}
@@ -4075,7 +4160,7 @@
       }).join('') || '<p class="muted">Записей по вашему фильтру не найдено.</p>';
     }
 
-    // ================= DM SCREEN: 3 MAIN TABS, NOTES SEARCH, NPC & COMBAT =================
+    // ================= DM SCREEN: STRUCTURED NOTES (FILES/PHOTOS + SHARE TO PLAYERS), NPC & COMBAT =================
     window.switchDmMainTab = (tab) => {
       const map = {
         combat: ['dmMainCombatBtn', 'dmMainCombatPanel'],
@@ -4097,31 +4182,212 @@
       if (!isNotes) renderDmNpcList();
     };
 
-    window.renderDmNotesSearch = () => {
-      const queryRaw = (document.getElementById('dmNotesSearchInput')?.value || '').trim();
-      const box = document.getElementById('dmNotesSearchHits');
-      if (!queryRaw) {
-        box.classList.add('hidden');
-        box.innerHTML = '';
-        return;
-      }
-      const text = document.getElementById('dmSecretNotes')?.value || '';
-      const lines = text.split('\n').filter((l) => l.trim().length > 0);
-      const qLower = queryRaw.toLowerCase();
-      const matches = lines.filter((l) => l.toLowerCase().includes(qLower));
+    window.handleDmNoteFileSelect = async (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const isImg = file.type.startsWith('image/');
+      const fileName = file.name.replace(/\.[^/.]+$/, '');
+      const fileContent = isImg ? await compressImage(file, 1100, 0.76) : await file.text();
 
-      box.classList.remove('hidden');
-      if (!matches.length) {
-        box.innerHTML = '<span class="muted">Совпадений в тайных записях не найдено.</span>';
+      pendingDmNoteAttachment = {
+        fileType: isImg ? 'image' : 'text',
+        fileName,
+        fileContent
+      };
+      document.getElementById('dmNoteFileSelectedBadge').textContent = `📎 ${fileName}`;
+      e.target.value = '';
+    };
+
+    window.addDmNoteCard = async () => {
+      const titleInput = document.getElementById('newDmNoteTitle');
+      const tagsInput = document.getElementById('newDmNoteTags');
+      const bodyInput = document.getElementById('newDmNoteBody');
+
+      const title = titleInput.value.trim() || (pendingDmNoteAttachment?.fileName || '');
+      const body = bodyInput.value.trim();
+      const tags = parseTags(tagsInput.value);
+
+      if (!title && !body && !pendingDmNoteAttachment) {
+        return alert('Введите текст записи или прикрепите фото / файл.');
+      }
+
+      const cardObj = {
+        id: 'dmnote_' + Date.now(),
+        title: title || 'Заметка Мастера',
+        body,
+        tags,
+        attachment: pendingDmNoteAttachment || null,
+        shared: false,
+        createdAt: Date.now()
+      };
+
+      const noteCards = [cardObj, ...(state.dm.noteCards || [])];
+      await saveDmPatch({ noteCards });
+
+      titleInput.value = '';
+      tagsInput.value = '';
+      bodyInput.value = '';
+      pendingDmNoteAttachment = null;
+      document.getElementById('dmNoteFileSelectedBadge').textContent = '';
+      renderDmNotesList();
+    };
+
+    window.setDmNoteTagFilter = (tag) => {
+      activeDmNoteTag = activeDmNoteTag === tag ? '' : tag;
+      renderDmNotesList();
+    };
+
+    window.editDmNoteCard = async (id) => {
+      const cards = [...(state.dm.noteCards || [])];
+      const target = cards.find((c) => c.id === id);
+      if (!target) return;
+
+      const nextTitle = prompt('Заголовок записи:', target.title);
+      if (nextTitle === null) return;
+      const nextTagsRaw = prompt('Теги через запятую:', (target.tags || []).join(', '));
+      const nextBody = prompt('Текст заметки:', target.body || '');
+
+      if (nextTitle.trim()) target.title = nextTitle.trim();
+      if (nextTagsRaw !== null) target.tags = parseTags(nextTagsRaw);
+      if (nextBody !== null) target.body = nextBody.trim();
+
+      await saveDmPatch({ noteCards: cards });
+      renderDmNotesList();
+    };
+
+    window.deleteDmNoteCard = async (id) => {
+      if (!confirm('Удалить эту запись из заметок Мастера?')) return;
+      const noteCards = (state.dm.noteCards || []).filter((c) => c.id !== id);
+      await saveDmPatch({ noteCards });
+      renderDmNotesList();
+    };
+
+    window.previewDmNoteAttachment = (id) => {
+      const card = (state.dm.noteCards || []).find((c) => c.id === id);
+      if (!card || !card.attachment) return;
+      openRawPreview(card.attachment.fileName || card.title, card.attachment.fileType, card.attachment.fileContent);
+    };
+
+    // Share DM Note / Photo / File directly to Players' Shared Hub
+    window.shareDmNoteWithPlayers = async (id) => {
+      const cards = [...(state.dm.noteCards || [])];
+      const card = cards.find((c) => c.id === id);
+      if (!card) return;
+
+      const hasAttachment = Boolean(card.attachment && card.attachment.fileContent);
+      const hasBody = Boolean(card.body && card.body.trim());
+
+      if (!confirm(`Опубликовать «${card.title}» для всех игроков партии?`)) return;
+
+      // 1. Если есть фото или файл — публикуем в «Общие документы и Карты»
+      if (hasAttachment) {
+        const docObj = {
+          title: card.title || card.attachment.fileName || 'Раздатка от Мастера',
+          type: card.attachment.fileType,
+          content: card.attachment.fileContent,
+          author: 'Мастер',
+          ownerId: 'dm',
+          createdAt: Date.now()
+        };
+        if (isOnline) {
+          await addDoc(collection(db, 'docs'), docObj);
+        } else {
+          state.docs.unshift({ id: 'doc_' + Date.now(), ...docObj });
+        }
+      }
+
+      // 2. Если есть текст (или нет файла, а только текст) — публикуем в общую Летопись
+      if (hasBody || !hasAttachment) {
+        const fullText = card.title && hasBody
+          ? `📜 ${card.title}: ${card.body}`
+          : (card.body || card.title);
+        const chrEntry = {
+          text: fullText,
+          tags: card.tags || [],
+          author: 'Мастер',
+          ownerId: 'dm',
+          createdAt: Date.now()
+        };
+        if (isOnline) {
+          await addDoc(collection(db, 'chronicle'), chrEntry);
+        } else {
+          state.chronicle.unshift({ id: 'chr_' + Date.now(), ...chrEntry });
+        }
+      }
+
+      card.shared = true;
+      await saveDmPatch({ noteCards: cards });
+      if (!isOnline) saveLocalState();
+      renderDmNotesList();
+      alert(`«${card.title}» теперь доступно всем игрокам во вкладке «Летопись»!`);
+    };
+
+    window.renderDmNotesList = () => {
+      const cards = state.dm.noteCards || [];
+      const allTags = new Set();
+      cards.forEach((c) => (c.tags || []).forEach((t) => allTags.add(t)));
+
+      document.getElementById('dmNotesTagCloud').innerHTML = [...allTags].map((t) =>
+        `<span class="tag-chip ${activeDmNoteTag === t ? 'active' : ''}" onclick="setDmNoteTagFilter('${t}')">#${t}</span>`
+      ).join('');
+
+      const q = (document.getElementById('dmNotesSearchInput')?.value || '').trim().toLowerCase();
+      const filtered = cards.filter((c) => {
+        const tags = c.tags || [];
+        if (activeDmNoteTag && !tags.includes(activeDmNoteTag)) return false;
+        if (!q) return true;
+        return (c.title || '').toLowerCase().includes(q)
+          || (c.body || '').toLowerCase().includes(q)
+          || (c.attachment?.fileName || '').toLowerCase().includes(q)
+          || tags.some((t) => t.includes(q));
+      });
+
+      const listEl = document.getElementById('dmNotesCardsList');
+      if (!filtered.length) {
+        listEl.innerHTML = '<p class="muted">Сохранённых записей с файлами пока нет.</p>';
         return;
       }
-      const escapedQ = queryRaw.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-      const regex = new RegExp(`(${escapedQ})`, 'gi');
-      box.innerHTML = `<div class="muted" style="font-size:0.72rem; margin-bottom:4px; color:var(--gold);">Найдено строк: ${matches.length}</div>` +
-        matches.slice(0, 12).map((line) => {
-          const highlighted = escapeHtml(line).replace(regex, '<mark class="hl">$1</mark>');
-          return `<div style="padding:3px 0; border-bottom:1px solid rgba(255,255,255,0.05);">${highlighted}</div>`;
-        }).join('');
+
+      const escapedQ = q ? q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') : '';
+      const hlRegex = escapedQ ? new RegExp(`(${escapedQ})`, 'gi') : null;
+      const hl = (txt) => {
+        const safe = escapeHtml(txt);
+        return hlRegex ? safe.replace(hlRegex, '<mark class="hl">$1</mark>') : safe;
+      };
+
+      listEl.innerHTML = filtered.map((c) => {
+        const tagsHtml = (c.tags || []).map((t) =>
+          `<span class="tag-chip" onclick="setDmNoteTagFilter('${t}')">#${t}</span>`
+        ).join(' ');
+
+        let attHtml = '';
+        if (c.attachment && c.attachment.fileContent) {
+          if (c.attachment.fileType === 'image') {
+            attHtml = `<img class="note-card-thumb" src="${c.attachment.fileContent}" onclick="previewDmNoteAttachment('${c.id}')" alt="${escapeHtml(c.title)}" />`;
+          } else {
+            attHtml = `<div class="note-file-pill" onclick="previewDmNoteAttachment('${c.id}')">📄 ${hl(c.attachment.fileName || 'Текстовый файл')}</div>`;
+          }
+        }
+
+        return `
+          <div class="item-card">
+            <div class="row" style="justify-content:space-between; align-items:flex-start;">
+              <div style="min-width:0; flex:1;">
+                <strong style="color:var(--gold); font-family:'Cinzel', serif;">${hl(c.title)}</strong>
+                ${c.shared ? `<span class="muted" style="font-size:0.68rem; color:#6ee7b7; margin-left:5px;">✓ у игроков</span>` : ''}
+              </div>
+              <div class="row">
+                <button class="btn btn-primary btn-xs" onclick="shareDmNoteWithPlayers('${c.id}')" title="Отправить игрокам в общую Летопись / Документы">📢 Игрокам</button>
+                <button class="btn btn-xs" onclick="editDmNoteCard('${c.id}')" title="Редактировать">✏️</button>
+                <button class="btn btn-danger btn-xs" onclick="deleteDmNoteCard('${c.id}')" title="Удалить">✕</button>
+              </div>
+            </div>
+            ${c.body ? `<div style="font-size:0.84rem; margin-top:6px; white-space:pre-wrap;">${hl(c.body)}</div>` : ''}
+            ${attHtml}
+            ${tagsHtml ? `<div class="row mt-8" style="flex-wrap:wrap;">${tagsHtml}</div>` : ''}
+          </div>
+        `;
+      }).join('');
     };
 
     window.addDmNpc = async () => {
@@ -4370,22 +4636,68 @@
       saveDmPatch({ initiative: list, combatLog });
     };
 
-    window.addPartyToInitiative = () => {
+    // Selective Party Combat Entry
+    window.openSelectPartyForCombatModal = () => {
+      const heroes = Object.values(state.heroes);
+      if (!heroes.length) return alert('В партии пока нет героев.');
+
       const existingHeroIds = new Set(
         (state.dm.initiative || []).filter((i) => i.type === 'hero').map((i) => i.heroId)
       );
-      const added = Object.values(state.heroes)
-        .filter((h) => !existingHeroIds.has(h.id))
+
+      document.getElementById('selectCombatPartyList').innerHTML = heroes.map((h) => {
+        const alreadyIn = existingHeroIds.has(h.id);
+        return `
+          <label class="party-pick-row ${alreadyIn ? 'disabled' : ''}">
+            <div>
+              <strong style="color:var(--gold);">${escapeHtml(h.name)}</strong>
+              <div class="muted" style="font-size:0.74rem;">${escapeHtml(h.heroClass)} • ❤️ ${h.hpCur}/${h.hpMax} • 🛡️ ${h.ac}</div>
+            </div>
+            <div>
+              ${alreadyIn
+                ? '<span class="muted" style="font-size:0.74rem; color:#6ee7b7;">Уже в бою</span>'
+                : `<input type="checkbox" data-combat-hero-id="${h.id}" checked style="width:20px; height:20px; accent-color:#d4af37;" />`
+              }
+            </div>
+          </label>
+        `;
+      }).join('');
+
+      document.getElementById('selectCombatPartyModal').classList.add('open');
+    };
+
+    window.confirmSelectedPartyToCombat = () => {
+      const selectedIds = [];
+      document.querySelectorAll('[data-combat-hero-id]:checked').forEach((cb) => {
+        selectedIds.push(cb.getAttribute('data-combat-hero-id'));
+      });
+      document.getElementById('selectCombatPartyModal').classList.remove('open');
+      if (!selectedIds.length) return;
+      addHeroesByIdsToInitiative(selectedIds);
+    };
+
+    function addHeroesByIdsToInitiative(heroIds) {
+      const existingHeroIds = new Set(
+        (state.dm.initiative || []).filter((i) => i.type === 'hero').map((i) => i.heroId)
+      );
+      const added = heroIds
+        .map((id) => state.heroes[id])
+        .filter((h) => h && !existingHeroIds.has(h.id))
         .map((h) => {
           const dexMod = Math.floor(((h.stats?.DEX ?? 10) - 10) / 2);
           const roll = Math.floor(Math.random() * 20) + 1 + dexMod;
           return { type: 'hero', heroId: h.id, name: h.name, init: roll, deathSaves: true, conditions: [] };
         });
+
       if (!added.length) return;
       const list = [...(state.dm.initiative || []), ...added].sort((a, b) => Number(b.init) - Number(a.init));
       const turnIndex = state.dm.combatStarted ? (state.dm.turnIndex || 0) : 0;
-      const combatLog = appendCombatLog(`🛡️ Партия вступила в бой (${added.map((a) => `${a.name}: ${a.init}`).join(', ')})`);
+      const combatLog = appendCombatLog(`🛡️ В бой вступают: ${added.map((a) => `${a.name} (${a.init})`).join(', ')}`);
       saveDmPatch({ initiative: list, turnIndex, combatLog });
+    }
+
+    window.addPartyToInitiative = () => {
+      addHeroesByIdsToInitiative(Object.keys(state.heroes));
     };
 
     window.nextTurn = () => {
@@ -4531,7 +4843,6 @@
           `).join('') + `</div>`
         : '<p class="muted">Игроки ещё не создали персонажей.</p>';
 
-      // DM Party & XP overview (hero deletion removed — available only in Admin tab)
       document.getElementById('dmPartyOverview').innerHTML = heroes.length
         ? heroes.map((h) => `
             <div class="row" style="justify-content:space-between; padding:7px 9px; background:var(--bg-card-alt); border-radius:9px; margin-bottom:6px;">
@@ -4616,7 +4927,7 @@
               </div>
             `;
           }).join('')
-        : '<p class="muted">Выберите монстра из бестиария или нажмите «+ Всех в бой».</p>';
+        : '<p class="muted">Выберите монстра из бестиария или нажмите «+ Выбрать» / «+ Всех».</p>';
 
       const logs = state.dm.combatLog || [];
       document.getElementById('combatLogBox').innerHTML = logs.length
@@ -4624,7 +4935,7 @@
         : '<div class="muted">События боя будут записываться сюда автоматически...</div>';
 
       document.getElementById('dmSecretNotes').value = state.dm.notes || '';
-      renderDmNotesSearch();
+      renderDmNotesList();
       renderDmNpcList();
     }
 
