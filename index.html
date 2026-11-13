@@ -428,6 +428,22 @@
       opacity: 0.58;
       border-left-color: var(--crimson);
     }
+    .init-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 3px 8px;
+      border-radius: 7px;
+      background: rgba(212, 175, 55, 0.14);
+      border: 1px dashed rgba(212, 175, 55, 0.55);
+      color: var(--gold);
+      font-weight: 700;
+      font-size: 0.8rem;
+      cursor: pointer;
+    }
+    .init-pill:active {
+      background: rgba(212, 175, 55, 0.3);
+    }
     .hp-bar-track {
       width: 100%;
       height: 6px;
@@ -804,6 +820,8 @@
             <button class="btn btn-primary btn-sm" style="flex:1.2;" onclick="addInitiativeCombatant()">+ В бой</button>
           </div>
         </div>
+
+        <p class="muted" style="margin-bottom:8px;">Нажмите на <strong>🎲 Иниц: X</strong>, чтобы ввести реальный бросок игрока — порядок перестроится сам.</p>
 
         <!-- Combatants List -->
         <div id="initiativeList"></div>
@@ -1586,8 +1604,7 @@ const firebaseConfig = {
     function appendCombatLog(message) {
       const round = state.dm.round || 1;
       const line = `[Р${round}] ${message}`;
-      const log = [line, ...(state.dm.combatLog || [])].slice(0, 60);
-      return log;
+      return [line, ...(state.dm.combatLog || [])].slice(0, 60);
     }
 
     window.changeDmPin = () => {
@@ -1617,6 +1634,29 @@ const firebaseConfig = {
       document.getElementById('initValInput').value = '';
       document.getElementById('initHpInput').value = '';
       document.getElementById('initAcInput').value = '';
+    };
+
+    window.editCombatantInit = (idx) => {
+      const list = [...(state.dm.initiative || [])];
+      const target = list[idx];
+      if (!target) return;
+
+      const cName = target.type === 'hero' ? (state.heroes[target.heroId]?.name || target.name) : target.name;
+      const raw = prompt(`Новая инициатива для ${cName}:`, target.init);
+      if (raw === null || raw.trim() === '') return;
+      const nextInit = parseInt(raw);
+      if (isNaN(nextInit)) return;
+
+      // Запоминаем того, чей сейчас ход, чтобы указатель не сбился после пересортировки
+      const curIdx = state.dm.turnIndex || 0;
+      const activeCombatant = list[curIdx];
+
+      list[idx] = { ...target, init: nextInit };
+      list.sort((a, b) => b.init - a.init);
+
+      const newTurnIdx = activeCombatant ? Math.max(0, list.indexOf(activeCombatant)) : 0;
+      const combatLog = appendCombatLog(`🎲 ${cName}: инициатива изменена на ${nextInit}`);
+      saveDmPatch({ initiative: list, turnIndex: newTurnIdx, combatLog });
     };
 
     window.cloneCombatant = (idx) => {
@@ -1801,7 +1841,7 @@ const firebaseConfig = {
                     <span class="muted" style="margin-left:6px;">🛡️ ${ac}</span>
                   </div>
                   <div class="row">
-                    <span style="color:var(--gold); font-weight:700; font-size:0.85rem;">Иниц: ${c.init}</span>
+                    <button class="init-pill" onclick="editCombatantInit(${idx})" title="Изменить инициативу">🎲 Иниц: ${c.init}</button>
                     ${!isHero ? `<button class="btn btn-xs" onclick="cloneCombatant(${idx})" title="Клонировать врага">+Копия</button>` : ''}
                     <button class="btn btn-danger btn-xs" onclick="removeCombatant(${idx})">✕</button>
                   </div>
