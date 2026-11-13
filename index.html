@@ -274,6 +274,39 @@
       border-radius: 6px;
     }
 
+    /* Level & XP Box */
+    .xp-panel {
+      background: rgba(212, 175, 55, 0.08);
+      border: 1px solid rgba(212, 175, 55, 0.28);
+      border-radius: 10px;
+      padding: 8px 10px;
+      margin-top: 10px;
+    }
+    .lvl-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 2px 8px;
+      border-radius: 6px;
+      background: linear-gradient(180deg, #d4af37, #a68222);
+      color: #120f0a;
+      font-weight: 800;
+      font-size: 0.78rem;
+    }
+    .xp-bar-track {
+      width: 100%;
+      height: 6px;
+      background: rgba(0, 0, 0, 0.55);
+      border-radius: 999px;
+      overflow: hidden;
+      margin-top: 6px;
+    }
+    .xp-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #a68222, #f5d061);
+      transition: width 0.25s ease;
+    }
+
     .hp-box {
       background: rgba(185, 28, 28, 0.14);
       border: 1px solid rgba(239, 68, 68, 0.35);
@@ -803,13 +836,32 @@
             <input type="file" accept="image/*" class="hidden" onchange="handleAvatarUpload(event)" />
           </label>
           <div style="flex:1; min-width:0;">
-            <h2 id="heroNameDisplay" style="font-size:1.25rem; color:var(--gold);">Имя Героя</h2>
-            <div id="heroMetaDisplay" class="muted">Раса • Класс • Ур. 1</div>
-            <div class="row mt-8">
+            <div class="row" style="justify-content:space-between; align-items:flex-start;">
+              <h2 id="heroNameDisplay" style="font-size:1.22rem; color:var(--gold); line-height:1.2;">Имя Героя</h2>
+              <button class="btn btn-sm" onclick="openEditHeroModal()">Изм.</button>
+            </div>
+            <div id="heroMetaDisplay" class="muted">Раса • Класс</div>
+            <div class="row mt-8" style="flex-wrap:wrap;">
+              <span id="heroLevelBadge" class="lvl-badge">Ур. 1</span>
               <span class="muted">КД: <strong id="heroAcDisplay" style="color:var(--text-main);">15</strong></span>
               <span class="muted">• Скор: <strong id="heroSpeedDisplay" style="color:var(--text-main);">30</strong></span>
-              <button class="btn btn-sm" style="margin-left:auto;" onclick="editHeroBasics()">Изм.</button>
             </div>
+          </div>
+        </div>
+
+        <!-- Level & XP Bar -->
+        <div class="xp-panel">
+          <div class="row" style="justify-content:space-between; flex-wrap:wrap;">
+            <div style="font-size:0.8rem;">
+              <span class="muted">Опыт:</span> <strong id="heroXpDisplay" style="color:var(--gold);">0 / 300 XP</strong>
+            </div>
+            <div class="row">
+              <button id="levelUpBtn" class="btn btn-primary btn-xs hidden" onclick="levelUpHero()">⬆ Ур. 2!</button>
+              <button class="btn btn-xs" onclick="addSelfXp()">+ XP</button>
+            </div>
+          </div>
+          <div class="xp-bar-track">
+            <div id="heroXpBarFill" class="xp-bar-fill" style="width:0%;"></div>
           </div>
         </div>
 
@@ -978,11 +1030,14 @@
 
     <!-- ================= TAB 4: DUNGEON MASTER SCREEN ================= -->
     <section id="tabDm" class="hidden">
-      <!-- Live Party Status -->
+      <!-- Live Party Status + XP Award + Delete Hero -->
       <div class="card">
         <div class="card-header">
           <span class="card-title">Сводка по партии</span>
-          <button class="btn btn-xs" onclick="changeDmPin()">🔑 PIN</button>
+          <div class="row">
+            <button class="btn btn-primary btn-xs" onclick="openAwardXpModal()">✨ Выдать XP</button>
+            <button class="btn btn-xs" onclick="changeDmPin()">🔑 PIN</button>
+          </div>
         </div>
         <div id="dmPartyOverview"></div>
       </div>
@@ -1137,17 +1192,21 @@
           <input type="text" id="newHeroRace" placeholder="Дварф" />
         </div>
         <div>
-          <label class="muted">Класс и уровень</label>
-          <input type="text" id="newHeroClass" placeholder="Воин 3" />
+          <label class="muted">Класс</label>
+          <input type="text" id="newHeroClass" placeholder="Воин" />
         </div>
       </div>
-      <div class="grid-2 mt-8">
+      <div class="grid-3 mt-8">
         <div>
-          <label class="muted">Макс. хиты (HP)</label>
+          <label class="muted">Уровень</label>
+          <input type="number" id="newHeroLevel" value="1" min="1" max="20" />
+        </div>
+        <div>
+          <label class="muted">Макс. ОЗ (HP)</label>
           <input type="number" id="newHeroHp" value="24" />
         </div>
         <div>
-          <label class="muted">PIN-код (4 цифры)</label>
+          <label class="muted">PIN (4 цифры)</label>
           <input type="password" id="newHeroPin" maxlength="4" inputmode="numeric" placeholder="1234" />
         </div>
       </div>
@@ -1156,6 +1215,111 @@
         <input type="file" id="newHeroAvatarFile" accept="image/*" />
       </div>
       <button class="btn btn-primary btn-block mt-12" onclick="createNewHero()">Создать и войти</button>
+    </div>
+  </div>
+
+  <!-- ================= MODAL: EDIT & DELETE HERO ================= -->
+  <div id="editHeroModal" class="modal-backdrop" onclick="if(event.target===this) this.classList.remove('open')">
+    <div class="modal-box">
+      <div class="card-header">
+        <span class="card-title">Профиль персонажа</span>
+        <button class="btn btn-sm" onclick="document.getElementById('editHeroModal').classList.remove('open')">✕</button>
+      </div>
+      <div class="mt-8">
+        <label class="muted">Имя героя</label>
+        <input type="text" id="editHeroName" />
+      </div>
+      <div class="grid-2 mt-8">
+        <div>
+          <label class="muted">Раса</label>
+          <input type="text" id="editHeroRace" />
+        </div>
+        <div>
+          <label class="muted">Класс</label>
+          <input type="text" id="editHeroClass" />
+        </div>
+      </div>
+      <div class="grid-2 mt-8">
+        <div>
+          <label class="muted">Уровень (1–20)</label>
+          <input type="number" id="editHeroLevel" min="1" max="20" />
+        </div>
+        <div>
+          <label class="muted">Опыт (XP)</label>
+          <input type="number" id="editHeroXp" min="0" />
+        </div>
+      </div>
+      <div class="grid-3 mt-8">
+        <div>
+          <label class="muted">Макс. ОЗ</label>
+          <input type="number" id="editHeroHpMax" />
+        </div>
+        <div>
+          <label class="muted">КД (AC)</label>
+          <input type="number" id="editHeroAc" />
+        </div>
+        <div>
+          <label class="muted">Скорость</label>
+          <input type="number" id="editHeroSpeed" />
+        </div>
+      </div>
+      <div class="mt-8">
+        <label class="muted">PIN-код входа (4 цифры)</label>
+        <input type="text" id="editHeroPin" maxlength="4" inputmode="numeric" />
+      </div>
+
+      <button class="btn btn-primary btn-block mt-12" onclick="saveHeroEdits()">Сохранить изменения</button>
+
+      <div style="margin-top:16px; padding-top:12px; border-top:1px solid rgba(239,68,68,0.28);">
+        <button class="btn btn-danger btn-block btn-sm" onclick="deleteCurrentHero()">🗑️ Удалить этого персонажа</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= MODAL: DM AWARD XP ================= -->
+  <div id="awardXpModal" class="modal-backdrop" onclick="if(event.target===this) this.classList.remove('open')">
+    <div class="modal-box">
+      <div class="card-header">
+        <span class="card-title">✨ Начисление опыта (XP)</span>
+        <button class="btn btn-sm" onclick="document.getElementById('awardXpModal').classList.remove('open')">✕</button>
+      </div>
+
+      <div>
+        <label class="muted">Способ выдачи</label>
+        <select id="xpAwardMode" onchange="renderXpAwardMode()">
+          <option value="equal">Поделить общую сумму поровну на всех</option>
+          <option value="custom">Указать разный опыт каждому игроку</option>
+          <option value="single">Выдать одному конкретному игроку</option>
+        </select>
+      </div>
+
+      <!-- Mode 1: Equal split -->
+      <div id="xpModeEqualBox" class="mt-8">
+        <label class="muted">Общий пул опыта за бой / квест</label>
+        <input type="number" id="xpPoolTotal" placeholder="Например: 1200" oninput="updateXpSplitPreview()" />
+        <div id="xpSplitPreview" class="muted mt-8" style="color:var(--gold);"></div>
+      </div>
+
+      <!-- Mode 2: Custom per hero -->
+      <div id="xpModeCustomBox" class="mt-8 hidden">
+        <label class="muted">Сколько XP начислить каждому герою:</label>
+        <div id="xpCustomList" class="mt-8"></div>
+      </div>
+
+      <!-- Mode 3: Single hero -->
+      <div id="xpModeSingleBox" class="mt-8 hidden">
+        <label class="muted">Выберите героя</label>
+        <select id="xpSingleHeroSelect"></select>
+        <label class="muted mt-8" style="display:block;">Количество опыта (XP)</label>
+        <input type="number" id="xpSingleAmount" placeholder="Например: 300" />
+      </div>
+
+      <div class="mt-8">
+        <label class="muted">За что награда (в Летопись партии)</label>
+        <input type="text" id="xpAwardReason" placeholder="Победа над гоблинами / выполнение квеста" />
+      </div>
+
+      <button class="btn btn-primary btn-block mt-12" onclick="submitXpAward()">Начислить опыт</button>
     </div>
   </div>
 
@@ -1186,6 +1350,12 @@
       messagingSenderId: "799802669624",
       appId: "1:799802669624:web:23eb1868428dc1ee0004cd"
     };
+
+    // Пороги опыта D&D 5e для уровней 1..20 (индекс = уровень - 1)
+    const XP_THRESHOLDS_5E = [
+      0, 300, 900, 2700, 6500, 14000, 23000, 34000, 48000, 64000,
+      85000, 100000, 120000, 140000, 165000, 195000, 225000, 265000, 305000, 355000
+    ];
 
     const BESTIARY_5E = [
       { id: 'goblin', name: 'Гоблин', cr: '1/4', hp: 7, ac: 15, initMod: 2, note: 'Ятаган/Лук +4 (1d6+2), Ловкий побег' },
@@ -1257,7 +1427,6 @@
       heroId: null
     };
 
-    // Populate Bestiary dropdown immediately
     const bestiarySel = document.getElementById('bestiarySelect');
     bestiarySel.innerHTML = BESTIARY_5E.map((m) => {
       const modStr = m.initMod >= 0 ? `+${m.initMod}` : `${m.initMod}`;
@@ -1305,6 +1474,11 @@
         const map = {};
         snap.forEach((d) => { map[d.id] = { id: d.id, ...d.data() }; });
         state.heroes = map;
+        // Если текущий открытый герой был удалён — выходим на экран выбора роли
+        if (session.role === 'hero' && session.heroId && !state.heroes[session.heroId]) {
+          logout();
+          return;
+        }
         renderAll();
       });
 
@@ -1365,6 +1539,10 @@
       });
     }
 
+    function profBonusForLevel(lvl) {
+      return Math.floor((Math.max(1, lvl) - 1) / 4) + 2;
+    }
+
     // ================= AUTH & NAVIGATION =================
     window.openCreateHeroModal = () => {
       document.getElementById('createHeroModal').classList.add('open');
@@ -1373,7 +1551,8 @@
     window.createNewHero = async () => {
       const name = document.getElementById('newHeroName').value.trim();
       const race = document.getElementById('newHeroRace').value.trim() || 'Человек';
-      const heroClass = document.getElementById('newHeroClass').value.trim() || 'Искатель приключений 1';
+      const heroClass = document.getElementById('newHeroClass').value.trim() || 'Искатель приключений';
+      const level = Math.max(1, Math.min(20, parseInt(document.getElementById('newHeroLevel').value) || 1));
       const hpMax = parseInt(document.getElementById('newHeroHp').value) || 20;
       const pin = document.getElementById('newHeroPin').value.trim() || '1234';
       const avatarFile = document.getElementById('newHeroAvatarFile').files[0];
@@ -1386,10 +1565,11 @@
       }
 
       const id = 'hero_' + Date.now();
+      const startXp = XP_THRESHOLDS_5E[level - 1] || 0;
       const heroObj = {
-        id, name, race, heroClass, pin, avatar,
+        id, name, race, heroClass, level, xp: startXp, pin, avatar,
         hpCur: hpMax, hpMax, ac: 14, speed: 30,
-        profBonus: 2,
+        profBonus: profBonusForLevel(level),
         stats: { STR: 10, DEX: 14, CON: 14, INT: 10, WIS: 12, CHA: 10 },
         saves: {},
         skills: {},
@@ -1483,7 +1663,7 @@
       if (navId) document.getElementById(navId).classList.add('active');
     };
 
-    // ================= CHARACTER SHEET, DEATH SAVES, SAVING THROWS & SKILLS =================
+    // ================= EDIT & DELETE HERO + LEVEL / XP =================
     async function saveHeroPatchById(id, patch) {
       if (!id || !state.heroes[id]) return;
       state.heroes[id] = { ...state.heroes[id], ...patch };
@@ -1498,6 +1678,210 @@
       return saveHeroPatchById(session.heroId, patch);
     }
 
+    window.openEditHeroModal = () => {
+      const h = state.heroes[session.heroId];
+      if (!h) return;
+      document.getElementById('editHeroName').value = h.name || '';
+      document.getElementById('editHeroRace').value = h.race || '';
+      document.getElementById('editHeroClass').value = h.heroClass || '';
+      document.getElementById('editHeroLevel').value = h.level || 1;
+      document.getElementById('editHeroXp').value = h.xp ?? 0;
+      document.getElementById('editHeroHpMax').value = h.hpMax || 20;
+      document.getElementById('editHeroAc').value = h.ac || 14;
+      document.getElementById('editHeroSpeed').value = h.speed || 30;
+      document.getElementById('editHeroPin').value = h.pin || '';
+      document.getElementById('editHeroModal').classList.add('open');
+    };
+
+    window.saveHeroEdits = async () => {
+      const h = state.heroes[session.heroId];
+      if (!h) return;
+      const name = document.getElementById('editHeroName').value.trim();
+      if (!name) return alert('Имя героя не может быть пустым');
+
+      const race = document.getElementById('editHeroRace').value.trim() || 'Человек';
+      const heroClass = document.getElementById('editHeroClass').value.trim() || 'Искатель приключений';
+      const level = Math.max(1, Math.min(20, parseInt(document.getElementById('editHeroLevel').value) || 1));
+      const xp = Math.max(0, parseInt(document.getElementById('editHeroXp').value) || 0);
+      const hpMax = Math.max(1, parseInt(document.getElementById('editHeroHpMax').value) || h.hpMax);
+      const ac = parseInt(document.getElementById('editHeroAc').value) || h.ac;
+      const speed = parseInt(document.getElementById('editHeroSpeed').value) || 30;
+      const pin = document.getElementById('editHeroPin').value.trim() || h.pin || '1234';
+
+      // Если герой в активном бою у Мастера — обновим и его имя в трекере
+      const initList = state.dm.initiative || [];
+      if (initList.some((c) => c.type === 'hero' && c.heroId === h.id)) {
+        const updatedInit = initList.map((c) =>
+          (c.type === 'hero' && c.heroId === h.id) ? { ...c, name } : c
+        );
+        await saveDmPatch({ initiative: updatedInit });
+      }
+
+      await saveHeroPatch({
+        name, race, heroClass, level, xp, hpMax,
+        hpCur: Math.min(h.hpCur, hpMax),
+        ac, speed, pin
+      });
+
+      document.getElementById('editHeroModal').classList.remove('open');
+      renderAll();
+    };
+
+    async function performDeleteHero(heroId) {
+      const h = state.heroes[heroId];
+      if (!h) return;
+      if (!confirm(`Удалить персонажа «${h.name}» безвозвратно?`)) return;
+
+      // Убираем героя из трекера инициативы, если он там был
+      const initList = state.dm.initiative || [];
+      if (initList.some((c) => c.type === 'hero' && c.heroId === heroId)) {
+        const filtered = initList.filter((c) => !(c.type === 'hero' && c.heroId === heroId));
+        const turnIndex = Math.min(state.dm.turnIndex || 0, Math.max(0, filtered.length - 1));
+        await saveDmPatch({ initiative: filtered, turnIndex });
+      }
+
+      if (isOnline) {
+        await deleteDoc(doc(db, 'heroes', heroId));
+      } else {
+        delete state.heroes[heroId];
+        saveLocalState();
+      }
+    }
+
+    window.deleteCurrentHero = async () => {
+      const id = session.heroId;
+      if (!id) return;
+      await performDeleteHero(id);
+      document.getElementById('editHeroModal').classList.remove('open');
+      logout();
+    };
+
+    window.deleteHeroByDm = async (heroId) => {
+      await performDeleteHero(heroId);
+      renderAll();
+    };
+
+    window.addSelfXp = async () => {
+      const h = state.heroes[session.heroId];
+      if (!h) return;
+      const raw = prompt('Сколько опыта (XP) добавить (или с минусом, чтобы убавить)?');
+      if (raw === null || raw.trim() === '') return;
+      const delta = parseInt(raw, 10);
+      if (isNaN(delta) || delta === 0) return;
+      const nextXp = Math.max(0, (h.xp ?? 0) + delta);
+      await saveHeroPatch({ xp: nextXp });
+      renderHeroSheet();
+    };
+
+    window.levelUpHero = async () => {
+      const h = state.heroes[session.heroId];
+      if (!h) return;
+      const curLvl = h.level || 1;
+      if (curLvl >= 20) return;
+      const nextLvl = curLvl + 1;
+      const suggestedProf = profBonusForLevel(nextLvl);
+      await saveHeroPatch({ level: nextLvl, profBonus: suggestedProf });
+      alert(`Поздравляем! ${h.name} достиг ${nextLvl} уровня! Бонус мастерства обновлён до +${suggestedProf}. Не забудьте увеличить макс. ОЗ в профиле.`);
+      renderHeroSheet();
+    };
+
+    // ================= DM XP AWARD MODAL =================
+    window.openAwardXpModal = () => {
+      const heroes = Object.values(state.heroes);
+      if (!heroes.length) return alert('В партии пока нет ни одного героя.');
+
+      document.getElementById('xpPoolTotal').value = '';
+      document.getElementById('xpSingleAmount').value = '';
+      document.getElementById('xpAwardReason').value = '';
+      document.getElementById('xpSplitPreview').textContent = '';
+
+      document.getElementById('xpCustomList').innerHTML = heroes.map((h) => `
+        <div class="row" style="justify-content:space-between; margin-bottom:6px; background:var(--bg-card-alt); padding:6px 8px; border-radius:8px;">
+          <span style="font-size:0.86rem;"><strong>${h.name}</strong> <span class="muted">(Ур. ${h.level || 1})</span></span>
+          <input type="number" data-xp-hero-id="${h.id}" placeholder="0" style="width:95px; padding:5px 8px;" />
+        </div>
+      `).join('');
+
+      document.getElementById('xpSingleHeroSelect').innerHTML = heroes.map((h) =>
+        `<option value="${h.id}">${h.name} (Ур. ${h.level || 1}, сейчас ${h.xp ?? 0} XP)</option>`
+      ).join('');
+
+      document.getElementById('xpAwardMode').value = 'equal';
+      renderXpAwardMode();
+      document.getElementById('awardXpModal').classList.add('open');
+    };
+
+    window.renderXpAwardMode = () => {
+      const mode = document.getElementById('xpAwardMode').value;
+      document.getElementById('xpModeEqualBox').classList.toggle('hidden', mode !== 'equal');
+      document.getElementById('xpModeCustomBox').classList.toggle('hidden', mode !== 'custom');
+      document.getElementById('xpModeSingleBox').classList.toggle('hidden', mode !== 'single');
+    };
+
+    window.updateXpSplitPreview = () => {
+      const heroes = Object.values(state.heroes);
+      const total = parseInt(document.getElementById('xpPoolTotal').value) || 0;
+      const preview = document.getElementById('xpSplitPreview');
+      if (total <= 0 || !heroes.length) {
+        preview.textContent = '';
+        return;
+      }
+      const each = Math.floor(total / heroes.length);
+      preview.textContent = `По ${each} XP каждому из ${heroes.length} героев.`;
+    };
+
+    window.submitXpAward = async () => {
+      const mode = document.getElementById('xpAwardMode').value;
+      const reason = document.getElementById('xpAwardReason').value.trim();
+      const reasonSuffix = reason ? ` (${reason})` : '';
+      const heroes = Object.values(state.heroes);
+
+      let grants = []; // { hero, amount }
+
+      if (mode === 'equal') {
+        const total = parseInt(document.getElementById('xpPoolTotal').value) || 0;
+        if (total <= 0) return alert('Введите положительное количество опыта');
+        const each = Math.floor(total / heroes.length);
+        if (each <= 0) return alert('Сумма слишком мала для деления на всех');
+        grants = heroes.map((h) => ({ hero: h, amount: each }));
+      } else if (mode === 'custom') {
+        document.querySelectorAll('[data-xp-hero-id]').forEach((inp) => {
+          const val = parseInt(inp.value) || 0;
+          const h = state.heroes[inp.getAttribute('data-xp-hero-id')];
+          if (h && val !== 0) grants.push({ hero: h, amount: val });
+        });
+        if (!grants.length) return alert('Укажите опыт хотя бы одному герою');
+      } else if (mode === 'single') {
+        const id = document.getElementById('xpSingleHeroSelect').value;
+        const val = parseInt(document.getElementById('xpSingleAmount').value) || 0;
+        const h = state.heroes[id];
+        if (!h || val === 0) return alert('Укажите количество опыта');
+        grants = [{ hero: h, amount: val }];
+      }
+
+      for (const g of grants) {
+        const nextXp = Math.max(0, (g.hero.xp ?? 0) + g.amount);
+        await saveHeroPatchById(g.hero.id, { xp: nextXp });
+      }
+
+      // Записываем награду в общую Летопись партии
+      const chronicleText = mode === 'equal'
+        ? `✨ Мастер выдал партии по ${grants[0].amount} XP${reasonSuffix}`
+        : `✨ Мастер выдал опыт: ${grants.map((g) => `${g.hero.name} (${g.amount > 0 ? '+' : ''}${g.amount} XP)`).join(', ')}${reasonSuffix}`;
+
+      const entry = { text: chronicleText, author: 'Мастер', createdAt: Date.now() };
+      if (isOnline) {
+        await addDoc(collection(db, 'chronicle'), entry);
+      } else {
+        state.chronicle.unshift({ id: 'chr_' + Date.now(), ...entry });
+        saveLocalState();
+      }
+
+      document.getElementById('awardXpModal').classList.remove('open');
+      renderAll();
+    };
+
+    // ================= DEATH SAVES, SAVING THROWS & SKILLS =================
     window.toggleDeathSavePip = async (heroId, type, idx) => {
       const h = state.heroes[heroId];
       if (!h) return;
@@ -1685,16 +2069,6 @@
       renderHeroSheet();
     };
 
-    window.editHeroBasics = () => {
-      const h = state.heroes[session.heroId];
-      if (!h) return;
-      const hpMax = parseInt(prompt('Максимум хитов (HP):', h.hpMax)) || h.hpMax;
-      const ac = parseInt(prompt('Класс Доспеха (КД):', h.ac)) || h.ac;
-      const heroClass = prompt('Класс и уровень:', h.heroClass) || h.heroClass;
-      saveHeroPatch({ hpMax, ac, heroClass });
-      renderHeroSheet();
-    };
-
     window.updateStat = (statKey, val) => {
       const h = state.heroes[session.heroId];
       if (!h) return;
@@ -1783,13 +2157,41 @@
     function renderHeroSheet() {
       const h = state.heroes[session.heroId];
       if (!h) return;
+      const lvl = h.level || 1;
+      const xp = h.xp ?? 0;
+
       document.getElementById('heroNameDisplay').textContent = h.name;
       document.getElementById('heroMetaDisplay').textContent = `${h.race} • ${h.heroClass}`;
+      document.getElementById('heroLevelBadge').textContent = `Ур. ${lvl}`;
       document.getElementById('heroAcDisplay').textContent = h.ac;
       document.getElementById('heroSpeedDisplay').textContent = h.speed || 30;
       document.getElementById('heroHpCur').textContent = h.hpCur;
       document.getElementById('heroHpMax').textContent = h.hpMax;
 
+      // XP & Level Progress Bar
+      const curFloor = XP_THRESHOLDS_5E[Math.min(19, lvl - 1)] || 0;
+      const nextCap = lvl < 20 ? XP_THRESHOLDS_5E[lvl] : curFloor;
+      const lvlUpBtn = document.getElementById('levelUpBtn');
+
+      if (lvl >= 20) {
+        document.getElementById('heroXpDisplay').textContent = `${xp.toLocaleString('ru-RU')} XP (Макс. ур.)`;
+        document.getElementById('heroXpBarFill').style.width = '100%';
+        lvlUpBtn.classList.add('hidden');
+      } else {
+        document.getElementById('heroXpDisplay').textContent = `${xp.toLocaleString('ru-RU')} / ${nextCap.toLocaleString('ru-RU')} XP`;
+        const span = Math.max(1, nextCap - curFloor);
+        const pct = Math.max(0, Math.min(100, Math.round(((xp - curFloor) / span) * 100)));
+        document.getElementById('heroXpBarFill').style.width = `${pct}%`;
+
+        if (xp >= nextCap) {
+          lvlUpBtn.textContent = `⬆ Ур. ${lvl + 1}!`;
+          lvlUpBtn.classList.remove('hidden');
+        } else {
+          lvlUpBtn.classList.add('hidden');
+        }
+      }
+
+      // Death Saves Panel
       const dsPanel = document.getElementById('heroDeathSavesPanel');
       if ((h.hpCur || 0) === 0) {
         dsPanel.classList.remove('hidden');
@@ -1844,13 +2246,13 @@
       document.getElementById('passivePerceptionVal').textContent = 10 + calcSkillBonus(h, perceptionSkill);
 
       document.getElementById('skillsGrid').innerHTML = SKILLS_5E.map((s) => {
-        const lvl = h.skills?.[s.key] ?? 0;
+        const lvlSkill = h.skills?.[s.key] ?? 0;
         const bonus = calcSkillBonus(h, s);
         const bonusStr = bonus >= 0 ? `+${bonus}` : `${bonus}`;
         return `
-          <div class="skill-row ${lvl > 0 ? 'proficient' : ''}">
-            <button class="prof-dot lvl-${lvl}" onclick="toggleSkillProf('${s.key}')" title="Переключить владение / компетентность">
-              ${lvl === 2 ? '×2' : ''}
+          <div class="skill-row ${lvlSkill > 0 ? 'proficient' : ''}">
+            <button class="prof-dot lvl-${lvlSkill}" onclick="toggleSkillProf('${s.key}')" title="Переключить владение / компетентность">
+              ${lvlSkill === 2 ? '×2' : ''}
             </button>
             <button class="skill-name-btn" onclick="rollSkillCheck('${s.key}')" title="Бросить проверку: ${s.name}">
               ${s.name} <span class="skill-stat-tag">(${s.statLabel})</span>
@@ -2425,11 +2827,15 @@
       document.getElementById('dmPartyOverview').innerHTML = heroes.length
         ? heroes.map((h) => `
             <div class="row" style="justify-content:space-between; padding:6px 8px; background:var(--bg-card-alt); border-radius:8px; margin-bottom:5px;">
-              <div>
-                <strong>${h.name}</strong> <span class="muted">(${h.heroClass})</span>
+              <div style="min-width:0;">
+                <strong>${h.name}</strong> <span class="muted">(${h.heroClass}, Ур. ${h.level || 1})</span>
+                <div class="muted" style="font-size:0.72rem;">✨ ${(h.xp ?? 0).toLocaleString('ru-RU')} XP</div>
               </div>
-              <div style="font-size:0.84rem;">
-                ❤️ <strong>${h.hpCur}/${h.hpMax}</strong> • 🛡️ <strong>${h.ac}</strong>
+              <div class="row">
+                <div style="font-size:0.84rem; white-space:nowrap;">
+                  ❤️ <strong>${h.hpCur}/${h.hpMax}</strong> • 🛡️ <strong>${h.ac}</strong>
+                </div>
+                <button class="btn btn-danger btn-xs" onclick="deleteHeroByDm('${h.id}')" title="Удалить персонажа">🗑️</button>
               </div>
             </div>
           `).join('')
@@ -2613,7 +3019,7 @@
             : `<div class="avatar-circle">${h.name[0]?.toUpperCase() || '?'}</div>`
           }
           <div style="font-weight:700; color:var(--gold); font-size:0.95rem;">${h.name}</div>
-          <div class="muted" style="font-size:0.75rem;">${h.heroClass}</div>
+          <div class="muted" style="font-size:0.75rem;">${h.heroClass} • Ур. ${h.level || 1}</div>
         </div>
       `).join('');
     }
