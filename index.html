@@ -295,6 +295,57 @@
       margin-top: 8px;
     }
 
+    /* Death Saves Pips */
+    .death-saves-panel {
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px solid rgba(239, 68, 68, 0.28);
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .ds-group {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 0.76rem;
+      font-weight: 600;
+    }
+    .ds-pip {
+      width: 19px;
+      height: 19px;
+      border-radius: 50%;
+      border: 1.5px solid rgba(255, 255, 255, 0.28);
+      background: rgba(0, 0, 0, 0.35);
+      cursor: pointer;
+      transition: transform 0.08s ease;
+    }
+    .ds-pip:active {
+      transform: scale(0.9);
+    }
+    .ds-pip.succ {
+      border-color: #34d399;
+      background: #10b981;
+      box-shadow: 0 0 7px rgba(16, 185, 129, 0.65);
+    }
+    .ds-pip.fail {
+      border-color: #f87171;
+      background: #dc2626;
+      box-shadow: 0 0 7px rgba(239, 68, 68, 0.65);
+    }
+    .dm-ds-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 7px;
+      padding: 6px 8px;
+      border-radius: 8px;
+      background: rgba(185, 28, 28, 0.16);
+      border: 1px solid rgba(239, 68, 68, 0.3);
+    }
+
     .stat-box {
       background: var(--bg-card-alt);
       border: 1px solid rgba(212, 175, 55, 0.22);
@@ -321,6 +372,91 @@
       font-size: 0.8rem;
       border-radius: 6px;
       margin: 0 auto;
+    }
+
+    /* Saving Throws & Skills 5e */
+    .saves-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+    }
+    .skills-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+    }
+    @media (max-width: 390px) {
+      .skills-grid {
+        grid-template-columns: 1fr;
+      }
+      .saves-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+    .skill-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 6px;
+      padding: 7px 8px;
+      background: var(--bg-card-alt);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 9px;
+    }
+    .skill-row.proficient {
+      border-color: rgba(212, 175, 55, 0.35);
+      background: rgba(212, 175, 55, 0.06);
+    }
+    .prof-dot {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      border: 1.5px solid var(--gold-dim);
+      background: transparent;
+      flex-shrink: 0;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.62rem;
+      font-weight: 800;
+      color: #110e09;
+    }
+    .prof-dot.lvl-1 {
+      border-color: var(--gold);
+      background: var(--gold);
+    }
+    .prof-dot.lvl-2 {
+      border-color: #fff3c4;
+      background: var(--gold);
+      box-shadow: 0 0 0 2px #16131a, 0 0 0 3.5px var(--gold);
+    }
+    .skill-name-btn {
+      background: none;
+      border: none;
+      color: var(--text-main);
+      font-size: 0.8rem;
+      text-align: left;
+      cursor: pointer;
+      flex: 1;
+      min-width: 0;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .skill-name-btn:active {
+      color: var(--gold);
+    }
+    .skill-stat-tag {
+      font-size: 0.68rem;
+      color: var(--text-muted);
+    }
+    .skill-bonus {
+      font-size: 0.84rem;
+      font-weight: 700;
+      color: var(--gold);
+      min-width: 24px;
+      text-align: right;
     }
 
     .spell-slot-row {
@@ -425,7 +561,7 @@
       background: linear-gradient(90deg, rgba(212, 175, 55, 0.16), var(--bg-card-alt));
     }
     .combatant-card.is-dead {
-      opacity: 0.58;
+      opacity: 0.68;
       border-left-color: var(--crimson);
     }
     .init-pill {
@@ -670,7 +806,7 @@
           </div>
         </div>
 
-        <!-- HP Tracker -->
+        <!-- HP Tracker + Death Saves (auto-shown at 0 HP) -->
         <div class="hp-box">
           <div class="muted" style="text-transform:uppercase; font-size:0.72rem; letter-spacing:0.06em;">Здоровье (Хиты)</div>
           <div class="hp-value">
@@ -682,10 +818,38 @@
             <button class="btn btn-sm" onclick="changeHp(1)">+1</button>
             <button class="btn btn-sm" onclick="changeHp(5)">+5</button>
           </div>
+          <div id="heroDeathSavesPanel" class="death-saves-panel hidden"></div>
         </div>
 
         <!-- 6 Stats -->
         <div class="grid-3" id="statsGrid"></div>
+      </div>
+
+      <!-- 6 Saving Throws D&D 5e -->
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">Спасброски (5e)</span>
+          <span class="muted" style="font-size:0.72rem;">Тап по названию = бросок d20</span>
+        </div>
+        <div id="savingThrowsGrid" class="saves-grid"></div>
+      </div>
+
+      <!-- 18 Skills D&D 5e -->
+      <div class="card">
+        <div class="card-header">
+          <div>
+            <span class="card-title">Навыки (5e)</span>
+            <div class="muted" style="font-size:0.72rem;">Пасс. Внимат.: <strong id="passivePerceptionVal" style="color:var(--gold);">10</strong></div>
+          </div>
+          <div class="row">
+            <span class="muted">БМ:</span>
+            <button class="btn btn-xs" onclick="changeProfBonus(-1)">-</button>
+            <strong id="profBonusDisplay" style="color:var(--gold); min-width:22px; text-align:center;">+2</strong>
+            <button class="btn btn-xs" onclick="changeProfBonus(1)">+</button>
+          </div>
+        </div>
+        <p class="muted" style="margin-bottom:8px; font-size:0.74rem;">Кружок: владение / компетентность (×2). Нажмите на навык для броска d20.</p>
+        <div id="skillsGrid" class="skills-grid"></div>
       </div>
 
       <!-- Spell Slots & Gold -->
@@ -816,7 +980,7 @@
         <div id="dmPartyOverview"></div>
       </div>
 
-      <!-- Full Combat Tracker (Initiative + HP + Damage + Conditions) -->
+      <!-- Full Combat Tracker (Initiative + HP + Damage + Conditions + Death Saves) -->
       <div class="card">
         <div class="card-header">
           <span class="card-title">Бой • Раунд <span id="roundCounter">1</span></span>
@@ -840,7 +1004,7 @@
           </div>
         </div>
 
-        <p class="muted" style="margin-bottom:8px;">Поверженные враги (0 ОЗ) пропускаются при нажатии <strong>«Ход ➔»</strong>. Для героев можно включить/отключить <strong>💀 Спасброски</strong>.</p>
+        <p class="muted" style="margin-bottom:8px;">При 0 ОЗ у героя открываются отметки спасбросков от смерти (авто-сброс при лечении).</p>
 
         <!-- Combatants List -->
         <div id="initiativeList"></div>
@@ -999,17 +1163,44 @@
       onSnapshot, query, orderBy, limit
     } from 'https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore.js';
 
-    // =========================================================================
-    // ВСТАВЬ СВОЙ FIREBASE CONFIG СЮДА (из Firebase Console -> Project Settings)
-    // =========================================================================
     const firebaseConfig = {
-      apiKey: "",
-      authDomain: "",
-      projectId: "",
-      storageBucket: "",
-      messagingSenderId: "",
-      appId: ""
+      apiKey: "AIzaSyCpOetpE-1uozMYv75eux7L5-JEJKPGitg",
+      authDomain: "dnd-party-sport-alco.firebaseapp.com",
+      projectId: "dnd-party-sport-alco",
+      storageBucket: "dnd-party-sport-alco.firebasestorage.app",
+      messagingSenderId: "799802669624",
+      appId: "1:799802669624:web:23eb1868428dc1ee0004cd"
     };
+
+    const SAVING_THROWS_5E = [
+      { key: 'STR', shortName: 'Сила', fullName: 'Сила' },
+      { key: 'DEX', shortName: 'Ловк', fullName: 'Ловкость' },
+      { key: 'CON', shortName: 'Тел', fullName: 'Телосложение' },
+      { key: 'INT', shortName: 'Инт', fullName: 'Интеллект' },
+      { key: 'WIS', shortName: 'Мудр', fullName: 'Мудрость' },
+      { key: 'CHA', shortName: 'Хар', fullName: 'Харизма' }
+    ];
+
+    const SKILLS_5E = [
+      { key: 'acrobatics', name: 'Акробатика', stat: 'DEX', statLabel: 'Лов' },
+      { key: 'investigation', name: 'Анализ', stat: 'INT', statLabel: 'Инт' },
+      { key: 'athletics', name: 'Атлетика', stat: 'STR', statLabel: 'Сил' },
+      { key: 'perception', name: 'Внимательность', stat: 'WIS', statLabel: 'Муд' },
+      { key: 'survival', name: 'Выживание', stat: 'WIS', statLabel: 'Муд' },
+      { key: 'performance', name: 'Выступление', stat: 'CHA', statLabel: 'Хар' },
+      { key: 'intimidation', name: 'Запугивание', stat: 'CHA', statLabel: 'Хар' },
+      { key: 'history', name: 'История', stat: 'INT', statLabel: 'Инт' },
+      { key: 'sleight', name: 'Ловкость рук', stat: 'DEX', statLabel: 'Лов' },
+      { key: 'arcana', name: 'Магия', stat: 'INT', statLabel: 'Инт' },
+      { key: 'medicine', name: 'Медицина', stat: 'WIS', statLabel: 'Муд' },
+      { key: 'deception', name: 'Обман', stat: 'CHA', statLabel: 'Хар' },
+      { key: 'nature', name: 'Природа', stat: 'INT', statLabel: 'Инт' },
+      { key: 'insight', name: 'Проницательность', stat: 'WIS', statLabel: 'Муд' },
+      { key: 'religion', name: 'Религия', stat: 'INT', statLabel: 'Инт' },
+      { key: 'stealth', name: 'Скрытность', stat: 'DEX', statLabel: 'Лов' },
+      { key: 'persuasion', name: 'Убеждение', stat: 'CHA', statLabel: 'Хар' },
+      { key: 'animal', name: 'Уход за животными', stat: 'WIS', statLabel: 'Муд' }
+    ];
 
     let db = null;
     let isOnline = false;
@@ -1152,7 +1343,11 @@
       const heroObj = {
         id, name, race, heroClass, pin, avatar,
         hpCur: hpMax, hpMax, ac: 14, speed: 30,
+        profBonus: 2,
         stats: { STR: 10, DEX: 14, CON: 14, INT: 10, WIS: 12, CHA: 10 },
+        saves: {},
+        skills: {},
+        deathSaves: { success: 0, failure: 0 },
         slots: [2, 0, 0, 0],
         slotsMax: [2, 0, 0, 0],
         gold: 15, silver: 0, copper: 0,
@@ -1242,7 +1437,7 @@
       if (navId) document.getElementById(navId).classList.add('active');
     };
 
-    // ================= CHARACTER SHEET =================
+    // ================= CHARACTER SHEET, DEATH SAVES, SAVING THROWS & SKILLS =================
     async function saveHeroPatchById(id, patch) {
       if (!id || !state.heroes[id]) return;
       state.heroes[id] = { ...state.heroes[id], ...patch };
@@ -1257,6 +1452,173 @@
       return saveHeroPatchById(session.heroId, patch);
     }
 
+    window.toggleDeathSavePip = async (heroId, type, idx) => {
+      const h = state.heroes[heroId];
+      if (!h) return;
+      const ds = { success: 0, failure: 0, ...(h.deathSaves || {}) };
+      const targetVal = idx + 1;
+      ds[type] = ds[type] === targetVal ? idx : targetVal;
+      await saveHeroPatchById(heroId, { deathSaves: ds });
+
+      if (session.role === 'dm') {
+        const label = type === 'success' ? `успех (${ds.success}/3)` : `провал (${ds.failure}/3)`;
+        const statusTail = ds.success >= 3 ? ' — СТАБИЛИЗИРОВАН!' : (ds.failure >= 3 ? ' — ПОГИБ!' : '');
+        const combatLog = appendCombatLog(`💀 ${h.name}: спасбросок от смерти — ${label}${statusTail}`);
+        await saveDmPatch({ combatLog });
+      }
+      renderAll();
+    };
+
+    window.rollDeathSaveForHero = async (heroId) => {
+      const h = state.heroes[heroId];
+      if (!h) return;
+      const ds = { success: 0, failure: 0, ...(h.deathSaves || {}) };
+      const d20 = Math.floor(Math.random() * 20) + 1;
+
+      let outcomeText = '';
+      if (d20 === 20) {
+        // Натуральная 20: герой приходит в сознание с 1 ОЗ, спасброски сбрасываются
+        await saveHeroPatchById(heroId, { hpCur: 1, deathSaves: { success: 0, failure: 0 } });
+        outcomeText = 'КРИТ 20! Очнулся с 1 ОЗ!';
+      } else if (d20 === 1) {
+        ds.failure = Math.min(3, ds.failure + 2);
+        await saveHeroPatchById(heroId, { deathSaves: ds });
+        outcomeText = `КРИТИЧЕСКИЙ ПРОВАЛ (2 провала, ${ds.failure}/3)`;
+      } else if (d20 >= 10) {
+        ds.success = Math.min(3, ds.success + 1);
+        await saveHeroPatchById(heroId, { deathSaves: ds });
+        outcomeText = `Успех (${ds.success}/3)`;
+      } else {
+        ds.failure = Math.min(3, ds.failure + 1);
+        await saveHeroPatchById(heroId, { deathSaves: ds });
+        outcomeText = `Провал (${ds.failure}/3)`;
+      }
+
+      const entry = {
+        roller: h.name,
+        detail: `Спасбросок от смерти: 1d20 [${d20}] — ${outcomeText}`,
+        total: d20,
+        isCrit: d20 === 20,
+        isFumble: d20 === 1,
+        secret: false,
+        createdAt: Date.now()
+      };
+
+      if (isOnline) {
+        await addDoc(collection(db, 'rolls'), entry);
+      } else {
+        state.rolls.unshift(entry);
+        saveLocalState();
+      }
+
+      if (session.role === 'dm' || (state.dm.initiative || []).some((c) => c.type === 'hero' && c.heroId === heroId)) {
+        const combatLog = appendCombatLog(`💀 ${h.name} (d20=${d20}): ${outcomeText}`);
+        await saveDmPatch({ combatLog });
+      }
+      renderAll();
+    };
+
+    function calcSaveBonus(h, statKey) {
+      const statScore = h.stats?.[statKey] ?? 10;
+      const statMod = Math.floor((statScore - 10) / 2);
+      const profBonus = h.profBonus ?? 2;
+      const isProf = Boolean(h.saves?.[statKey]);
+      return statMod + (isProf ? profBonus : 0);
+    }
+
+    window.toggleSaveProf = (statKey) => {
+      const h = state.heroes[session.heroId];
+      if (!h) return;
+      const current = Boolean(h.saves?.[statKey]);
+      const saves = { ...(h.saves || {}), [statKey]: !current };
+      saveHeroPatch({ saves });
+      renderHeroSheet();
+    };
+
+    window.rollSavingThrow = async (statKey) => {
+      const h = state.heroes[session.heroId];
+      const st = SAVING_THROWS_5E.find((s) => s.key === statKey);
+      if (!h || !st) return;
+
+      const bonus = calcSaveBonus(h, statKey);
+      const d20 = Math.floor(Math.random() * 20) + 1;
+      const total = d20 + bonus;
+      const signStr = bonus >= 0 ? `+ ${bonus}` : `- ${Math.abs(bonus)}`;
+
+      const entry = {
+        roller: h.name,
+        detail: `Спасбросок (${st.fullName}): 1d20 [${d20}] ${signStr}`,
+        total,
+        isCrit: d20 === 20,
+        isFumble: d20 === 1,
+        secret: false,
+        createdAt: Date.now()
+      };
+
+      if (isOnline) {
+        await addDoc(collection(db, 'rolls'), entry);
+      } else {
+        state.rolls.unshift(entry);
+        saveLocalState();
+      }
+      openDiceModal();
+    };
+
+    function calcSkillBonus(h, skill) {
+      const statScore = h.stats?.[skill.stat] ?? 10;
+      const statMod = Math.floor((statScore - 10) / 2);
+      const profBonus = h.profBonus ?? 2;
+      const level = h.skills?.[skill.key] ?? 0;
+      return statMod + profBonus * level;
+    }
+
+    window.changeProfBonus = (delta) => {
+      const h = state.heroes[session.heroId];
+      if (!h) return;
+      const next = Math.max(1, Math.min(9, (h.profBonus ?? 2) + delta));
+      saveHeroPatch({ profBonus: next });
+      renderHeroSheet();
+    };
+
+    window.toggleSkillProf = (skillKey) => {
+      const h = state.heroes[session.heroId];
+      if (!h) return;
+      const current = h.skills?.[skillKey] ?? 0;
+      const next = (current + 1) % 3;
+      const skills = { ...(h.skills || {}), [skillKey]: next };
+      saveHeroPatch({ skills });
+      renderHeroSheet();
+    };
+
+    window.rollSkillCheck = async (skillKey) => {
+      const h = state.heroes[session.heroId];
+      const skill = SKILLS_5E.find((s) => s.key === skillKey);
+      if (!h || !skill) return;
+
+      const bonus = calcSkillBonus(h, skill);
+      const d20 = Math.floor(Math.random() * 20) + 1;
+      const total = d20 + bonus;
+      const signStr = bonus >= 0 ? `+ ${bonus}` : `- ${Math.abs(bonus)}`;
+
+      const entry = {
+        roller: h.name,
+        detail: `${skill.name}: 1d20 [${d20}] ${signStr}`,
+        total,
+        isCrit: d20 === 20,
+        isFumble: d20 === 1,
+        secret: false,
+        createdAt: Date.now()
+      };
+
+      if (isOnline) {
+        await addDoc(collection(db, 'rolls'), entry);
+      } else {
+        state.rolls.unshift(entry);
+        saveLocalState();
+      }
+      openDiceModal();
+    };
+
     window.handleAvatarUpload = async (e) => {
       const file = e.target.files[0];
       if (!file) return;
@@ -1268,8 +1630,14 @@
     window.changeHp = (delta) => {
       const h = state.heroes[session.heroId];
       if (!h) return;
-      const next = Math.max(0, Math.min(h.hpMax + 20, (h.hpCur || 0) + delta));
-      saveHeroPatch({ hpCur: next });
+      const prevHp = h.hpCur || 0;
+      const next = Math.max(0, Math.min(h.hpMax + 20, prevHp + delta));
+      const patch = { hpCur: next };
+      // Автоматический сброс спасбросков от смерти при любом лечении
+      if (delta > 0 && next > 0) {
+        patch.deathSaves = { success: 0, failure: 0 };
+      }
+      saveHeroPatch(patch);
       renderHeroSheet();
     };
 
@@ -1314,7 +1682,11 @@
     window.restoreSpellSlots = () => {
       const h = state.heroes[session.heroId];
       if (!h) return;
-      saveHeroPatch({ hpCur: h.hpMax, slots: [...(h.slotsMax || [2, 0, 0, 0])] });
+      saveHeroPatch({
+        hpCur: h.hpMax,
+        deathSaves: { success: 0, failure: 0 },
+        slots: [...(h.slotsMax || [2, 0, 0, 0])]
+      });
       renderHeroSheet();
     };
 
@@ -1330,6 +1702,40 @@
       saveHeroPatch({ inventory: document.getElementById('heroInventoryInput').value });
     };
 
+    function renderDeathSavesControls(heroId, dsObj) {
+      const ds = { success: 0, failure: 0, ...(dsObj || {}) };
+      const succPips = [0, 1, 2].map((i) =>
+        `<button class="ds-pip ${i < ds.success ? 'succ' : ''}" onclick="toggleDeathSavePip('${heroId}', 'success', ${i})" title="Успех ${i + 1}"></button>`
+      ).join('');
+      const failPips = [0, 1, 2].map((i) =>
+        `<button class="ds-pip ${i < ds.failure ? 'fail' : ''}" onclick="toggleDeathSavePip('${heroId}', 'failure', ${i})" title="Провал ${i + 1}"></button>`
+      ).join('');
+
+      let statusBadge = '';
+      if (ds.failure >= 3) {
+        statusBadge = '<span style="color:#f87171; font-weight:800; font-size:0.75rem;">☠️ Погиб</span>';
+      } else if (ds.success >= 3) {
+        statusBadge = '<span style="color:#34d399; font-weight:800; font-size:0.75rem;">🩹 Стабилизирован</span>';
+      }
+
+      return `
+        <div class="row" style="justify-content:center; flex-wrap:wrap; gap:12px;">
+          <div class="ds-group">
+            <span style="color:#6ee7b7;">Успехи:</span>
+            ${succPips}
+          </div>
+          <div class="ds-group">
+            <span style="color:#fca5a5;">Провалы:</span>
+            ${failPips}
+          </div>
+        </div>
+        <div class="row" style="justify-content:center; gap:8px;">
+          ${statusBadge}
+          <button class="btn btn-xs" onclick="rollDeathSaveForHero('${heroId}')">🎲 Бросок d20</button>
+        </div>
+      `;
+    }
+
     function renderHeroSheet() {
       const h = state.heroes[session.heroId];
       if (!h) return;
@@ -1339,6 +1745,15 @@
       document.getElementById('heroSpeedDisplay').textContent = h.speed || 30;
       document.getElementById('heroHpCur').textContent = h.hpCur;
       document.getElementById('heroHpMax').textContent = h.hpMax;
+
+      // Death Saves Panel (visible when HP === 0)
+      const dsPanel = document.getElementById('heroDeathSavesPanel');
+      if ((h.hpCur || 0) === 0) {
+        dsPanel.classList.remove('hidden');
+        dsPanel.innerHTML = renderDeathSavesControls(h.id, h.deathSaves);
+      } else {
+        dsPanel.classList.add('hidden');
+      }
 
       const img = document.getElementById('heroAvatarImg');
       const ph = document.getElementById('heroAvatarPlaceholder');
@@ -1363,6 +1778,43 @@
             <div class="stat-label">${labels[k]}</div>
             <div class="stat-mod">${modStr}</div>
             <input class="stat-score-input" type="number" value="${val}" onchange="updateStat('${k}', this.value)" />
+          </div>
+        `;
+      }).join('');
+
+      // Render 6 Saving Throws
+      document.getElementById('savingThrowsGrid').innerHTML = SAVING_THROWS_5E.map((st) => {
+        const isProf = Boolean(h.saves?.[st.key]);
+        const bonus = calcSaveBonus(h, st.key);
+        const bonusStr = bonus >= 0 ? `+${bonus}` : `${bonus}`;
+        return `
+          <div class="skill-row ${isProf ? 'proficient' : ''}">
+            <button class="prof-dot ${isProf ? 'lvl-1' : ''}" onclick="toggleSaveProf('${st.key}')" title="Владение спасброском: ${st.fullName}"></button>
+            <button class="skill-name-btn" onclick="rollSavingThrow('${st.key}')" title="Бросить спасбросок: ${st.fullName}">${st.shortName}</button>
+            <span class="skill-bonus">${bonusStr}</span>
+          </div>
+        `;
+      }).join('');
+
+      // Render 18 Skills
+      const profBonus = h.profBonus ?? 2;
+      document.getElementById('profBonusDisplay').textContent = `+${profBonus}`;
+      const perceptionSkill = SKILLS_5E.find((s) => s.key === 'perception');
+      document.getElementById('passivePerceptionVal').textContent = 10 + calcSkillBonus(h, perceptionSkill);
+
+      document.getElementById('skillsGrid').innerHTML = SKILLS_5E.map((s) => {
+        const lvl = h.skills?.[s.key] ?? 0;
+        const bonus = calcSkillBonus(h, s);
+        const bonusStr = bonus >= 0 ? `+${bonus}` : `${bonus}`;
+        return `
+          <div class="skill-row ${lvl > 0 ? 'proficient' : ''}">
+            <button class="prof-dot lvl-${lvl}" onclick="toggleSkillProf('${s.key}')" title="Переключить владение / компетентность">
+              ${lvl === 2 ? '×2' : ''}
+            </button>
+            <button class="skill-name-btn" onclick="rollSkillCheck('${s.key}')" title="Бросить проверку: ${s.name}">
+              ${s.name} <span class="skill-stat-tag">(${s.statLabel})</span>
+            </button>
+            <span class="skill-bonus">${bonusStr}</span>
           </div>
         `;
       }).join('');
@@ -1625,12 +2077,10 @@
       return c.hpCur ?? c.hpMax ?? 0;
     }
 
-    // Возвращает true, если ход должен остановиться на этом участнике
     function shouldTakeTurn(c) {
       if (!c) return false;
       const hp = getCombatantHpCur(c);
       if (hp > 0) return true;
-      // При 0 ОЗ враги всегда пропускаются; герои ходят только если включены спасброски от смерти
       return c.type === 'hero' && (c.deathSaves !== false);
     }
 
@@ -1772,7 +2222,6 @@
       let round = state.dm.round || 1;
       let foundIdx = -1;
 
-      // Ищем следующего участника, который должен совершать ход
       for (let step = 0; step < list.length; step++) {
         candidateIdx += 1;
         if (candidateIdx >= list.length) {
@@ -1808,7 +2257,12 @@
         const h = state.heroes[c.heroId];
         if (!h) return;
         const nextHp = Math.max(0, Math.min(h.hpMax + 20, (h.hpCur || 0) + delta));
-        await saveHeroPatchById(h.id, { hpCur: nextHp });
+        const heroPatch = { hpCur: nextHp };
+        // Автоматический сброс спасбросков от смерти при лечении героя
+        if (delta > 0 && nextHp > 0) {
+          heroPatch.deathSaves = { success: 0, failure: 0 };
+        }
+        await saveHeroPatchById(h.id, heroPatch);
         const downNote = nextHp === 0 && delta < 0 ? ' — БЕЗ СОЗНАНИЯ!' : '';
         const actionText = delta < 0
           ? `💥 ${h.name} получает ${Math.abs(delta)} урона (${nextHp}/${h.hpMax} ОЗ)${downNote}`
@@ -1928,6 +2382,10 @@
               `<span class="cond-pill" onclick="removeCombatCondition(${idx}, ${cIdx})">${cond} ✕</span>`
             ).join(' ');
 
+            const dmDeathSavesBlock = (isHero && heroData && hpCur === 0)
+              ? `<div class="dm-ds-bar">${renderDeathSavesControls(heroData.id, heroData.deathSaves)}</div>`
+              : '';
+
             return `
               <div class="combatant-card ${idx === curIdx ? 'active-turn' : ''} ${hpCur === 0 ? 'is-dead' : ''}">
                 <div class="row" style="justify-content:space-between;">
@@ -1967,6 +2425,7 @@
                   </div>
                 </div>
 
+                ${dmDeathSavesBlock}
                 ${conds ? `<div class="row mt-8" style="flex-wrap:wrap;">${conds}</div>` : ''}
               </div>
             `;
