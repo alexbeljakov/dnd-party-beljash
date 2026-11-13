@@ -215,6 +215,62 @@
       gap: 8px;
     }
 
+    /* Sub-tabs & Tags */
+    .subtab-bar {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+      background: rgba(0, 0, 0, 0.35);
+      padding: 4px;
+      border-radius: 10px;
+      margin-bottom: 10px;
+    }
+    .subtab-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      padding: 7px 8px;
+      border-radius: 8px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .subtab-btn.active {
+      background: rgba(212, 175, 55, 0.22);
+      color: var(--gold);
+      border: 1px solid rgba(212, 175, 55, 0.4);
+    }
+
+    .tag-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      padding: 2px 8px;
+      border-radius: 999px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      background: rgba(212, 175, 55, 0.14);
+      border: 1px solid rgba(212, 175, 55, 0.35);
+      color: var(--gold);
+      cursor: pointer;
+    }
+    .tag-chip.active {
+      background: var(--gold);
+      color: #120f0a;
+    }
+
+    /* Rations Counter Box */
+    .rations-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 10px;
+      background: var(--bg-card-alt);
+      border: 1px solid rgba(212, 175, 55, 0.22);
+      border-radius: 10px;
+      margin-bottom: 10px;
+    }
+
     /* Login / Role Gate */
     .role-grid {
       display: grid;
@@ -577,6 +633,8 @@
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
+      flex: 1;
+      cursor: pointer;
     }
 
     /* Combat Tracker & Bestiary */
@@ -804,14 +862,15 @@
         <div class="card-header">
           <span class="card-title">Вход в чертоги</span>
         </div>
-        <p class="muted">Выберите своего героя или войдите за Ширму Мастера.</p>
+        <p class="muted">Выберите своего героя или войдите как Мастер / Админ.</p>
 
         <div id="partyList" class="role-grid"></div>
 
         <div class="mt-12" style="border-top: 1px solid rgba(212,175,55,0.15); padding-top: 12px;">
-          <div class="grid-2">
-            <button class="btn" onclick="openCreateHeroModal()">+ Новый герой</button>
-            <button class="btn btn-primary" onclick="promptDmLogin()">👑 Ширма Мастера</button>
+          <button class="btn btn-block" onclick="openCreateHeroModal()">+ Новый герой</button>
+          <div class="grid-2 mt-8">
+            <button class="btn btn-primary" onclick="promptDmLogin()">👑 Мастер</button>
+            <button class="btn" onclick="promptAdminLogin()">🛡️ Админ</button>
           </div>
         </div>
       </div>
@@ -820,7 +879,7 @@
         <div class="card-header">
           <span class="card-title">Быстрый генератор имён</span>
         </div>
-        <p class="muted">Доступен сразу или внутри профиля с сохранением в NPC Мастера.</p>
+        <p class="muted">Доступен сразу или внутри профиля с сохранением в базу NPC Мастера.</p>
         <button class="btn btn-block mt-8" onclick="enterGuestNames()">Открыть кузницу имён</button>
       </div>
     </section>
@@ -934,11 +993,24 @@
         </div>
       </div>
 
-      <!-- Inventory & Personal Notes -->
+      <!-- Rations & Inventory -->
       <div class="card">
         <div class="card-header">
-          <span class="card-title">Снаряжение и Личные заметки</span>
+          <span class="card-title">Снаряжение и Припасы</span>
         </div>
+
+        <div class="rations-bar">
+          <div>
+            <strong style="font-size:0.9rem;">🍖 Рационы (дней)</strong>
+            <div class="muted" style="font-size:0.72rem;">Списание при длительном отдыхе</div>
+          </div>
+          <div class="row">
+            <button class="btn btn-danger btn-sm" onclick="changeRations(-1)">-1</button>
+            <strong id="rationsCountDisplay" style="font-size:1.15rem; color:var(--gold); min-width:28px; text-align:center;">5</strong>
+            <button class="btn btn-sm" onclick="changeRations(1)">+1</button>
+          </div>
+        </div>
+
         <textarea id="heroInventoryInput" placeholder="Оружие, зелья, артефакты и заметки персонажа..." onchange="saveHeroNotes()"></textarea>
       </div>
     </section>
@@ -1008,41 +1080,51 @@
             <input type="file" id="docFileInput" accept="image/*,.txt,.md" class="hidden" onchange="handleDocUpload(event)" />
           </label>
         </div>
-        <p class="muted" style="margin-bottom:10px;">Карты, письма, раздатки. Нажмите на карточку для полноэкранного просмотра.</p>
+        <p id="docsPermissionHint" class="muted" style="margin-bottom:10px;"></p>
         <div class="row" style="margin-bottom:10px;">
-          <input type="text" id="newTextDocTitle" placeholder="Или создайте текстовую заметку: Заголовок..." />
+          <input type="text" id="newTextDocTitle" placeholder="Создать текстовый документ: Заголовок..." />
           <button class="btn btn-sm" onclick="createTextDoc()">Создать</button>
         </div>
         <div id="sharedDocsGrid" class="doc-grid"></div>
       </div>
 
+      <!-- Chronicle with Search, Tags & Moderation -->
       <div class="card">
         <div class="card-header">
           <span class="card-title">Летопись и Квесты партии</span>
+          <span id="chronicleRoleBadge" class="muted" style="font-size:0.72rem;"></span>
         </div>
-        <div class="row">
-          <input type="text" id="chronicleInput" placeholder="Новая запись в журнал приключений..." />
-          <button class="btn btn-primary btn-sm" onclick="addChronicleEntry()">+</button>
+
+        <input type="text" id="chronicleInput" placeholder="Новая запись в летопись..." />
+        <div class="row mt-8">
+          <input type="text" id="chronicleTagsInput" placeholder="Теги через запятую (напр. квест, таверна, лут)" />
+          <button class="btn btn-primary btn-sm" style="white-space:nowrap;" onclick="addChronicleEntry()">+ Записать</button>
         </div>
+
+        <div style="margin-top:12px; padding-top:10px; border-top:1px solid rgba(212,175,55,0.14);">
+          <input type="text" id="chronicleSearchInput" placeholder="🔍 Поиск по летописи и тегам..." oninput="renderChronicle()" />
+          <div id="chronicleTagCloud" class="row mt-8" style="flex-wrap:wrap;"></div>
+        </div>
+
         <div id="chronicleList" class="mt-12"></div>
       </div>
     </section>
 
-    <!-- ================= TAB 4: DUNGEON MASTER SCREEN ================= -->
+    <!-- ================= TAB 4: DUNGEON MASTER SCREEN (DM ONLY) ================= -->
     <section id="tabDm" class="hidden">
-      <!-- Live Party Status + XP Award + Delete Hero -->
       <div class="card">
         <div class="card-header">
           <span class="card-title">Сводка по партии</span>
-          <div class="row">
+          <div class="row" style="flex-wrap:wrap; justify-content:flex-end;">
             <button class="btn btn-primary btn-xs" onclick="openAwardXpModal()">✨ Выдать XP</button>
-            <button class="btn btn-xs" onclick="changeDmPin()">🔑 PIN</button>
+            <button class="btn btn-xs" onclick="openXpConfigModal()">📊 Шкала XP</button>
+            <button class="btn btn-xs" onclick="changeDmPinOnly()">🔑 PIN ДМа</button>
           </div>
         </div>
         <div id="dmPartyOverview"></div>
       </div>
 
-      <!-- Full Combat Tracker (Bestiary + Initiative + HP + Damage + Conditions + Death Saves) -->
+      <!-- Full Combat Tracker -->
       <div class="card">
         <div class="card-header">
           <span class="card-title">Бой • Раунд <span id="roundCounter">1</span></span>
@@ -1053,7 +1135,6 @@
           </div>
         </div>
 
-        <!-- Quick Bestiary 5e -->
         <div class="bestiary-box">
           <div class="muted" style="font-size:0.72rem; margin-bottom:5px; color:var(--gold);">🐉 Быстрый бестиарий (автобросок инициативы, ОЗ и КД):</div>
           <div class="row">
@@ -1063,7 +1144,6 @@
           <div id="bestiaryHint" class="muted" style="font-size:0.74rem; margin-top:5px;"></div>
         </div>
 
-        <!-- Custom Enemy / NPC Form -->
         <div style="background:rgba(0,0,0,0.25); padding:8px; border-radius:10px; margin-bottom:10px;">
           <div class="row">
             <input type="text" id="initNameInput" placeholder="Свой враг / NPC" style="flex:2.2;" />
@@ -1076,10 +1156,8 @@
           </div>
         </div>
 
-        <!-- Combatants List -->
         <div id="initiativeList"></div>
 
-        <!-- Combat Log -->
         <div class="card-header mt-12">
           <span class="card-title" style="font-size:0.8rem;">📜 Журнал боя</span>
           <div class="row">
@@ -1090,12 +1168,58 @@
         <div id="combatLogBox" class="combat-log-box"></div>
       </div>
 
-      <!-- DM Secret Notes & Saved NPCs -->
+      <!-- DM Secret Notes & NPC Database -->
+      <div class="card">
+        <div class="subtab-bar">
+          <button id="dmSubNotesBtn" class="subtab-btn active" onclick="switchDmSubtab('notes')">📝 Тайные записи</button>
+          <button id="dmSubNpcBtn" class="subtab-btn" onclick="switchDmSubtab('npc')">🎭 База NPC</button>
+        </div>
+
+        <div id="dmSubNotesPanel">
+          <textarea id="dmSecretNotes" style="min-height:150px;" placeholder="Сюжетные повороты, тайны мира, ловушки и лут..." onchange="saveDmNotes()"></textarea>
+        </div>
+
+        <div id="dmSubNpcPanel" class="hidden">
+          <div class="grid-2">
+            <input type="text" id="newNpcNameInput" placeholder="Имя NPC..." />
+            <input type="text" id="newNpcTagsInput" placeholder="Теги (таверна, враг, гильдия)" />
+          </div>
+          <textarea id="newNpcDescInput" class="mt-8" style="min-height:62px;" placeholder="Внешность, характер, мотивы, секреты..."></textarea>
+          <button class="btn btn-primary btn-sm btn-block mt-8" onclick="addDmNpc()">+ Добавить NPC в базу</button>
+
+          <div style="margin-top:12px; padding-top:10px; border-top:1px solid rgba(212,175,55,0.14);">
+            <input type="text" id="npcSearchInput" placeholder="🔍 Поиск NPC по имени, описанию или тегам..." oninput="renderDmNpcList()" />
+            <div id="npcTagCloud" class="row mt-8" style="flex-wrap:wrap;"></div>
+          </div>
+
+          <div id="dmNpcList" class="mt-12"></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ================= TAB 5: ADMIN PANEL (NO DM SPOILERS) ================= -->
+    <section id="tabAdmin" class="hidden">
       <div class="card">
         <div class="card-header">
-          <span class="card-title">Тайные записи и NPC Мастера</span>
+          <span class="card-title">🛡️ Панель Администратора</span>
+          <button class="btn btn-xs" onclick="changeAdminPinOnly()">🔑 PIN Админа</button>
         </div>
-        <textarea id="dmSecretNotes" placeholder="Сюжетные повороты, лут, характеристики боссов и сохранённые из генератора NPC..." onchange="saveDmNotes()"></textarea>
+        <p class="muted">Управление составом партии, сброс забытых PIN-кодов игроков, модерация летописи и общих документов. Сюжетные записи и трекер боя Мастера здесь скрыты.</p>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">Профили игроков партии</span>
+        </div>
+        <div id="adminPartyManageList"></div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <span class="card-title">Быстрая модерация контента</span>
+        </div>
+        <p class="muted">Все вложения и записи летописи доступны для переименования, правки и удаления на вкладке <strong>«🗺️ Летопись»</strong>.</p>
+        <button class="btn btn-primary btn-block mt-8" onclick="switchTab('tabShared', 'navShared')">Перейти к модерации Летописи и Файлов ➔</button>
       </div>
     </section>
   </main>
@@ -1115,11 +1239,15 @@
     </button>
     <button id="navShared" class="nav-btn" onclick="switchTab('tabShared', 'navShared')">
       <span class="nav-icon">🗺️</span>
-      <span>Документы</span>
+      <span>Летопись</span>
     </button>
     <button id="navDm" class="nav-btn hidden" onclick="switchTab('tabDm', 'navDm')">
       <span class="nav-icon">👑</span>
       <span>Мастер</span>
+    </button>
+    <button id="navAdmin" class="nav-btn hidden" onclick="switchTab('tabAdmin', 'navAdmin')">
+      <span class="nav-icon">🛡️</span>
+      <span>Админ</span>
     </button>
   </nav>
 
@@ -1276,6 +1404,34 @@
     </div>
   </div>
 
+  <!-- ================= MODAL: DM XP PROGRESSION SETTINGS ================= -->
+  <div id="xpConfigModal" class="modal-backdrop" onclick="if(event.target===this) this.classList.remove('open')">
+    <div class="modal-box">
+      <div class="card-header">
+        <span class="card-title">📊 Шкала опыта и уровней</span>
+        <button class="btn btn-sm" onclick="document.getElementById('xpConfigModal').classList.remove('open')">✕</button>
+      </div>
+
+      <div>
+        <label class="muted">Режим прогрессии</label>
+        <select id="xpModeSelect" onchange="toggleCustomXpInputs()">
+          <option value="canon">По канону D&D 5e (стандартная таблица)</option>
+          <option value="custom">Своя шкала Мастера (назначить XP до каждого уровня)</option>
+        </select>
+      </div>
+
+      <div id="customXpTableWrap" class="mt-12 hidden">
+        <div class="row" style="justify-content:space-between; margin-bottom:8px;">
+          <span class="muted">Пороги суммарного XP для уровней 2–20:</span>
+          <button class="btn btn-xs" onclick="fillCanonIntoCustomXp()">Сбросить к канону</button>
+        </div>
+        <div id="customXpLevelsGrid" class="grid-2" style="max-height:260px; overflow-y:auto; padding-right:4px;"></div>
+      </div>
+
+      <button class="btn btn-primary btn-block mt-12" onclick="saveXpConfig()">Сохранить настройки шкалы</button>
+    </div>
+  </div>
+
   <!-- ================= MODAL: DM AWARD XP ================= -->
   <div id="awardXpModal" class="modal-backdrop" onclick="if(event.target===this) this.classList.remove('open')">
     <div class="modal-box">
@@ -1293,20 +1449,17 @@
         </select>
       </div>
 
-      <!-- Mode 1: Equal split -->
       <div id="xpModeEqualBox" class="mt-8">
         <label class="muted">Общий пул опыта за бой / квест</label>
         <input type="number" id="xpPoolTotal" placeholder="Например: 1200" oninput="updateXpSplitPreview()" />
         <div id="xpSplitPreview" class="muted mt-8" style="color:var(--gold);"></div>
       </div>
 
-      <!-- Mode 2: Custom per hero -->
       <div id="xpModeCustomBox" class="mt-8 hidden">
         <label class="muted">Сколько XP начислить каждому герою:</label>
         <div id="xpCustomList" class="mt-8"></div>
       </div>
 
-      <!-- Mode 3: Single hero -->
       <div id="xpModeSingleBox" class="mt-8 hidden">
         <label class="muted">Выберите героя</label>
         <select id="xpSingleHeroSelect"></select>
@@ -1328,7 +1481,10 @@
     <div class="modal-box" style="max-width:520px;">
       <div class="card-header">
         <span id="previewTitle" class="card-title">Документ</span>
-        <button class="btn btn-sm" onclick="document.getElementById('previewModal').classList.remove('open')">✕</button>
+        <div class="row">
+          <button id="previewRenameBtn" class="btn btn-xs hidden">✏️ Имя</button>
+          <button class="btn btn-sm" onclick="document.getElementById('previewModal').classList.remove('open')">✕</button>
+        </div>
       </div>
       <div id="previewBody" style="text-align:center;"></div>
     </div>
@@ -1351,8 +1507,7 @@
       appId: "1:799802669624:web:23eb1868428dc1ee0004cd"
     };
 
-    // Пороги опыта D&D 5e для уровней 1..20 (индекс = уровень - 1)
-    const XP_THRESHOLDS_5E = [
+    const CANON_XP_5E = [
       0, 300, 900, 2700, 6500, 14000, 23000, 34000, 48000, 64000,
       85000, 100000, 120000, 140000, 165000, 195000, 225000, 265000, 305000, 355000
     ];
@@ -1406,6 +1561,9 @@
 
     let db = null;
     let isOnline = false;
+    let activeChronicleTag = '';
+    let activeNpcTag = '';
+
     let state = {
       heroes: {},
       docs: [],
@@ -1413,7 +1571,11 @@
       rolls: [],
       dm: {
         pin: '0000',
-        notes: 'NPC и заметки Мастера:\n',
+        adminPin: '1111',
+        xpMode: 'canon',
+        customXpTable: [...CANON_XP_5E],
+        notes: 'Секретные заметки Мастера:\n',
+        npcs: [],
         round: 1,
         turnIndex: 0,
         combatStarted: false,
@@ -1423,9 +1585,42 @@
     };
 
     let session = {
-      role: null,
+      role: null, // 'hero' | 'dm' | 'admin' | 'guest'
       heroId: null
     };
+
+    // ==================== PERMISSION MATRIX ====================
+    function isModerator() {
+      return session.role === 'dm' || session.role === 'admin';
+    }
+
+    function canModifyDoc(docItem) {
+      if (!docItem) return false;
+      if (isModerator()) return true;
+      return session.role === 'hero' && session.heroId && docItem.ownerId === session.heroId;
+    }
+
+    function canModifyChronicle(entry) {
+      if (!entry) return false;
+      if (isModerator()) return true;
+      return session.role === 'hero' && session.heroId && entry.ownerId === session.heroId;
+    }
+
+    function getActiveXpTable() {
+      if (state.dm.xpMode === 'custom' && Array.isArray(state.dm.customXpTable) && state.dm.customXpTable.length >= 20) {
+        return state.dm.customXpTable;
+      }
+      return CANON_XP_5E;
+    }
+
+    function parseTags(str) {
+      if (!str) return [];
+      return [...new Set(
+        str.split(',')
+          .map((t) => t.trim().replace(/^#/, '').toLowerCase())
+          .filter(Boolean)
+      )];
+    }
 
     const bestiarySel = document.getElementById('bestiarySelect');
     bestiarySel.innerHTML = BESTIARY_5E.map((m) => {
@@ -1474,7 +1669,6 @@
         const map = {};
         snap.forEach((d) => { map[d.id] = { id: d.id, ...d.data() }; });
         state.heroes = map;
-        // Если текущий открытый герой был удалён — выходим на экран выбора роли
         if (session.role === 'hero' && session.heroId && !state.heroes[session.heroId]) {
           logout();
           return;
@@ -1503,6 +1697,7 @@
         } else {
           setDoc(doc(db, 'meta', 'dm'), state.dm);
         }
+        renderHeroSheet();
         renderDmScreen();
       });
     }
@@ -1565,7 +1760,8 @@
       }
 
       const id = 'hero_' + Date.now();
-      const startXp = XP_THRESHOLDS_5E[level - 1] || 0;
+      const xpTable = getActiveXpTable();
+      const startXp = xpTable[level - 1] || 0;
       const heroObj = {
         id, name, race, heroClass, level, xp: startXp, pin, avatar,
         hpCur: hpMax, hpMax, ac: 14, speed: 30,
@@ -1577,7 +1773,8 @@
         slots: [2, 0, 0, 0],
         slotsMax: [2, 0, 0, 0],
         gold: 15, silver: 0, copper: 0,
-        inventory: 'Походный рюкзак, рационы на 5 дней, факелы.'
+        rations: 5,
+        inventory: 'Походный рюкзак, спальник, факелы.'
       };
 
       if (isOnline) {
@@ -1612,6 +1809,16 @@
       enterApp();
     };
 
+    window.promptAdminLogin = () => {
+      const entered = prompt('Введите PIN Админа (по умолчанию 1111):');
+      if (entered === null) return;
+      if (entered !== (state.dm.adminPin || '1111')) {
+        return alert('Неверный пароль Админа');
+      }
+      session = { role: 'admin', heroId: null };
+      enterApp();
+    };
+
     window.enterGuestNames = () => {
       session = { role: 'guest', heroId: null };
       enterApp();
@@ -1624,22 +1831,25 @@
 
       const navHero = document.getElementById('navHero');
       const navDm = document.getElementById('navDm');
+      const navAdmin = document.getElementById('navAdmin');
       const dmRollWrap = document.getElementById('dmSecretRollWrap');
 
+      navHero.classList.add('hidden');
+      navDm.classList.add('hidden');
+      navAdmin.classList.add('hidden');
+      dmRollWrap.classList.add('hidden');
+
       if (session.role === 'dm') {
-        navHero.classList.add('hidden');
         navDm.classList.remove('hidden');
         dmRollWrap.classList.remove('hidden');
         switchTab('tabDm', 'navDm');
+      } else if (session.role === 'admin') {
+        navAdmin.classList.remove('hidden');
+        switchTab('tabAdmin', 'navAdmin');
       } else if (session.role === 'hero') {
         navHero.classList.remove('hidden');
-        navDm.classList.add('hidden');
-        dmRollWrap.classList.add('hidden');
         switchTab('tabHero', 'navHero');
       } else {
-        navHero.classList.add('hidden');
-        navDm.classList.add('hidden');
-        dmRollWrap.classList.add('hidden');
         switchTab('tabNames', 'navNames');
       }
       renderAll();
@@ -1647,7 +1857,7 @@
 
     window.logout = () => {
       session = { role: null, heroId: null };
-      ['tabHero', 'tabNames', 'tabShared', 'tabDm', 'bottomNav', 'logoutBtn'].forEach((id) =>
+      ['tabHero', 'tabNames', 'tabShared', 'tabDm', 'tabAdmin', 'bottomNav', 'logoutBtn'].forEach((id) =>
         document.getElementById(id).classList.add('hidden')
       );
       document.getElementById('loginScreen').classList.remove('hidden');
@@ -1655,7 +1865,11 @@
     };
 
     window.switchTab = (tabId, navId) => {
-      ['tabHero', 'tabNames', 'tabShared', 'tabDm'].forEach((id) =>
+      // Жёсткая защита: в ширму Мастера может войти только role === 'dm'
+      if (tabId === 'tabDm' && session.role !== 'dm') return;
+      if (tabId === 'tabAdmin' && session.role !== 'admin') return;
+
+      ['tabHero', 'tabNames', 'tabShared', 'tabDm', 'tabAdmin'].forEach((id) =>
         document.getElementById(id).classList.add('hidden')
       );
       document.querySelectorAll('.nav-btn').forEach((b) => b.classList.remove('active'));
@@ -1663,7 +1877,52 @@
       if (navId) document.getElementById(navId).classList.add('active');
     };
 
-    // ================= EDIT & DELETE HERO + LEVEL / XP =================
+    // ================= ADMIN PANEL ACTIONS (NO DM SPOILERS) =================
+    window.changeAdminPinOnly = async () => {
+      const nextPin = prompt('Новый PIN-код Админа (минимум 4 символа):');
+      if (!nextPin || nextPin.trim().length < 4) return alert('PIN должен содержать минимум 4 символа');
+      await saveDmPatch({ adminPin: nextPin.trim() });
+      alert('PIN Админа обновлён!');
+    };
+
+    window.changeDmPinOnly = async () => {
+      const nextPin = prompt('Новый PIN-код Мастера (минимум 4 символа):');
+      if (!nextPin || nextPin.trim().length < 4) return alert('PIN должен содержать минимум 4 символа');
+      await saveDmPatch({ pin: nextPin.trim() });
+      alert('PIN Мастера обновлён!');
+    };
+
+    window.resetHeroPinByAdmin = async (heroId) => {
+      if (session.role !== 'admin') return;
+      const h = state.heroes[heroId];
+      if (!h) return;
+      const nextPin = prompt(`Задайте новый 4-значный PIN для «${h.name}»:`, '1234');
+      if (!nextPin || nextPin.trim().length < 4) return alert('PIN должен содержать минимум 4 цифры');
+      await saveHeroPatchById(heroId, { pin: nextPin.trim() });
+      alert(`PIN для ${h.name} изменён на ${nextPin.trim()}`);
+    };
+
+    function renderAdminPanel() {
+      const container = document.getElementById('adminPartyManageList');
+      if (!container) return;
+      const heroes = Object.values(state.heroes);
+      container.innerHTML = heroes.length
+        ? heroes.map((h) => `
+            <div class="row" style="justify-content:space-between; padding:8px 10px; background:var(--bg-card-alt); border-radius:10px; margin-bottom:6px;">
+              <div style="min-width:0;">
+                <strong style="color:var(--gold);">${h.name}</strong>
+                <div class="muted" style="font-size:0.75rem;">${h.race} • ${h.heroClass} • Ур. ${h.level || 1}</div>
+              </div>
+              <div class="row">
+                <button class="btn btn-xs" onclick="resetHeroPinByAdmin('${h.id}')" title="Сбросить забытый PIN игрока">🔑 PIN</button>
+                <button class="btn btn-danger btn-xs" onclick="deleteHeroByAdmin('${h.id}')" title="Удалить профиль">🗑️ Удалить</button>
+              </div>
+            </div>
+          `).join('')
+        : '<p class="muted">В партии пока нет созданных персонажей.</p>';
+    }
+
+    // ================= EDIT & DELETE HERO + LEVEL / XP / RATIONS =================
     async function saveHeroPatchById(id, patch) {
       if (!id || !state.heroes[id]) return;
       state.heroes[id] = { ...state.heroes[id], ...patch };
@@ -1677,6 +1936,15 @@
     function saveHeroPatch(patch) {
       return saveHeroPatchById(session.heroId, patch);
     }
+
+    window.changeRations = (delta) => {
+      const h = state.heroes[session.heroId];
+      if (!h) return;
+      const cur = h.rations ?? 5;
+      const next = Math.max(0, cur + delta);
+      saveHeroPatch({ rations: next });
+      renderHeroSheet();
+    };
 
     window.openEditHeroModal = () => {
       const h = state.heroes[session.heroId];
@@ -1708,7 +1976,6 @@
       const speed = parseInt(document.getElementById('editHeroSpeed').value) || 30;
       const pin = document.getElementById('editHeroPin').value.trim() || h.pin || '1234';
 
-      // Если герой в активном бою у Мастера — обновим и его имя в трекере
       const initList = state.dm.initiative || [];
       if (initList.some((c) => c.type === 'hero' && c.heroId === h.id)) {
         const updatedInit = initList.map((c) =>
@@ -1732,7 +1999,6 @@
       if (!h) return;
       if (!confirm(`Удалить персонажа «${h.name}» безвозвратно?`)) return;
 
-      // Убираем героя из трекера инициативы, если он там был
       const initList = state.dm.initiative || [];
       if (initList.some((c) => c.type === 'hero' && c.heroId === heroId)) {
         const filtered = initList.filter((c) => !(c.type === 'hero' && c.heroId === heroId));
@@ -1757,6 +2023,13 @@
     };
 
     window.deleteHeroByDm = async (heroId) => {
+      if (session.role !== 'dm') return;
+      await performDeleteHero(heroId);
+      renderAll();
+    };
+
+    window.deleteHeroByAdmin = async (heroId) => {
+      if (session.role !== 'admin') return;
       await performDeleteHero(heroId);
       renderAll();
     };
@@ -1785,7 +2058,49 @@
       renderHeroSheet();
     };
 
-    // ================= DM XP AWARD MODAL =================
+    // ================= DM XP PROGRESSION CONFIG & AWARD =================
+    window.openXpConfigModal = () => {
+      const mode = state.dm.xpMode || 'canon';
+      document.getElementById('xpModeSelect').value = mode;
+      const table = getActiveXpTable();
+
+      let html = '';
+      for (let lvl = 2; lvl <= 20; lvl++) {
+        html += `
+          <div class="row" style="justify-content:space-between; background:var(--bg-card-alt); padding:5px 8px; border-radius:8px;">
+            <span class="muted" style="font-weight:700;">Ур. ${lvl}:</span>
+            <input type="number" data-xp-lvl-idx="${lvl - 1}" value="${table[lvl - 1]}" style="width:96px; padding:4px 6px; font-size:0.84rem;" />
+          </div>
+        `;
+      }
+      document.getElementById('customXpLevelsGrid').innerHTML = html;
+      toggleCustomXpInputs();
+      document.getElementById('xpConfigModal').classList.add('open');
+    };
+
+    window.toggleCustomXpInputs = () => {
+      const isCustom = document.getElementById('xpModeSelect').value === 'custom';
+      document.getElementById('customXpTableWrap').classList.toggle('hidden', !isCustom);
+    };
+
+    window.fillCanonIntoCustomXp = () => {
+      document.querySelectorAll('[data-xp-lvl-idx]').forEach((inp) => {
+        const idx = parseInt(inp.getAttribute('data-xp-lvl-idx'), 10);
+        inp.value = CANON_XP_5E[idx] || 0;
+      });
+    };
+
+    window.saveXpConfig = async () => {
+      const xpMode = document.getElementById('xpModeSelect').value;
+      const customXpTable = [0];
+      document.querySelectorAll('[data-xp-lvl-idx]').forEach((inp) => {
+        customXpTable.push(Math.max(0, parseInt(inp.value) || 0));
+      });
+      await saveDmPatch({ xpMode, customXpTable });
+      document.getElementById('xpConfigModal').classList.remove('open');
+      renderAll();
+    };
+
     window.openAwardXpModal = () => {
       const heroes = Object.values(state.heroes);
       if (!heroes.length) return alert('В партии пока нет ни одного героя.');
@@ -1836,7 +2151,7 @@
       const reasonSuffix = reason ? ` (${reason})` : '';
       const heroes = Object.values(state.heroes);
 
-      let grants = []; // { hero, amount }
+      let grants = [];
 
       if (mode === 'equal') {
         const total = parseInt(document.getElementById('xpPoolTotal').value) || 0;
@@ -1864,12 +2179,11 @@
         await saveHeroPatchById(g.hero.id, { xp: nextXp });
       }
 
-      // Записываем награду в общую Летопись партии
       const chronicleText = mode === 'equal'
         ? `✨ Мастер выдал партии по ${grants[0].amount} XP${reasonSuffix}`
         : `✨ Мастер выдал опыт: ${grants.map((g) => `${g.hero.name} (${g.amount > 0 ? '+' : ''}${g.amount} XP)`).join(', ')}${reasonSuffix}`;
 
-      const entry = { text: chronicleText, author: 'Мастер', createdAt: Date.now() };
+      const entry = { text: chronicleText, tags: ['опыт'], author: 'Мастер', ownerId: 'dm', createdAt: Date.now() };
       if (isOnline) {
         await addDoc(collection(db, 'chronicle'), entry);
       } else {
@@ -2159,6 +2473,7 @@
       if (!h) return;
       const lvl = h.level || 1;
       const xp = h.xp ?? 0;
+      const xpTable = getActiveXpTable();
 
       document.getElementById('heroNameDisplay').textContent = h.name;
       document.getElementById('heroMetaDisplay').textContent = `${h.race} • ${h.heroClass}`;
@@ -2167,10 +2482,10 @@
       document.getElementById('heroSpeedDisplay').textContent = h.speed || 30;
       document.getElementById('heroHpCur').textContent = h.hpCur;
       document.getElementById('heroHpMax').textContent = h.hpMax;
+      document.getElementById('rationsCountDisplay').textContent = h.rations ?? 5;
 
-      // XP & Level Progress Bar
-      const curFloor = XP_THRESHOLDS_5E[Math.min(19, lvl - 1)] || 0;
-      const nextCap = lvl < 20 ? XP_THRESHOLDS_5E[lvl] : curFloor;
+      const curFloor = xpTable[Math.min(19, lvl - 1)] || 0;
+      const nextCap = lvl < 20 ? (xpTable[lvl] ?? curFloor) : curFloor;
       const lvlUpBtn = document.getElementById('levelUpBtn');
 
       if (lvl >= 20) {
@@ -2191,7 +2506,6 @@
         }
       }
 
-      // Death Saves Panel
       const dsPanel = document.getElementById('heroDeathSavesPanel');
       if ((h.hpCur || 0) === 0) {
         dsPanel.classList.remove('hidden');
@@ -2376,35 +2690,51 @@
           <span class="name-text">${fullName}</span>
           <div class="row">
             <button class="btn btn-sm" onclick="navigator.clipboard.writeText('${fullName}'); this.textContent='✓'">Копия</button>
-            <button class="btn btn-primary btn-sm" onclick="saveNameToDm('${fullName}')">+ в NPC</button>
+            ${session.role === 'dm' ? `<button class="btn btn-primary btn-sm" onclick="saveNameToDm('${fullName}')">+ в NPC</button>` : ''}
           </div>
         </div>
       `).join('');
     };
 
     window.saveNameToDm = async (npcName) => {
+      if (session.role !== 'dm') return;
       const raceText = document.getElementById('genRace').selectedOptions[0].text;
-      const entry = `\n• ${npcName} (${raceText})`;
-      const updatedNotes = (state.dm.notes || '') + entry;
-      state.dm.notes = updatedNotes;
-      if (isOnline) {
-        await updateDoc(doc(db, 'meta', 'dm'), { notes: updatedNotes });
-      } else {
-        saveLocalState();
-      }
-      alert(`«${npcName}» добавлен в заметки Мастера!`);
+      const npcs = [
+        {
+          id: 'npc_' + Date.now(),
+          name: npcName,
+          tags: [raceText.toLowerCase()],
+          desc: 'Сгенерирован в Кузнице Имён.',
+          createdAt: Date.now()
+        },
+        ...(state.dm.npcs || [])
+      ];
+      await saveDmPatch({ npcs });
+      alert(`«${npcName}» добавлен в Базу NPC Мастера!`);
     };
 
-    // ================= SHARED DOCS & CHRONICLE =================
+    // ================= SHARED DOCS & CHRONICLE (STRICT PERMISSIONS) =================
+    function currentActorIdentity() {
+      if (session.role === 'dm') return { author: 'Мастер', ownerId: 'dm' };
+      if (session.role === 'admin') return { author: 'Админ', ownerId: 'admin' };
+      if (session.role === 'hero' && session.heroId) {
+        return { author: state.heroes[session.heroId]?.name || 'Игрок', ownerId: session.heroId };
+      }
+      return { author: 'Гость', ownerId: 'guest' };
+    }
+
     window.handleDocUpload = async (e) => {
       const file = e.target.files[0];
       if (!file) return;
 
+      const { author, ownerId } = currentActorIdentity();
       const isImg = file.type.startsWith('image/');
       let docObj = {
         title: file.name.replace(/\.[^/.]+$/, ''),
         type: isImg ? 'image' : 'text',
         content: '',
+        author,
+        ownerId,
         createdAt: Date.now()
       };
 
@@ -2428,7 +2758,8 @@
       const title = titleInput.value.trim();
       if (!title) return;
       const body = prompt('Введите текст документа / правил / письма:') || '';
-      const docObj = { title, type: 'text', content: body, createdAt: Date.now() };
+      const { author, ownerId } = currentActorIdentity();
+      const docObj = { title, type: 'text', content: body, author, ownerId, createdAt: Date.now() };
       if (isOnline) {
         await addDoc(collection(db, 'docs'), docObj);
       } else {
@@ -2438,10 +2769,38 @@
       titleInput.value = '';
     };
 
+    window.renameSharedDoc = async (id) => {
+      const d = state.docs.find((x) => x.id === id);
+      if (!d || !canModifyDoc(d)) {
+        return alert('Переименовывать можно только свои файлы (или с правами Админа / Мастера).');
+      }
+      const nextTitle = prompt('Новое название файла / документа:', d.title);
+      if (!nextTitle || !nextTitle.trim()) return;
+      const cleanTitle = nextTitle.trim();
+
+      if (isOnline) {
+        await updateDoc(doc(db, 'docs', id), { title: cleanTitle });
+      } else {
+        d.title = cleanTitle;
+        saveLocalState();
+      }
+      if (document.getElementById('previewModal').classList.contains('open')) {
+        document.getElementById('previewTitle').textContent = cleanTitle;
+      }
+    };
+
     window.openDocPreview = (id) => {
       const d = state.docs.find((x) => x.id === id);
       if (!d) return;
       document.getElementById('previewTitle').textContent = d.title;
+      const renameBtn = document.getElementById('previewRenameBtn');
+      if (canModifyDoc(d)) {
+        renameBtn.classList.remove('hidden');
+        renameBtn.onclick = () => renameSharedDoc(id);
+      } else {
+        renameBtn.classList.add('hidden');
+      }
+
       const body = document.getElementById('previewBody');
       if (d.type === 'image') {
         body.innerHTML = `<img src="${d.content}" style="max-width:100%; border-radius:10px;" />`;
@@ -2452,41 +2811,60 @@
     };
 
     window.deleteSharedDoc = async (id) => {
-      if (!confirm('Удалить этот документ?')) return;
+      const d = state.docs.find((x) => x.id === id);
+      if (!d || !canModifyDoc(d)) {
+        return alert('Удалять чужие документы может только Админ или Мастер.');
+      }
+      if (!confirm(`Удалить документ «${d.title}»?`)) return;
       if (isOnline) {
         await deleteDoc(doc(db, 'docs', id));
       } else {
-        state.docs = state.docs.filter((d) => d.id !== id);
+        state.docs = state.docs.filter((x) => x.id !== id);
         saveLocalState();
       }
     };
 
     function renderSharedDocs() {
+      const hint = document.getElementById('docsPermissionHint');
+      hint.textContent = isModerator()
+        ? 'Режим модерации: вы можете переименовывать и удалять любые файлы партии.'
+        : 'Вы можете загружать файлы, а менять/удалять — только свои.';
+
       const grid = document.getElementById('sharedDocsGrid');
       if (!state.docs.length) {
         grid.innerHTML = '<p class="muted" style="grid-column:1/-1;">Пока нет загруженных карт или документов.</p>';
         return;
       }
-      grid.innerHTML = state.docs.map((d) => `
-        <div class="doc-card">
-          ${d.type === 'image'
-            ? `<img class="doc-thumb" src="${d.content}" onclick="openDocPreview('${d.id}')" />`
-            : `<div class="doc-text-preview" onclick="openDocPreview('${d.id}')">${d.content || 'Пустой документ'}</div>`
-          }
-          <div class="doc-meta">
-            <span class="doc-title" onclick="openDocPreview('${d.id}')">${d.title}</span>
-            <button class="btn btn-danger btn-sm" style="padding:2px 6px;" onclick="deleteSharedDoc('${d.id}')">✕</button>
+      grid.innerHTML = state.docs.map((d) => {
+        const allowed = canModifyDoc(d);
+        return `
+          <div class="doc-card">
+            ${d.type === 'image'
+              ? `<img class="doc-thumb" src="${d.content}" onclick="openDocPreview('${d.id}')" />`
+              : `<div class="doc-text-preview" onclick="openDocPreview('${d.id}')">${d.content || 'Пустой документ'}</div>`
+            }
+            <div class="doc-meta">
+              <span class="doc-title" onclick="openDocPreview('${d.id}')">${d.title}</span>
+              ${allowed ? `
+                <button class="btn btn-xs" style="padding:2px 5px;" onclick="renameSharedDoc('${d.id}')" title="Переименовать">✏️</button>
+                <button class="btn btn-danger btn-xs" style="padding:2px 5px;" onclick="deleteSharedDoc('${d.id}')" title="Удалить">✕</button>
+              ` : ''}
+            </div>
           </div>
-        </div>
-      `).join('');
+        `;
+      }).join('');
     }
 
     window.addChronicleEntry = async () => {
       const inp = document.getElementById('chronicleInput');
+      const tagsInp = document.getElementById('chronicleTagsInput');
       const text = inp.value.trim();
       if (!text) return;
-      const author = session.role === 'dm' ? 'Мастер' : (state.heroes[session.heroId]?.name || 'Игрок');
-      const entry = { text, author, createdAt: Date.now() };
+
+      const tags = parseTags(tagsInp.value);
+      const { author, ownerId } = currentActorIdentity();
+
+      const entry = { text, tags, author, ownerId, createdAt: Date.now() };
       if (isOnline) {
         await addDoc(collection(db, 'chronicle'), entry);
       } else {
@@ -2494,19 +2872,195 @@
         saveLocalState();
       }
       inp.value = '';
+      tagsInp.value = '';
+    };
+
+    window.setChronicleTagFilter = (tag) => {
+      activeChronicleTag = activeChronicleTag === tag ? '' : tag;
+      renderChronicle();
+    };
+
+    window.editChronicleEntry = async (id) => {
+      const item = state.chronicle.find((c) => c.id === id);
+      if (!item || !canModifyChronicle(item)) {
+        return alert('Редактировать чужие записи может только Админ или Мастер.');
+      }
+      const nextText = prompt('Редактировать запись летописи:', item.text);
+      if (nextText === null || !nextText.trim()) return;
+      const nextTagsRaw = prompt('Теги через запятую:', (item.tags || []).join(', '));
+      const tags = nextTagsRaw !== null ? parseTags(nextTagsRaw) : (item.tags || []);
+
+      if (isOnline) {
+        await updateDoc(doc(db, 'chronicle', id), { text: nextText.trim(), tags });
+      } else {
+        item.text = nextText.trim();
+        item.tags = tags;
+        saveLocalState();
+      }
+    };
+
+    window.deleteChronicleEntry = async (id) => {
+      const item = state.chronicle.find((c) => c.id === id);
+      if (!item || !canModifyChronicle(item)) {
+        return alert('Удалять чужие записи может только Админ или Мастер.');
+      }
+      if (!confirm('Удалить эту запись из летописи?')) return;
+      if (isOnline) {
+        await deleteDoc(doc(db, 'chronicle', id));
+      } else {
+        state.chronicle = state.chronicle.filter((c) => c.id !== id);
+        saveLocalState();
+      }
     };
 
     function renderChronicle() {
+      const roleBadge = document.getElementById('chronicleRoleBadge');
+      roleBadge.textContent = session.role === 'admin'
+        ? '🛡️ Режим Админа'
+        : (session.role === 'dm' ? '👑 Режим Мастера' : '');
+
+      const allTags = new Set();
+      state.chronicle.forEach((c) => (c.tags || []).forEach((t) => allTags.add(t)));
+      const cloud = document.getElementById('chronicleTagCloud');
+      cloud.innerHTML = [...allTags].map((t) =>
+        `<span class="tag-chip ${activeChronicleTag === t ? 'active' : ''}" onclick="setChronicleTagFilter('${t}')">#${t}</span>`
+      ).join('');
+
+      const q = (document.getElementById('chronicleSearchInput')?.value || '').trim().toLowerCase();
+      const filtered = state.chronicle.filter((c) => {
+        const tags = c.tags || [];
+        if (activeChronicleTag && !tags.includes(activeChronicleTag)) return false;
+        if (!q) return true;
+        return (c.text || '').toLowerCase().includes(q)
+          || (c.author || '').toLowerCase().includes(q)
+          || tags.some((t) => t.includes(q));
+      });
+
       const list = document.getElementById('chronicleList');
-      list.innerHTML = state.chronicle.map((c) => `
-        <div style="padding:8px 0; border-bottom:1px solid rgba(255,255,255,0.06);">
-          <div style="font-size:0.9rem;">${c.text}</div>
-          <div class="muted" style="font-size:0.72rem;">— ${c.author}</div>
-        </div>
-      `).join('') || '<p class="muted">Летопись пока пуста.</p>';
+      list.innerHTML = filtered.map((c) => {
+        const tagsHtml = (c.tags || []).map((t) =>
+          `<span class="tag-chip" onclick="setChronicleTagFilter('${t}')">#${t}</span>`
+        ).join(' ');
+
+        const allowed = canModifyChronicle(c);
+        const modControls = allowed ? `
+          <div class="row">
+            <button class="btn btn-xs" style="padding:2px 6px;" onclick="editChronicleEntry('${c.id}')" title="Редактировать">✏️</button>
+            <button class="btn btn-danger btn-xs" style="padding:2px 6px;" onclick="deleteChronicleEntry('${c.id}')" title="Удалить">✕</button>
+          </div>
+        ` : '';
+
+        return `
+          <div style="padding:9px 0; border-bottom:1px solid rgba(255,255,255,0.06);">
+            <div class="row" style="justify-content:space-between; align-items:flex-start;">
+              <div style="font-size:0.9rem; flex:1;">${c.text}</div>
+              ${modControls}
+            </div>
+            ${tagsHtml ? `<div class="row mt-8" style="flex-wrap:wrap;">${tagsHtml}</div>` : ''}
+            <div class="muted" style="font-size:0.72rem; margin-top:4px;">— ${c.author}</div>
+          </div>
+        `;
+      }).join('') || '<p class="muted">Записей по вашему фильтру не найдено.</p>';
     }
 
-    // ================= DM SCREEN, BESTIARY & FULL COMBAT LOG =================
+    // ================= DM SCREEN: NOTES vs NPC SUB-TABS & COMBAT =================
+    window.switchDmSubtab = (tab) => {
+      const isNotes = tab === 'notes';
+      document.getElementById('dmSubNotesBtn').classList.toggle('active', isNotes);
+      document.getElementById('dmSubNpcBtn').classList.toggle('active', !isNotes);
+      document.getElementById('dmSubNotesPanel').classList.toggle('hidden', !isNotes);
+      document.getElementById('dmSubNpcPanel').classList.toggle('hidden', isNotes);
+      if (!isNotes) renderDmNpcList();
+    };
+
+    window.addDmNpc = async () => {
+      const name = document.getElementById('newNpcNameInput').value.trim();
+      const tags = parseTags(document.getElementById('newNpcTagsInput').value);
+      const desc = document.getElementById('newNpcDescInput').value.trim();
+      if (!name) return alert('Введите имя NPC');
+
+      const npcs = [
+        { id: 'npc_' + Date.now(), name, tags, desc, createdAt: Date.now() },
+        ...(state.dm.npcs || [])
+      ];
+      await saveDmPatch({ npcs });
+
+      document.getElementById('newNpcNameInput').value = '';
+      document.getElementById('newNpcTagsInput').value = '';
+      document.getElementById('newNpcDescInput').value = '';
+      renderDmNpcList();
+    };
+
+    window.setNpcTagFilter = (tag) => {
+      activeNpcTag = activeNpcTag === tag ? '' : tag;
+      renderDmNpcList();
+    };
+
+    window.editDmNpc = async (id) => {
+      const npcs = [...(state.dm.npcs || [])];
+      const target = npcs.find((n) => n.id === id);
+      if (!target) return;
+
+      const nextName = prompt('Имя NPC:', target.name);
+      if (nextName === null || !nextName.trim()) return;
+      const nextTagsRaw = prompt('Теги NPC через запятую:', (target.tags || []).join(', '));
+      const nextDesc = prompt('Описание / характер / заметки об NPC:', target.desc || '');
+
+      target.name = nextName.trim();
+      if (nextTagsRaw !== null) target.tags = parseTags(nextTagsRaw);
+      if (nextDesc !== null) target.desc = nextDesc.trim();
+
+      await saveDmPatch({ npcs });
+      renderDmNpcList();
+    };
+
+    window.deleteDmNpc = async (id) => {
+      if (!confirm('Удалить этого NPC из базы?')) return;
+      const npcs = (state.dm.npcs || []).filter((n) => n.id !== id);
+      await saveDmPatch({ npcs });
+      renderDmNpcList();
+    };
+
+    function renderDmNpcList() {
+      const npcs = state.dm.npcs || [];
+      const allTags = new Set();
+      npcs.forEach((n) => (n.tags || []).forEach((t) => allTags.add(t)));
+
+      document.getElementById('npcTagCloud').innerHTML = [...allTags].map((t) =>
+        `<span class="tag-chip ${activeNpcTag === t ? 'active' : ''}" onclick="setNpcTagFilter('${t}')">#${t}</span>`
+      ).join('');
+
+      const q = (document.getElementById('npcSearchInput')?.value || '').trim().toLowerCase();
+      const filtered = npcs.filter((n) => {
+        const tags = n.tags || [];
+        if (activeNpcTag && !tags.includes(activeNpcTag)) return false;
+        if (!q) return true;
+        return (n.name || '').toLowerCase().includes(q)
+          || (n.desc || '').toLowerCase().includes(q)
+          || tags.some((t) => t.includes(q));
+      });
+
+      document.getElementById('dmNpcList').innerHTML = filtered.map((n) => {
+        const tagsHtml = (n.tags || []).map((t) =>
+          `<span class="tag-chip" onclick="setNpcTagFilter('${t}')">#${t}</span>`
+        ).join(' ');
+
+        return `
+          <div style="background:var(--bg-card-alt); border:1px solid rgba(212,175,55,0.22); border-radius:10px; padding:10px; margin-bottom:8px;">
+            <div class="row" style="justify-content:space-between;">
+              <strong style="color:var(--gold); font-family:'Cinzel', serif;">${n.name}</strong>
+              <div class="row">
+                <button class="btn btn-xs" onclick="editDmNpc('${n.id}')" title="Редактировать NPC">✏️</button>
+                <button class="btn btn-danger btn-xs" onclick="deleteDmNpc('${n.id}')" title="Удалить NPC">✕</button>
+              </div>
+            </div>
+            ${n.desc ? `<div style="font-size:0.84rem; margin-top:5px; white-space:pre-wrap;">${n.desc}</div>` : ''}
+            ${tagsHtml ? `<div class="row mt-8" style="flex-wrap:wrap;">${tagsHtml}</div>` : ''}
+          </div>
+        `;
+      }).join('') || '<p class="muted">База NPC пуста или ничего не найдено.</p>';
+    }
+
     function combatantKey(c) {
       if (!c) return '';
       return c.type === 'hero' ? `hero:${c.heroId}` : `npc:${c.uid || c.name}`;
@@ -2541,13 +3095,6 @@
       const line = `[Р${round}] ${message}`;
       return [line, ...(state.dm.combatLog || [])].slice(0, 60);
     }
-
-    window.changeDmPin = () => {
-      const nextPin = prompt('Введите новый PIN-код Мастера (минимум 4 символа):');
-      if (!nextPin || nextPin.trim().length < 4) return alert('PIN должен содержать минимум 4 символа');
-      saveDmPatch({ pin: nextPin.trim() });
-      alert('PIN Мастера обновлён!');
-    };
 
     window.addFromBestiary = () => {
       const monsterId = document.getElementById('bestiarySelect').value;
@@ -2808,7 +3355,7 @@
       const logs = state.dm.combatLog || [];
       if (!logs.length) return alert('Журнал боя пуст');
       const summary = `⚔️ Итоги сражения (${state.dm.round || 1} раунд.): ` + [...logs].reverse().slice(-8).join(' | ');
-      const entry = { text: summary, author: 'Мастер (Журнал боя)', createdAt: Date.now() };
+      const entry = { text: summary, tags: ['бой'], author: 'Мастер (Журнал боя)', ownerId: 'dm', createdAt: Date.now() };
       if (isOnline) {
         await addDoc(collection(db, 'chronicle'), entry);
       } else {
@@ -2829,7 +3376,7 @@
             <div class="row" style="justify-content:space-between; padding:6px 8px; background:var(--bg-card-alt); border-radius:8px; margin-bottom:5px;">
               <div style="min-width:0;">
                 <strong>${h.name}</strong> <span class="muted">(${h.heroClass}, Ур. ${h.level || 1})</span>
-                <div class="muted" style="font-size:0.72rem;">✨ ${(h.xp ?? 0).toLocaleString('ru-RU')} XP</div>
+                <div class="muted" style="font-size:0.72rem;">✨ ${(h.xp ?? 0).toLocaleString('ru-RU')} XP • 🍖 ${h.rations ?? 5} рац.</div>
               </div>
               <div class="row">
                 <div style="font-size:0.84rem; white-space:nowrap;">
@@ -2919,6 +3466,7 @@
         : '<div class="muted">События боя будут записываться сюда автоматически...</div>';
 
       document.getElementById('dmSecretNotes').value = state.dm.notes || '';
+      renderDmNpcList();
     }
 
     // ================= DICE ROLLER & LOG =================
@@ -2960,7 +3508,7 @@
 
       const roller = session.role === 'dm'
         ? '👑 Мастер'
-        : (state.heroes[session.heroId]?.name || 'Странник');
+        : (session.role === 'admin' ? '🛡️ Админ' : (state.heroes[session.heroId]?.name || 'Странник'));
 
       const entry = {
         roller,
@@ -3030,6 +3578,7 @@
       renderSharedDocs();
       renderChronicle();
       renderDmScreen();
+      renderAdminPanel();
       renderRollLog();
     }
 
