@@ -186,11 +186,6 @@
       background: rgba(5, 150, 105, 0.22);
       color: #6ee7b7;
     }
-    .btn-temp {
-      border-color: rgba(56, 189, 248, 0.5);
-      background: rgba(2, 132, 199, 0.22);
-      color: #7dd3fc;
-    }
     .btn-sm {
       padding: 5px 9px;
       font-size: 0.78rem;
@@ -226,16 +221,6 @@
       display: grid;
       grid-template-columns: repeat(4, 1fr);
       gap: 4px;
-      background: rgba(0, 0, 0, 0.42);
-      border: 1px solid rgba(212, 175, 55, 0.22);
-      padding: 4px;
-      border-radius: 12px;
-      margin-bottom: 12px;
-    }
-    .subtab-bar-3 {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 5px;
       background: rgba(0, 0, 0, 0.42);
       border: 1px solid rgba(212, 175, 55, 0.22);
       padding: 4px;
@@ -345,7 +330,7 @@
       margin-bottom: 2px;
     }
 
-    /* Public Player Initiative Board (NO HP/AC/INDICATORS FOR MONSTERS) */
+    /* Public Player Initiative Board */
     .pub-combat-row {
       display: flex;
       align-items: center;
@@ -472,7 +457,7 @@
       transition: width 0.25s ease;
     }
 
-    /* Dynamic Gradient HP Box (Green -> Amber -> Crimson) + Temp HP */
+    /* Dynamic Gradient HP Box */
     .hp-box {
       background: linear-gradient(155deg, rgba(16, 185, 129, 0.24) 0%, rgba(16, 185, 129, 0.08) 100%);
       border: 1px solid rgba(16, 185, 129, 0.45);
@@ -1114,6 +1099,32 @@
       padding: 16px;
     }
 
+    /* Custom Styled Dialog Modal (replaces browser prompt/confirm/alert) */
+    #appDialogModal {
+      z-index: 220;
+    }
+    .dialog-box {
+      background: linear-gradient(165deg, #1b1721 0%, #110e15 100%);
+      border: 1.5px solid var(--gold);
+      box-shadow: 0 16px 44px rgba(0, 0, 0, 0.85), 0 0 24px rgba(212, 175, 55, 0.16);
+      border-radius: 16px;
+      width: 100%;
+      max-width: 400px;
+      padding: 18px 16px;
+      animation: dialogFadeIn 0.16s ease-out;
+    }
+    @keyframes dialogFadeIn {
+      from { opacity: 0; transform: scale(0.95) translateY(6px); }
+      to { opacity: 1; transform: scale(1) translateY(0); }
+    }
+    .dialog-message {
+      font-size: 0.92rem;
+      line-height: 1.45;
+      color: var(--text-main);
+      margin-bottom: 12px;
+      white-space: pre-wrap;
+    }
+
     .dice-grid {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
@@ -1276,7 +1287,6 @@
           <div id="heroResourcesList"></div>
         </div>
 
-        <!-- Action Economy Cheat Sheet D&D 5e -->
         <div class="card">
           <div class="card-header">
             <span class="card-title">📖 Памятка: Что сделать в ход</span>
@@ -1488,7 +1498,6 @@
 
     <!-- ================= TAB 3: SHARED HUB (PUBLIC COMBAT BOARD + DOCS + CHRONICLE) ================= -->
     <section id="tabShared" class="hidden">
-      <!-- Public Combat Initiative Board (NO HP, AC, OR HEALTH INDICATORS FOR ENEMIES!) -->
       <div id="publicCombatCard" class="card hidden">
         <div class="card-header">
           <span class="card-title">⚔️ Текущий бой • Раунд <span id="pubRoundCounter">1</span></span>
@@ -1565,7 +1574,6 @@
             </div>
           </div>
 
-          <!-- Bestiary + Custom Monster Builder -->
           <div class="bestiary-box">
             <div class="row" style="justify-content:space-between; margin-bottom:5px;">
               <span class="muted" style="font-size:0.72rem; color:var(--gold);">🐉 Бестиарий (статы + автобросок атаки):</span>
@@ -1578,7 +1586,6 @@
             <div id="bestiaryHint" class="muted" style="font-size:0.74rem; margin-top:5px;"></div>
           </div>
 
-          <!-- Quick One-off Enemy / NPC Form -->
           <div style="background:rgba(0,0,0,0.25); padding:8px; border-radius:10px; margin-bottom:10px;">
             <div class="row">
               <input type="text" id="initNameInput" placeholder="Быстрый враг / NPC" style="flex:2.2;" />
@@ -1676,7 +1683,6 @@
 
       <!-- DM SUBTAB 4: LOOT, TAVERN & RUMORS GENERATOR -->
       <div id="dmMainGenPanel" class="hidden">
-        <!-- Loot Generator -->
         <div class="card">
           <div class="card-header">
             <span class="card-title">💰 Генератор случайного лута</span>
@@ -1692,7 +1698,6 @@
           <div id="dmLootOutput" class="mt-12"></div>
         </div>
 
-        <!-- Tavern & Rumors Generator -->
         <div class="card">
           <div class="card-header">
             <span class="card-title">🍺 Генератор таверны и слухов</span>
@@ -1756,6 +1761,24 @@
       <span>Админ</span>
     </button>
   </nav>
+
+  <!-- ================= CUSTOM STYLED DIALOG MODAL (REPLACES BROWSER PROMPT/CONFIRM/ALERT) ================= -->
+  <div id="appDialogModal" class="modal-backdrop">
+    <div class="dialog-box">
+      <div class="card-header">
+        <span id="appDialogTitle" class="card-title">Сообщение</span>
+        <button id="appDialogCloseX" class="btn btn-xs">✕</button>
+      </div>
+      <div id="appDialogMessage" class="dialog-message"></div>
+      <div id="appDialogInputWrap" class="hidden" style="margin-bottom:12px;">
+        <input id="appDialogInput" type="text" />
+      </div>
+      <div class="row" style="justify-content:flex-end; gap:8px;">
+        <button id="appDialogCancelBtn" class="btn btn-sm">Отмена</button>
+        <button id="appDialogOkBtn" class="btn btn-primary btn-sm">Подтвердить</button>
+      </div>
+    </div>
+  </div>
 
   <!-- ================= MODAL: SHORT REST (HIT DICE & RESOURCES) ================= -->
   <div id="shortRestModal" class="modal-backdrop" onclick="if(event.target===this) this.classList.remove('open')">
@@ -2265,6 +2288,84 @@
       messagingSenderId: "799802669624",
       appId: "1:799802669624:web:23eb1868428dc1ee0004cd"
     };
+
+    // ==================== IN-APP STYLED DIALOGS (NO BROWSER PROMPT/CONFIRM/ALERT) ====================
+    function showAppDialog({ mode = 'alert', title = 'Гримуар', message = '', defaultValue = '', placeholder = '', inputType = 'text', inputMode = 'text', danger = false }) {
+      return new Promise((resolve) => {
+        const modal = document.getElementById('appDialogModal');
+        const titleEl = document.getElementById('appDialogTitle');
+        const msgEl = document.getElementById('appDialogMessage');
+        const inputWrap = document.getElementById('appDialogInputWrap');
+        const inputEl = document.getElementById('appDialogInput');
+        const okBtn = document.getElementById('appDialogOkBtn');
+        const cancelBtn = document.getElementById('appDialogCancelBtn');
+        const closeX = document.getElementById('appDialogCloseX');
+
+        titleEl.textContent = title;
+        msgEl.textContent = message;
+        msgEl.classList.toggle('hidden', !message);
+
+        okBtn.className = danger ? 'btn btn-danger btn-sm' : 'btn btn-primary btn-sm';
+        okBtn.textContent = mode === 'alert' ? 'Понятно' : (danger ? 'Удалить' : 'Подтвердить');
+        cancelBtn.classList.toggle('hidden', mode === 'alert');
+
+        if (mode === 'prompt') {
+          inputWrap.classList.remove('hidden');
+          inputEl.type = inputType;
+          inputEl.setAttribute('inputmode', inputMode);
+          inputEl.placeholder = placeholder;
+          inputEl.value = defaultValue !== undefined && defaultValue !== null ? String(defaultValue) : '';
+        } else {
+          inputWrap.classList.add('hidden');
+          inputEl.value = '';
+        }
+
+        const cleanup = (result) => {
+          modal.classList.remove('open');
+          okBtn.onclick = null;
+          cancelBtn.onclick = null;
+          closeX.onclick = null;
+          modal.onclick = null;
+          inputEl.onkeydown = null;
+          resolve(result);
+        };
+
+        okBtn.onclick = () => cleanup(mode === 'prompt' ? inputEl.value : true);
+        cancelBtn.onclick = () => cleanup(mode === 'prompt' ? null : false);
+        closeX.onclick = () => cleanup(mode === 'prompt' ? null : false);
+        modal.onclick = (e) => {
+          if (e.target === modal) cleanup(mode === 'prompt' ? null : false);
+        };
+        inputEl.onkeydown = (e) => {
+          if (e.key === 'Enter') {
+            e.preventDefault();
+            cleanup(inputEl.value);
+          } else if (e.key === 'Escape') {
+            e.preventDefault();
+            cleanup(null);
+          }
+        };
+
+        modal.classList.add('open');
+        if (mode === 'prompt') {
+          setTimeout(() => {
+            inputEl.focus();
+            inputEl.select();
+          }, 40);
+        } else {
+          setTimeout(() => okBtn.focus(), 40);
+        }
+      });
+    }
+
+    const uiAlert = (message, title = 'Уведомление') =>
+      showAppDialog({ mode: 'alert', title, message });
+
+    const uiConfirm = (message, title = 'Подтверждение', danger = false) =>
+      showAppDialog({ mode: 'confirm', title, message, danger });
+
+    const uiPrompt = (message, defaultValue = '', opts = {}) =>
+      showAppDialog({ mode: 'prompt', title: opts.title || 'Ввод данных', message, defaultValue, ...opts });
 
     const CANON_XP_5E = [
       0, 300, 900, 2700, 6500, 14000, 23000, 34000, 48000, 64000,
@@ -2789,7 +2890,7 @@
 
     window.createNewHero = async () => {
       const name = document.getElementById('newHeroName').value.trim();
-      if (!name) return alert('Введите имя персонажа');
+      if (!name) return uiAlert('Введите имя персонажа', 'Создание героя');
 
       const rKey = document.getElementById('newHeroRaceSelect').value;
       const cKey = document.getElementById('newHeroClassSelect').value;
@@ -2853,32 +2954,48 @@
       loginAsHero(id, true);
     };
 
-    window.loginAsHero = (id, skipPin = false) => {
+    window.loginAsHero = async (id, skipPin = false) => {
       const hero = state.heroes[id];
       if (!hero) return;
       if (!skipPin && hero.pin) {
-        const entered = prompt(`Введите PIN-код для ${hero.name}:`);
-        if (entered !== hero.pin) return alert('Неверный PIN-код');
+        const entered = await uiPrompt(`Введите PIN-код для героя «${hero.name}»:`, '', {
+          title: '🛡️ Вход в профиль',
+          inputType: 'password',
+          inputMode: 'numeric',
+          placeholder: '••••'
+        });
+        if (entered === null) return;
+        if (entered !== hero.pin) return uiAlert('Неверный PIN-код', 'Доступ запрещён');
       }
       session = { role: 'hero', heroId: id };
       enterApp();
     };
 
-    window.promptDmLogin = () => {
-      const entered = prompt('Введите PIN Мастера:');
+    window.promptDmLogin = async () => {
+      const entered = await uiPrompt('Введите секретный PIN Мастера:', '', {
+        title: '👑 Ширма Мастера',
+        inputType: 'password',
+        inputMode: 'numeric',
+        placeholder: '••••'
+      });
       if (entered === null) return;
       if (entered !== (state.dm.pin || '0000')) {
-        return alert('Неверный пароль Мастера');
+        return uiAlert('Неверный пароль Мастера', 'Доступ запрещён');
       }
       session = { role: 'dm', heroId: null };
       enterApp();
     };
 
-    window.promptAdminLogin = () => {
-      const entered = prompt('Введите PIN Админа (по умолчанию 1111):');
+    window.promptAdminLogin = async () => {
+      const entered = await uiPrompt('Введите PIN Администратора (по умолчанию 1111):', '', {
+        title: '🛡️ Панель Админа',
+        inputType: 'password',
+        inputMode: 'numeric',
+        placeholder: '••••'
+      });
       if (entered === null) return;
       if (entered !== (state.dm.adminPin || '1111')) {
-        return alert('Неверный пароль Админа');
+        return uiAlert('Неверный пароль Админа', 'Доступ запрещён');
       }
       session = { role: 'admin', heroId: null };
       enterApp();
@@ -2945,7 +3062,11 @@
     window.setHeroTempHp = async () => {
       const h = state.heroes[session.heroId];
       if (!h) return;
-      const raw = prompt('Задать временные хиты (Temp HP, по правилам 5e не складываются, а заменяются):', h.tempHp || 0);
+      const raw = await uiPrompt(
+        'Укажите количество временных хитов (по правилам 5e они не складываются, а заменяются):',
+        h.tempHp || 0,
+        { title: '🛡️ Временные ОЗ', inputType: 'number', inputMode: 'numeric' }
+      );
       if (raw === null || raw.trim() === '') return;
       const val = Math.max(0, parseInt(raw, 10) || 0);
       await saveHeroPatch({ tempHp: val });
@@ -2971,7 +3092,7 @@
       const hd = guessHitDieForHero(h);
       const left = h.hitDiceLeft !== undefined ? h.hitDiceLeft : lvl;
       if (left <= 0) {
-        return alert('Кости хитов закончились! Восстановите их долгим отдыхом.');
+        return uiAlert('Кости хитов закончились! Восстановите их долгим отдыхом.', 'Короткий отдых');
       }
       const conMod = Math.floor(((h.stats?.CON ?? 10) - 10) / 2);
       const roll = Math.floor(Math.random() * hd) + 1;
@@ -3066,7 +3187,7 @@
       const h = state.heroes[session.heroId];
       if (!h) return;
       const name = document.getElementById('wpnName').value.trim();
-      if (!name) return alert('Введите название оружия');
+      if (!name) return uiAlert('Введите название оружия', 'Арсенал');
 
       const wpn = {
         id: 'wpn_' + Date.now(),
@@ -3087,7 +3208,8 @@
 
     window.deleteHeroWeapon = async (wpnId) => {
       const h = state.heroes[session.heroId];
-      if (!h || !confirm('Удалить это оружие?')) return;
+      if (!h) return;
+      if (!(await uiConfirm('Удалить это оружие из арсенала?', 'Удаление оружия', true))) return;
       const weapons = (h.weapons || []).filter((w) => w.id !== wpnId);
       await saveHeroPatch({ weapons });
       renderHeroSheet();
@@ -3137,9 +3259,17 @@
     window.addClassResource = async () => {
       const h = state.heroes[session.heroId];
       if (!h) return;
-      const name = prompt('Название ресурса (напр. Ярость, Ци, Вдохновение, Порыв действий):');
+      const name = await uiPrompt('Название ресурса (напр. Ярость, Ци, Вдохновение, Порыв действий):', '', {
+        title: '🔥 Новый ресурс',
+        placeholder: 'Ярость'
+      });
       if (!name || !name.trim()) return;
-      const max = Math.max(1, parseInt(prompt('Максимум зарядов / очков:', '2')) || 1);
+      const maxRaw = await uiPrompt('Максимум зарядов / очков:', '2', {
+        title: '🔥 Заряды ресурса',
+        inputType: 'number',
+        inputMode: 'numeric'
+      });
+      const max = Math.max(1, parseInt(maxRaw, 10) || 1);
       const resources = [...(h.resources || []), { id: 'res_' + Date.now(), name: name.trim(), cur: max, max }];
       await saveHeroPatch({ resources });
       renderHeroSheet();
@@ -3189,7 +3319,7 @@
       const h = state.heroes[session.heroId];
       if (!h) return;
       const name = document.getElementById('splName').value.trim();
-      if (!name) return alert('Введите название заклинания или фокуса');
+      if (!name) return uiAlert('Введите название заклинания или фокуса', 'Гримуар');
 
       const spl = {
         id: 'spl_' + Date.now(),
@@ -3209,7 +3339,8 @@
 
     window.deleteHeroSpell = async (splId) => {
       const h = state.heroes[session.heroId];
-      if (!h || !confirm('Удалить это заклинание из гримуара?')) return;
+      if (!h) return;
+      if (!(await uiConfirm('Удалить это заклинание из гримуара?', 'Удаление заклинания', true))) return;
       const spells = (h.spells || []).filter((s) => s.id !== splId);
       await saveHeroPatch({ spells });
       renderHeroSheet();
@@ -3225,9 +3356,11 @@
         while (slots.length < 9) slots.push(0);
         const idx = s.level - 1;
         if ((slots[idx] || 0) <= 0) {
-          if (!confirm(`У вас закончились ячейки ${s.level} круга! Всё равно сотворить (например, ритуалом или за счёт черты)?`)) {
-            return;
-          }
+          const ok = await uiConfirm(
+            `У вас закончились ячейки ${s.level} круга! Всё равно сотворить (например, ритуалом или за счёт черты)?`,
+            'Нет свободных ячеек'
+          );
+          if (!ok) return;
         } else {
           slots[idx] = Math.max(0, slots[idx] - 1);
           await saveHeroPatch({ slots });
@@ -3314,27 +3447,43 @@
 
     // ================= ADMIN PANEL ACTIONS =================
     window.changeAdminPinOnly = async () => {
-      const nextPin = prompt('Новый PIN-код Админа (минимум 4 символа):');
-      if (!nextPin || nextPin.trim().length < 4) return alert('PIN должен содержать минимум 4 символа');
+      const nextPin = await uiPrompt('Новый PIN-код Админа (минимум 4 символа):', '', {
+        title: '🔑 Смена PIN Админа',
+        inputType: 'password',
+        inputMode: 'numeric',
+        placeholder: '••••'
+      });
+      if (nextPin === null) return;
+      if (nextPin.trim().length < 4) return uiAlert('PIN должен содержать минимум 4 символа', 'Ошибка');
       await saveDmPatch({ adminPin: nextPin.trim() });
-      alert('PIN Админа обновлён!');
+      await uiAlert('PIN Админа обновлён!', 'Готово');
     };
 
     window.changeDmPinOnly = async () => {
-      const nextPin = prompt('Новый PIN-код Мастера (минимум 4 символа):');
-      if (!nextPin || nextPin.trim().length < 4) return alert('PIN должен содержать минимум 4 символа');
+      const nextPin = await uiPrompt('Новый PIN-код Мастера (минимум 4 символа):', '', {
+        title: '🔑 Смена PIN Мастера',
+        inputType: 'password',
+        inputMode: 'numeric',
+        placeholder: '••••'
+      });
+      if (nextPin === null) return;
+      if (nextPin.trim().length < 4) return uiAlert('PIN должен содержать минимум 4 символа', 'Ошибка');
       await saveDmPatch({ pin: nextPin.trim() });
-      alert('PIN Мастера обновлён!');
+      await uiAlert('PIN Мастера обновлён!', 'Готово');
     };
 
     window.resetHeroPinByAdmin = async (heroId) => {
       if (session.role !== 'admin') return;
       const h = state.heroes[heroId];
       if (!h) return;
-      const nextPin = prompt(`Задайте новый 4-значный PIN для «${h.name}»:`, '1234');
-      if (!nextPin || nextPin.trim().length < 4) return alert('PIN должен содержать минимум 4 цифры');
+      const nextPin = await uiPrompt(`Задайте новый 4-значный PIN для «${h.name}»:`, '1234', {
+        title: '🔑 Сброс PIN игрока',
+        inputMode: 'numeric'
+      });
+      if (nextPin === null) return;
+      if (nextPin.trim().length < 4) return uiAlert('PIN должен содержать минимум 4 цифры', 'Ошибка');
       await saveHeroPatchById(heroId, { pin: nextPin.trim() });
-      alert(`PIN для ${h.name} изменён на ${nextPin.trim()}`);
+      await uiAlert(`PIN для «${h.name}» изменён на ${nextPin.trim()}`, 'Готово');
     };
 
     function renderAdminPanel() {
@@ -3372,7 +3521,6 @@
       return saveHeroPatchById(session.heroId, patch);
     }
 
-    // Applies damage (consuming Temp HP first) or healing (resetting death saves)
     function computeHeroHpAfterDelta(h, delta) {
       let hpCur = h.hpCur || 0;
       let tempHp = h.tempHp || 0;
@@ -3425,7 +3573,7 @@
       const h = state.heroes[session.heroId];
       if (!h) return;
       const name = document.getElementById('editHeroName').value.trim();
-      if (!name) return alert('Имя героя не может быть пустым');
+      if (!name) return uiAlert('Имя героя не может быть пустым', 'Ошибка');
 
       const race = document.getElementById('editHeroRace').value.trim() || 'Человек';
       const heroClass = document.getElementById('editHeroClass').value.trim() || 'Искатель приключений';
@@ -3456,8 +3604,9 @@
 
     async function performDeleteHero(heroId) {
       const h = state.heroes[heroId];
-      if (!h) return;
-      if (!confirm(`Удалить персонажа «${h.name}» безвозвратно?`)) return;
+      if (!h) return false;
+      const ok = await uiConfirm(`Удалить персонажа «${h.name}» безвозвратно?`, 'Удаление героя', true);
+      if (!ok) return false;
 
       const initList = state.dm.initiative || [];
       if (initList.some((c) => c.type === 'hero' && c.heroId === heroId)) {
@@ -3472,14 +3621,17 @@
         delete state.heroes[heroId];
         saveLocalState();
       }
+      return true;
     }
 
     window.deleteCurrentHero = async () => {
       const id = session.heroId;
       if (!id) return;
-      await performDeleteHero(id);
-      document.getElementById('editHeroModal').classList.remove('open');
-      logout();
+      const deleted = await performDeleteHero(id);
+      if (deleted) {
+        document.getElementById('editHeroModal').classList.remove('open');
+        logout();
+      }
     };
 
     window.deleteHeroByAdmin = async (heroId) => {
@@ -3491,7 +3643,12 @@
     window.addSelfXp = async () => {
       const h = state.heroes[session.heroId];
       if (!h) return;
-      const raw = prompt('Сколько опыта (XP) добавить (или с минусом, чтобы убавить)?');
+      const raw = await uiPrompt('Сколько опыта (XP) добавить (или с минусом, чтобы убавить)?', '', {
+        title: '✨ Опыт персонажа',
+        inputType: 'number',
+        inputMode: 'numeric',
+        placeholder: '300'
+      });
       if (raw === null || raw.trim() === '') return;
       const delta = parseInt(raw, 10);
       if (isNaN(delta) || delta === 0) return;
@@ -3509,7 +3666,10 @@
       const suggestedProf = profBonusForLevel(nextLvl);
       const nextHdLeft = (h.hitDiceLeft !== undefined ? h.hitDiceLeft : curLvl) + 1;
       await saveHeroPatch({ level: nextLvl, profBonus: suggestedProf, hitDiceLeft: Math.min(nextLvl, nextHdLeft) });
-      alert(`Поздравляем! ${h.name} достиг ${nextLvl} уровня! Бонус мастерства обновлён до +${suggestedProf}. Не забудьте увеличить макс. ОЗ в профиле.`);
+      await uiAlert(
+        `Поздравляем! ${h.name} достиг ${nextLvl} уровня!\nБонус мастерства обновлён до +${suggestedProf}. Не забудьте увеличить макс. ОЗ в профиле.`,
+        '🎉 Новый уровень!'
+      );
       renderHeroSheet();
     };
 
@@ -3558,7 +3718,7 @@
 
     window.openAwardXpModal = () => {
       const heroes = Object.values(state.heroes);
-      if (!heroes.length) return alert('В партии пока нет ни одного героя.');
+      if (!heroes.length) return uiAlert('В партии пока нет ни одного героя.', 'Выдача опыта');
 
       document.getElementById('xpPoolTotal').value = '';
       document.getElementById('xpSingleAmount').value = '';
@@ -3610,9 +3770,9 @@
 
       if (mode === 'equal') {
         const total = parseInt(document.getElementById('xpPoolTotal').value) || 0;
-        if (total <= 0) return alert('Введите положительное количество опыта');
+        if (total <= 0) return uiAlert('Введите положительное количество опыта', 'Ошибка');
         const each = Math.floor(total / heroes.length);
-        if (each <= 0) return alert('Сумма слишком мала для деления на всех');
+        if (each <= 0) return uiAlert('Сумма слишком мала для деления на всех', 'Ошибка');
         grants = heroes.map((h) => ({ hero: h, amount: each }));
       } else if (mode === 'custom') {
         document.querySelectorAll('[data-xp-hero-id]').forEach((inp) => {
@@ -3620,12 +3780,12 @@
           const h = state.heroes[inp.getAttribute('data-xp-hero-id')];
           if (h && val !== 0) grants.push({ hero: h, amount: val });
         });
-        if (!grants.length) return alert('Укажите опыт хотя бы одному герою');
+        if (!grants.length) return uiAlert('Укажите опыт хотя бы одному герою', 'Ошибка');
       } else if (mode === 'single') {
         const id = document.getElementById('xpSingleHeroSelect').value;
         const val = parseInt(document.getElementById('xpSingleAmount').value) || 0;
         const h = state.heroes[id];
-        if (!h || val === 0) return alert('Укажите количество опыта');
+        if (!h || val === 0) return uiAlert('Укажите количество опыта', 'Ошибка');
         grants = [{ hero: h, amount: val }];
       }
 
@@ -4387,7 +4547,7 @@
         ...(state.dm.npcs || [])
       ];
       await saveDmPatch({ npcs });
-      alert(`«${npcName}» добавлен в Базу NPC Мастера!`);
+      await uiAlert(`«${npcName}» добавлен в Базу NPC Мастера!`, 'База NPC');
     };
 
     // ================= PUBLIC COMBAT BOARD (NO HP, AC, OR MONSTER HEALTH INDICATORS!) =================
@@ -4473,7 +4633,11 @@
       const titleInput = document.getElementById('newTextDocTitle');
       const title = titleInput.value.trim();
       if (!title) return;
-      const body = prompt('Введите текст документа / правил / письма:') || '';
+      const body = await uiPrompt('Введите текст документа / правил / письма:', '', {
+        title: `📄 ${title}`,
+        placeholder: 'Текст документа...'
+      });
+      if (body === null) return;
       const { author, ownerId } = currentActorIdentity();
       const docObj = { title, type: 'text', content: body, author, ownerId, createdAt: Date.now() };
       if (isOnline) {
@@ -4488,9 +4652,11 @@
     window.renameSharedDoc = async (id) => {
       const d = state.docs.find((x) => x.id === id);
       if (!d || !canModifyDoc(d)) {
-        return alert('Переименовывать можно только свои файлы (или с правами Админа / Мастера).');
+        return uiAlert('Переименовывать можно только свои файлы (или с правами Админа / Мастера).', 'Нет прав');
       }
-      const nextTitle = prompt('Новое название файла / документа:', d.title);
+      const nextTitle = await uiPrompt('Новое название файла / документа:', d.title, {
+        title: '✏️ Переименовать файл'
+      });
       if (!nextTitle || !nextTitle.trim()) return;
       const cleanTitle = nextTitle.trim();
 
@@ -4541,9 +4707,9 @@
     window.deleteSharedDoc = async (id) => {
       const d = state.docs.find((x) => x.id === id);
       if (!d || !canModifyDoc(d)) {
-        return alert('Удалять чужие документы может только Админ или Мастер.');
+        return uiAlert('Удалять чужие документы может только Админ или Мастер.', 'Нет прав');
       }
-      if (!confirm(`Удалить документ «${d.title}»?`)) return;
+      if (!(await uiConfirm(`Удалить документ «${d.title}»?`, 'Удаление файла', true))) return;
       if (isOnline) {
         await deleteDoc(doc(db, 'docs', id));
       } else {
@@ -4611,11 +4777,15 @@
     window.editChronicleEntry = async (id) => {
       const item = state.chronicle.find((c) => c.id === id);
       if (!item || !canModifyChronicle(item)) {
-        return alert('Редактировать чужие записи может только Админ или Мастер.');
+        return uiAlert('Редактировать чужие записи может только Админ или Мастер.', 'Нет прав');
       }
-      const nextText = prompt('Редактировать запись летописи:', item.text);
+      const nextText = await uiPrompt('Редактировать запись летописи:', item.text, {
+        title: '✏️ Правка летописи'
+      });
       if (nextText === null || !nextText.trim()) return;
-      const nextTagsRaw = prompt('Теги через запятую:', (item.tags || []).join(', '));
+      const nextTagsRaw = await uiPrompt('Теги через запятую:', (item.tags || []).join(', '), {
+        title: '🏷️ Теги записи'
+      });
       const tags = nextTagsRaw !== null ? parseTags(nextTagsRaw) : (item.tags || []);
 
       if (isOnline) {
@@ -4630,9 +4800,9 @@
     window.deleteChronicleEntry = async (id) => {
       const item = state.chronicle.find((c) => c.id === id);
       if (!item || !canModifyChronicle(item)) {
-        return alert('Удалять чужие записи может только Админ или Мастер.');
+        return uiAlert('Удалять чужие записи может только Админ или Мастер.', 'Нет прав');
       }
-      if (!confirm('Удалить эту запись из летописи?')) return;
+      if (!(await uiConfirm('Удалить эту запись из летописи?', 'Удаление записи', true))) return;
       if (isOnline) {
         await deleteDoc(doc(db, 'chronicle', id));
       } else {
@@ -4714,7 +4884,6 @@
       if (!isNotes) renderDmNpcList();
     };
 
-    // Custom Monster Builder
     window.openCustomMonsterModal = () => {
       document.getElementById('cmName').value = '';
       document.getElementById('cmCr').value = '3';
@@ -4730,7 +4899,7 @@
 
     window.saveCustomBestiaryMonster = async () => {
       const name = document.getElementById('cmName').value.trim();
-      if (!name) return alert('Введите название монстра');
+      if (!name) return uiAlert('Введите название монстра', 'Бестиарий');
 
       const monster = {
         id: 'cmon_' + Date.now(),
@@ -4757,7 +4926,6 @@
       document.getElementById('customMonsterModal').classList.remove('open');
     };
 
-    // Monster Attack Button in Combat Tracker
     window.rollMonsterAttack = async (idx) => {
       const list = state.dm.initiative || [];
       const c = list[idx];
@@ -4798,7 +4966,6 @@
       }
     };
 
-    // Loot Generator
     const LOOT_TABLES = {
       low: {
         coins: () => `${(Math.floor(Math.random() * 6) + 2) * 10} ЗМ, ${(Math.floor(Math.random() * 8) + 3) * 10} СМ`,
@@ -4866,7 +5033,6 @@
       `;
     };
 
-    // Tavern & Rumors Generator
     const TAVERN_ADJ = ['Пьяный', 'Ржавый', 'Золотой', 'Хромой', 'Весёлый', 'Спящий', 'Серебряный', 'Тёмный', 'Старый', 'Морской'];
     const TAVERN_NOUN = ['Грифон', 'Котёл', 'Дракон', 'Вепрь', 'Фонарь', 'Якорь', 'Единорог', 'Ворон', 'Кубок', 'Гоблин'];
     const TAVERN_VIBE = [
@@ -4927,7 +5093,7 @@
         ...(state.dm.npcs || [])
       ];
       await saveDmPatch({ npcs });
-      alert(`Трактирщик «${keeperName}» добавлен в Базу NPC!`);
+      await uiAlert(`Трактирщик «${keeperName}» добавлен в Базу NPC!`, 'База NPC');
     };
 
     window.publishGeneratedTextToChronicle = async (text, tag) => {
@@ -4938,7 +5104,7 @@
         state.chronicle.unshift({ id: 'chr_' + Date.now(), ...entry });
         saveLocalState();
       }
-      alert('Опубликовано в Летопись партии!');
+      await uiAlert('Добыча опубликована в Летопись партии!', 'Летопись');
     };
 
     window.handleDmNoteFileSelect = async (e) => {
@@ -4967,7 +5133,7 @@
       const tags = parseTags(tagsInput.value);
 
       if (!title && !body && !pendingDmNoteAttachment) {
-        return alert('Введите текст записи или прикрепите фото / файл.');
+        return uiAlert('Введите текст записи или прикрепите фото / файл.', 'Записи Мастера');
       }
 
       const cardObj = {
@@ -5001,10 +5167,10 @@
       const target = cards.find((c) => c.id === id);
       if (!target) return;
 
-      const nextTitle = prompt('Заголовок записи:', target.title);
+      const nextTitle = await uiPrompt('Заголовок записи:', target.title, { title: '✏️ Редактировать запись' });
       if (nextTitle === null) return;
-      const nextTagsRaw = prompt('Теги через запятую:', (target.tags || []).join(', '));
-      const nextBody = prompt('Текст заметки:', target.body || '');
+      const nextTagsRaw = await uiPrompt('Теги через запятую:', (target.tags || []).join(', '), { title: '🏷️ Теги записи' });
+      const nextBody = await uiPrompt('Текст заметки:', target.body || '', { title: '📝 Текст заметки' });
 
       if (nextTitle.trim()) target.title = nextTitle.trim();
       if (nextTagsRaw !== null) target.tags = parseTags(nextTagsRaw);
@@ -5015,7 +5181,7 @@
     };
 
     window.deleteDmNoteCard = async (id) => {
-      if (!confirm('Удалить эту запись из заметок Мастера?')) return;
+      if (!(await uiConfirm('Удалить эту запись из заметок Мастера?', 'Удаление записи', true))) return;
       const noteCards = (state.dm.noteCards || []).filter((c) => c.id !== id);
       await saveDmPatch({ noteCards });
       renderDmNotesList();
@@ -5035,7 +5201,7 @@
       const hasAttachment = Boolean(card.attachment && card.attachment.fileContent);
       const hasBody = Boolean(card.body && card.body.trim());
 
-      if (!confirm(`Опубликовать «${card.title}» для всех игроков партии?`)) return;
+      if (!(await uiConfirm(`Опубликовать «${card.title}» для всех игроков партии?`, '📢 Поделиться с игроками'))) return;
 
       if (hasAttachment) {
         const docObj = {
@@ -5075,7 +5241,7 @@
       await saveDmPatch({ noteCards: cards });
       if (!isOnline) saveLocalState();
       renderDmNotesList();
-      alert(`«${card.title}» теперь доступно всем игрокам во вкладке «Летопись»!`);
+      await uiAlert(`«${card.title}» теперь доступно всем игрокам во вкладке «Летопись»!`, 'Опубликовано');
     };
 
     window.renderDmNotesList = () => {
@@ -5150,7 +5316,7 @@
       const name = document.getElementById('newNpcNameInput').value.trim();
       const tags = parseTags(document.getElementById('newNpcTagsInput').value);
       const desc = document.getElementById('newNpcDescInput').value.trim();
-      if (!name) return alert('Введите имя NPC');
+      if (!name) return uiAlert('Введите имя NPC', 'База NPC');
 
       const npcs = [
         { id: 'npc_' + Date.now(), name, tags, desc, createdAt: Date.now() },
@@ -5174,10 +5340,10 @@
       const target = npcs.find((n) => n.id === id);
       if (!target) return;
 
-      const nextName = prompt('Имя NPC:', target.name);
+      const nextName = await uiPrompt('Имя NPC:', target.name, { title: '✏️ Редактировать NPC' });
       if (nextName === null || !nextName.trim()) return;
-      const nextTagsRaw = prompt('Теги NPC через запятую:', (target.tags || []).join(', '));
-      const nextDesc = prompt('Описание / характер / заметки об NPC:', target.desc || '');
+      const nextTagsRaw = await uiPrompt('Теги NPC через запятую:', (target.tags || []).join(', '), { title: '🏷️ Теги NPC' });
+      const nextDesc = await uiPrompt('Описание / характер / заметки об NPC:', target.desc || '', { title: '🎭 Описание NPC' });
 
       target.name = nextName.trim();
       if (nextTagsRaw !== null) target.tags = parseTags(nextTagsRaw);
@@ -5188,7 +5354,7 @@
     };
 
     window.deleteDmNpc = async (id) => {
-      if (!confirm('Удалить этого NPC из базы?')) return;
+      if (!(await uiConfirm('Удалить этого NPC из базы?', 'Удаление NPC', true))) return;
       const npcs = (state.dm.npcs || []).filter((n) => n.id !== id);
       await saveDmPatch({ npcs });
       renderDmNpcList();
@@ -5340,13 +5506,17 @@
       document.getElementById('initAcInput').value = '';
     };
 
-    window.editCombatantInit = (idx) => {
+    window.editCombatantInit = async (idx) => {
       const list = [...(state.dm.initiative || [])];
       const target = list[idx];
       if (!target) return;
 
       const cName = target.type === 'hero' ? (state.heroes[target.heroId]?.name || target.name) : target.name;
-      const raw = prompt(`Новая инициатива для ${cName}:`, target.init);
+      const raw = await uiPrompt(`Новая инициатива для «${cName}»:`, target.init, {
+        title: '🎲 Инициатива',
+        inputType: 'number',
+        inputMode: 'numeric'
+      });
       if (raw === null || raw.trim() === '') return;
       const nextInit = parseInt(raw, 10);
       if (isNaN(nextInit)) return;
@@ -5409,7 +5579,7 @@
 
     window.openSelectPartyForCombatModal = () => {
       const heroes = Object.values(state.heroes);
-      if (!heroes.length) return alert('В партии пока нет героев.');
+      if (!heroes.length) return uiAlert('В партии пока нет героев.', 'Бой');
 
       const existingHeroIds = new Set(
         (state.dm.initiative || []).filter((i) => i.type === 'hero').map((i) => i.heroId)
@@ -5491,7 +5661,7 @@
       }
 
       if (foundIdx === -1) {
-        return alert('В бою не осталось активных участников (у всех 0 ОЗ).');
+        return uiAlert('В бою не осталось активных участников (у всех 0 ОЗ).', 'Бой');
       }
 
       const active = list[foundIdx];
@@ -5533,20 +5703,33 @@
       }
     };
 
-    window.promptCustomCombatHp = (idx, mode) => {
-      const label = mode === 'dmg' ? 'Сколько урона нанести?' : 'Сколько ОЗ вылечить?';
-      const raw = prompt(label);
-      const val = parseInt(raw);
+    window.promptCustomCombatHp = async (idx, mode) => {
+      const isDmg = mode === 'dmg';
+      const raw = await uiPrompt(
+        isDmg ? 'Сколько единиц урона нанести?' : 'Сколько ОЗ вылечить?',
+        '',
+        {
+          title: isDmg ? '⚔️ Нанести урон' : '💚 Лечение',
+          inputType: 'number',
+          inputMode: 'numeric',
+          placeholder: '10'
+        }
+      );
+      if (raw === null) return;
+      const val = parseInt(raw, 10);
       if (!val || val <= 0) return;
-      applyCombatHp(idx, mode === 'dmg' ? -val : val);
+      applyCombatHp(idx, isDmg ? -val : val);
     };
 
-    window.addCombatCondition = (idx) => {
+    window.addCombatCondition = async (idx) => {
       const list = [...(state.dm.initiative || [])];
       const c = list[idx];
       if (!c) return;
-      const presets = 'Оглушён, Отравлен, Сбит с ног, Концентрация, Слепота, Испуг';
-      const cond = prompt(`Введите состояние (напр. ${presets}):`);
+      const cond = await uiPrompt(
+        'Введите состояние (напр. Оглушён, Отравлен, Сбит с ног, Концентрация, Слепота, Испуг):',
+        '',
+        { title: '✨ Наложить состояние', placeholder: 'Оглушён' }
+      );
       if (!cond || !cond.trim()) return;
       const clean = cond.trim();
       const conds = [...(c.conditions || [])];
@@ -5576,14 +5759,14 @@
       saveDmPatch({ initiative: list, turnIndex });
     };
 
-    window.clearInitiative = () => {
-      if (!confirm('Завершить бой и очистить трекер с журналом?')) return;
+    window.clearInitiative = async () => {
+      if (!(await uiConfirm('Завершить бой и очистить трекер с журналом?', 'Сброс боя', true))) return;
       saveDmPatch({ initiative: [], turnIndex: 0, round: 1, combatStarted: false, combatLog: [] });
     };
 
     window.exportCombatToChronicle = async () => {
       const logs = state.dm.combatLog || [];
-      if (!logs.length) return alert('Журнал боя пуст');
+      if (!logs.length) return uiAlert('Журнал боя пуст', 'Летопись');
       const summary = `⚔️ Итоги сражения (${state.dm.round || 1} раунд.): ` + [...logs].reverse().slice(-8).join(' | ');
       const entry = { text: summary, tags: ['бой'], author: 'Мастер (Журнал боя)', ownerId: 'dm', createdAt: Date.now() };
       if (isOnline) {
@@ -5592,7 +5775,7 @@
         state.chronicle.unshift({ id: 'chr_' + Date.now(), ...entry });
         saveLocalState();
       }
-      alert('Сводка боя сохранена в общую Летопись партии!');
+      await uiAlert('Сводка боя сохранена в общую Летопись партии!', 'Летопись');
     };
 
     window.saveDmNotes = () => {
