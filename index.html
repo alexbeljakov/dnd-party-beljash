@@ -418,19 +418,22 @@
       transition: width 0.25s ease;
     }
 
+    /* Dynamic Gradient HP Box (Green -> Amber -> Crimson) */
     .hp-box {
-      background: rgba(185, 28, 28, 0.14);
-      border: 1px solid rgba(239, 68, 68, 0.35);
+      background: linear-gradient(155deg, rgba(16, 185, 129, 0.24) 0%, rgba(16, 185, 129, 0.08) 100%);
+      border: 1px solid rgba(16, 185, 129, 0.45);
       border-radius: 12px;
       padding: 10px 12px;
       text-align: center;
       margin-top: 10px;
+      transition: background 0.35s ease, border-color 0.35s ease, box-shadow 0.35s ease;
     }
     .hp-value {
       font-size: 1.75rem;
       font-weight: 800;
-      color: #fca5a5;
+      color: #6ee7b7;
       line-height: 1.1;
+      transition: color 0.35s ease;
     }
     .hp-controls {
       display: grid;
@@ -798,6 +801,138 @@
       border-radius: 3px;
     }
 
+    /* ================= 3D ANIMATED DICE STAGE ================= */
+    .dice-stage {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 12px 10px;
+      margin-bottom: 10px;
+      border-radius: 12px;
+      background: radial-gradient(circle at 50% 45%, rgba(212, 175, 55, 0.12), rgba(10, 8, 13, 0.85));
+      border: 1px solid rgba(212, 175, 55, 0.24);
+      perspective: 700px;
+      transition: border-color 0.25s ease, box-shadow 0.25s ease, background 0.25s ease;
+    }
+    .dice-stage.stage-crit {
+      border-color: #34d399;
+      background: radial-gradient(circle at 50% 45%, rgba(16, 185, 129, 0.26), rgba(10, 16, 14, 0.92));
+      box-shadow: 0 0 24px rgba(16, 185, 129, 0.32);
+    }
+    .dice-stage.stage-fumble {
+      border-color: #ef4444;
+      background: radial-gradient(circle at 50% 45%, rgba(220, 38, 38, 0.26), rgba(18, 9, 11, 0.92));
+      box-shadow: 0 0 24px rgba(239, 68, 68, 0.32);
+    }
+
+    .die-poly {
+      position: relative;
+      width: 78px;
+      height: 78px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transform-style: preserve-3d;
+      will-change: transform;
+    }
+    .die-poly svg {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      filter: drop-shadow(0 6px 12px rgba(0, 0, 0, 0.7));
+      transition: filter 0.25s ease;
+    }
+    .die-poly .die-stroke {
+      stroke: var(--gold);
+      transition: stroke 0.25s ease, fill 0.25s ease;
+    }
+    .die-poly .die-value {
+      position: relative;
+      z-index: 2;
+      font-family: 'Cinzel', serif;
+      font-size: 1.55rem;
+      font-weight: 800;
+      color: var(--text-main);
+      text-shadow: 0 2px 6px rgba(0, 0, 0, 0.9);
+      transition: color 0.25s ease, transform 0.2s ease;
+    }
+    .die-poly .die-sides-tag {
+      position: absolute;
+      bottom: 11px;
+      z-index: 2;
+      font-size: 0.58rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      color: var(--gold-dim);
+      text-transform: uppercase;
+    }
+
+    @keyframes diceTumble3D {
+      0% { transform: scale(0.92) rotateX(0deg) rotateY(0deg) rotateZ(0deg); }
+      25% { transform: scale(1.12) rotateX(165deg) rotateY(95deg) rotateZ(-45deg); }
+      50% { transform: scale(1.06) rotateX(340deg) rotateY(210deg) rotateZ(40deg); }
+      75% { transform: scale(1.1) rotateX(510deg) rotateY(305deg) rotateZ(-20deg); }
+      100% { transform: scale(1) rotateX(720deg) rotateY(360deg) rotateZ(0deg); }
+    }
+    @keyframes diceCritPop {
+      0% { transform: scale(1); }
+      35% { transform: scale(1.22) rotateZ(-6deg); }
+      70% { transform: scale(0.97) rotateZ(3deg); }
+      100% { transform: scale(1) rotateZ(0deg); }
+    }
+    @keyframes diceFumbleShake {
+      0%, 100% { transform: translateX(0) rotateZ(0deg); }
+      20% { transform: translateX(-7px) rotateZ(-8deg); }
+      40% { transform: translateX(7px) rotateZ(8deg); }
+      60% { transform: translateX(-5px) rotateZ(-5deg); }
+      80% { transform: translateX(5px) rotateZ(5deg); }
+    }
+
+    .die-poly.is-rolling {
+      animation: diceTumble3D 0.56s cubic-bezier(0.22, 0.85, 0.35, 1) forwards;
+    }
+    .die-poly.is-crit {
+      animation: diceCritPop 0.48s ease-out;
+    }
+    .die-poly.is-crit .die-stroke {
+      stroke: #34d399;
+    }
+    .die-poly.is-crit .die-value {
+      color: #6ee7b7;
+      text-shadow: 0 0 14px rgba(52, 211, 153, 0.85);
+    }
+    .die-poly.is-fumble {
+      animation: diceFumbleShake 0.45s ease-in-out;
+    }
+    .die-poly.is-fumble .die-stroke {
+      stroke: #ef4444;
+    }
+    .die-poly.is-fumble .die-value {
+      color: #fca5a5;
+      text-shadow: 0 0 14px rgba(239, 68, 68, 0.85);
+    }
+
+    .dice-stage-caption {
+      margin-top: 6px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-align: center;
+      min-height: 18px;
+    }
+    .dice-stage-caption.crit-text {
+      color: #34d399;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+    }
+    .dice-stage-caption.fumble-text {
+      color: #f87171;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+    }
+
     /* Floating Dice Button & Bottom Nav */
     .dice-fab {
       position: fixed;
@@ -948,7 +1083,6 @@
 
     <!-- ================= TAB 1: CHARACTER SHEET (WITH 4 SUB-TABS) ================= -->
     <section id="tabHero" class="hidden">
-      <!-- Fixed Hero Header (Avatar, Level/XP, HP/Death Saves) -->
       <div class="card">
         <div class="hero-banner">
           <label class="avatar-upload-wrap" title="Загрузить аватар">
@@ -987,13 +1121,13 @@
           </div>
         </div>
 
-        <!-- HP Tracker + Death Saves -->
-        <div class="hp-box">
+        <!-- Dynamic Gradient HP Tracker + Death Saves -->
+        <div id="heroHpBox" class="hp-box">
           <div class="row" style="justify-content:space-between;">
             <span class="muted" style="text-transform:uppercase; font-size:0.7rem; letter-spacing:0.06em;">Здоровье (ОЗ)</span>
             <button class="btn btn-xs" onclick="restoreSpellSlots()">⛺ Долгий отдых</button>
           </div>
-          <div class="hp-value">
+          <div id="heroHpValue" class="hp-value">
             <span id="heroHpCur">20</span> <span style="font-size:1.05rem; color:var(--text-muted);">/ <span id="heroHpMax">20</span></span>
           </div>
           <div class="hp-controls">
@@ -1016,7 +1150,6 @@
 
       <!-- HERO SUBTAB 1: COMBAT, WEAPONS & CLASS RESOURCES -->
       <div id="heroSubCombatPanel">
-        <!-- Arsenal / Weapons -->
         <div class="card">
           <div class="card-header">
             <span class="card-title">⚔️ Оружие и Атаки</span>
@@ -1025,7 +1158,6 @@
           <div id="heroWeaponsList"></div>
         </div>
 
-        <!-- Class Resources (Rage, Ki, Bardic Inspiration, Lay on Hands, etc.) -->
         <div class="card">
           <div class="card-header">
             <span class="card-title">🔥 Классовые ресурсы</span>
@@ -1070,7 +1202,6 @@
 
       <!-- HERO SUBTAB 3: MAGIC, SPELL SLOTS (1-9) & CANTRIPS/SPELLS GRIMOIRE -->
       <div id="heroSubMagicPanel" class="hidden">
-        <!-- Spellcasting Stats -->
         <div class="card">
           <div class="card-header">
             <span class="card-title">Магические параметры</span>
@@ -1096,7 +1227,6 @@
           </div>
         </div>
 
-        <!-- Spell Slots 1-9 -->
         <div class="card">
           <div class="card-header">
             <span class="card-title">Ячейки заклинаний (1–9 круг)</span>
@@ -1105,7 +1235,6 @@
           <div id="spellSlotsContainer"></div>
         </div>
 
-        <!-- Known Cantrips & Spells -->
         <div class="card">
           <div class="card-header">
             <span class="card-title">📖 Фокусы и Заклинания</span>
@@ -1257,7 +1386,6 @@
 
     <!-- ================= TAB 4: DUNGEON MASTER SCREEN (3 SUB-TABS) ================= -->
     <section id="tabDm" class="hidden">
-      <!-- 3 Main Sub-tabs for DM -->
       <div class="subtab-bar-3">
         <button id="dmMainCombatBtn" class="subtab-btn active" onclick="switchDmMainTab('combat')">⚔️ Бой</button>
         <button id="dmMainPartyBtn" class="subtab-btn" onclick="switchDmMainTab('party')">👥 Партия и XP</button>
@@ -1266,7 +1394,6 @@
 
       <!-- DM SUBTAB 1: COMBAT TRACKER & QUICK PARTY STATUS -->
       <div id="dmMainCombatPanel">
-        <!-- Compact Live Party Strip -->
         <div class="card">
           <div class="card-header">
             <span class="card-title">Статус партии</span>
@@ -1275,7 +1402,6 @@
           <div id="dmCompactPartyStrip"></div>
         </div>
 
-        <!-- Full Combat Tracker -->
         <div class="card">
           <div class="card-header">
             <span class="card-title">Бой • Раунд <span id="roundCounter">1</span></span>
@@ -1319,7 +1445,7 @@
         </div>
       </div>
 
-      <!-- DM SUBTAB 2: PARTY MANAGEMENT, XP AWARD & XP CONFIG -->
+      <!-- DM SUBTAB 2: PARTY MANAGEMENT, XP AWARD & XP CONFIG (NO HERO DELETION) -->
       <div id="dmMainPartyPanel" class="hidden">
         <div class="card">
           <div class="card-header">
@@ -1342,14 +1468,12 @@
             <button id="dmSubNpcBtn" class="subtab-btn" onclick="switchDmSubtab('npc')">🎭 База NPC</button>
           </div>
 
-          <!-- Subtab A: Secret Notes with Search -->
           <div id="dmSubNotesPanel">
             <input type="text" id="dmNotesSearchInput" placeholder="🔍 Поиск по тайным записям Мастера..." oninput="renderDmNotesSearch()" />
             <div id="dmNotesSearchHits" class="notes-search-hits hidden"></div>
             <textarea id="dmSecretNotes" class="mt-8" style="min-height:220px;" placeholder="Сюжетные повороты, тайны мира, ловушки, загадки и лут..." oninput="renderDmNotesSearch()" onchange="saveDmNotes()"></textarea>
           </div>
 
-          <!-- Subtab B: Tagged & Searchable NPC Database -->
           <div id="dmSubNpcPanel" class="hidden">
             <div class="grid-2">
               <input type="text" id="newNpcNameInput" placeholder="Имя NPC..." />
@@ -1423,12 +1547,27 @@
     </button>
   </nav>
 
-  <!-- ================= MODAL: DICE ROLLER & LOG ================= -->
+  <!-- ================= MODAL: 3D ANIMATED DICE ROLLER & LOG ================= -->
   <div id="diceModal" class="modal-backdrop" onclick="if(event.target===this) closeDiceModal()">
     <div class="modal-box">
       <div class="card-header">
         <span class="card-title">🎲 Бросок костей и Лог партии</span>
         <button class="btn btn-sm" onclick="closeDiceModal()">✕</button>
+      </div>
+
+      <!-- 3D Animated Polyhedron Stage -->
+      <div id="diceStage" class="dice-stage">
+        <div id="diePoly" class="die-poly">
+          <svg viewBox="0 0 100 100" aria-hidden="true">
+            <polygon class="die-stroke" points="50,4 92,28 92,72 50,96 8,72 8,28" fill="rgba(212,175,55,0.09)" stroke-width="3.2" />
+            <polygon class="die-stroke" points="50,4 78,50 50,96 22,50" fill="none" stroke-width="1.6" opacity="0.55" />
+            <line class="die-stroke" x1="8" y1="28" x2="92" y2="28" stroke-width="1.4" opacity="0.45" />
+            <line class="die-stroke" x1="8" y1="72" x2="92" y2="72" stroke-width="1.4" opacity="0.45" />
+          </svg>
+          <span id="dieFaceValue" class="die-value">20</span>
+          <span id="dieSidesLabel" class="die-sides-tag">d20</span>
+        </div>
+        <div id="diceStageCaption" class="dice-stage-caption">Нажмите на кость ниже для броска</div>
       </div>
 
       <div class="row">
@@ -1471,7 +1610,7 @@
       <div class="card-header mt-12">
         <span class="card-title" style="font-size:0.82rem;">Живой лог бросков</span>
       </div>
-      <div id="rollLogList" style="max-height:240px; overflow-y:auto;"></div>
+      <div id="rollLogList" style="max-height:220px; overflow-y:auto;"></div>
     </div>
   </div>
 
@@ -1822,7 +1961,6 @@
       85000, 100000, 120000, 140000, 165000, 195000, 225000, 265000, 305000, 355000
     ];
 
-    // 5e Races & Classes Presets
     const RACES_5E = {
       human: { name: 'Человек', speed: 30, stats: { STR: 11, DEX: 11, CON: 11, INT: 11, WIS: 11, CHA: 11 }, traits: '• Адаптивность: +1 ко всем характеристикам.' },
       elf: { name: 'Эльф', speed: 30, stats: { STR: 10, DEX: 12, CON: 10, INT: 11, WIS: 11, CHA: 10 }, traits: '• Тёмное зрение (60 фт)\n• Наследие фей: преимущество от очарования, иммунитет к маг. сну\n• Транс (4 часа отдыха)' },
@@ -1993,6 +2131,7 @@
     let activeChronicleTag = '';
     let activeNpcTag = '';
     let showAllSpellCircles = false;
+    let diceAnimTimer = null;
 
     let state = {
       heroes: {},
@@ -2018,6 +2157,94 @@
       role: null,
       heroId: null
     };
+
+    // ==================== DYNAMIC GRADIENT HP STYLING ====================
+    function applyHpBoxGradient(hpCur, hpMax) {
+      const box = document.getElementById('heroHpBox');
+      const valEl = document.getElementById('heroHpValue');
+      if (!box || !valEl) return;
+
+      const maxVal = Math.max(1, Number(hpMax) || 1);
+      const curVal = Math.max(0, Number(hpCur) || 0);
+      const ratio = Math.max(0, Math.min(1, curVal / maxVal));
+
+      // Hue: 145 (emerald green) at 100% -> 42 (amber/gold) at 50% -> 0 (crimson red) at 0%
+      const hue = Math.round(ratio * 145);
+      const hueEnd = Math.max(0, hue - 14);
+      const topAlpha = curVal === 0 ? 0.34 : 0.24;
+      const botAlpha = curVal === 0 ? 0.14 : 0.08;
+
+      box.style.background = `linear-gradient(155deg, hsla(${hue}, 78%, 40%, ${topAlpha}) 0%, hsla(${hueEnd}, 75%, 24%, ${botAlpha}) 100%)`;
+      box.style.borderColor = `hsla(${hue}, 82%, 52%, 0.48)`;
+      box.style.boxShadow = curVal === 0 ? '0 0 18px rgba(220, 38, 38, 0.28)' : 'none';
+      valEl.style.color = `hsl(${hue}, 86%, 72%)`;
+    }
+
+    // ==================== 3D DICE STAGE ANIMATION ====================
+    function triggerDiceStageAnimation({ sides = 20, finalDisplay = 20, caption = '', isCrit = false, isFumble = false }) {
+      const stage = document.getElementById('diceStage');
+      const poly = document.getElementById('diePoly');
+      const valEl = document.getElementById('dieFaceValue');
+      const sidesEl = document.getElementById('dieSidesLabel');
+      const capEl = document.getElementById('diceStageCaption');
+
+      if (!stage || !poly) return;
+
+      if (diceAnimTimer) {
+        clearInterval(diceAnimTimer);
+        diceAnimTimer = null;
+      }
+
+      stage.classList.remove('stage-crit', 'stage-fumble');
+      poly.classList.remove('is-rolling', 'is-crit', 'is-fumble');
+      capEl.classList.remove('crit-text', 'fumble-text');
+      void poly.offsetWidth;
+
+      sidesEl.textContent = `d${sides}`;
+      capEl.textContent = 'Бросок...';
+      poly.classList.add('is-rolling');
+
+      if (navigator.vibrate) {
+        try { navigator.vibrate(18); } catch (_) {}
+      }
+
+      const maxRand = Math.max(2, Number(sides) || 20);
+      let ticks = 0;
+      const totalTicks = 11;
+
+      diceAnimTimer = setInterval(() => {
+        ticks += 1;
+        if (ticks < totalTicks) {
+          valEl.textContent = Math.floor(Math.random() * maxRand) + 1;
+        } else {
+          clearInterval(diceAnimTimer);
+          diceAnimTimer = null;
+
+          poly.classList.remove('is-rolling');
+          valEl.textContent = finalDisplay;
+
+          if (isCrit) {
+            stage.classList.add('stage-crit');
+            poly.classList.add('is-crit');
+            capEl.classList.add('crit-text');
+            capEl.textContent = `🔥 КРИТИЧЕСКИЙ УСПЕХ! ${caption}`;
+            if (navigator.vibrate) {
+              try { navigator.vibrate([35, 45, 70]); } catch (_) {}
+            }
+          } else if (isFumble) {
+            stage.classList.add('stage-fumble');
+            poly.classList.add('is-fumble');
+            capEl.classList.add('fumble-text');
+            capEl.textContent = `💀 КРИТИЧЕСКИЙ ПРОВАЛ! ${caption}`;
+            if (navigator.vibrate) {
+              try { navigator.vibrate([80, 40, 80]); } catch (_) {}
+            }
+          } else {
+            capEl.textContent = caption || `Результат: ${finalDisplay}`;
+          }
+        }
+      }, 48);
+    }
 
     // ==================== PERMISSION MATRIX ====================
     function isModerator() {
@@ -2059,13 +2286,12 @@
         .replace(/>/g, '&gt;');
     }
 
-    // Dice expression evaluator: e.g. "2d6+3", "1d8", "3d4+3"
     function rollDiceFormula(formula, extraBonus = 0) {
       const clean = String(formula || '1d6').replace(/\s+/g, '').toLowerCase();
       const match = clean.match(/^(\d*)d(\d+)([+-]\d+)?$/);
       if (!match) {
         const flat = (parseInt(clean, 10) || 0) + extraBonus;
-        return { total: flat, detail: `${flat}` };
+        return { total: flat, detail: `${flat}`, sides: 6 };
       }
       const count = Math.max(1, Math.min(30, parseInt(match[1] || '1', 10)));
       const sides = Math.max(2, Math.min(100, parseInt(match[2], 10)));
@@ -2079,7 +2305,7 @@
       const total = Math.max(0, sum + totalMod);
       let detail = `${count}d${sides} [${rolls.join(', ')}]`;
       if (totalMod !== 0) detail += totalMod > 0 ? ` + ${totalMod}` : ` - ${Math.abs(totalMod)}`;
-      return { total, detail };
+      return { total, detail, sides };
     }
 
     const bestiarySel = document.getElementById('bestiarySelect');
@@ -2459,17 +2685,17 @@
       const d20 = Math.floor(Math.random() * 20) + 1;
       const total = d20 + atkBonus;
       const signStr = atkBonus >= 0 ? `+ ${atkBonus}` : `- ${Math.abs(atkBonus)}`;
+      const detail = `🎯 Атака (${w.name}): 1d20 [${d20}] ${signStr}`;
 
-      const entry = {
+      await pushRollLogEntry({
         roller: h.name,
-        detail: `🎯 Атака (${w.name}): 1d20 [${d20}] ${signStr}`,
+        detail,
         total,
         isCrit: d20 === 20,
         isFumble: d20 === 1,
         secret: false,
         createdAt: Date.now()
-      };
-      await pushRollLogEntry(entry);
+      }, { sides: 20, finalDisplay: total, caption: detail, isCrit: d20 === 20, isFumble: d20 === 1 });
     };
 
     window.rollWeaponDamage = async (wpnId) => {
@@ -2479,16 +2705,16 @@
 
       const dmgBonus = getWeaponDamageBonus(h, w);
       const res = rollDiceFormula(w.dice, dmgBonus);
-      const entry = {
+      const detail = `💥 Урон (${w.name}, ${w.dmgType || 'физ.'}): ${res.detail}`;
+      await pushRollLogEntry({
         roller: h.name,
-        detail: `💥 Урон (${w.name}, ${w.dmgType || 'физ.'}): ${res.detail}`,
+        detail,
         total: res.total,
         isCrit: false,
         isFumble: false,
         secret: false,
         createdAt: Date.now()
-      };
-      await pushRollLogEntry(entry);
+      }, { sides: res.sides, finalDisplay: res.total, caption: detail });
     };
 
     // Class Resources
@@ -2579,7 +2805,6 @@
       const s = (h?.spells || []).find((x) => x.id === splId);
       if (!h || !s) return;
 
-      // Списание ячейки, если круг >= 1
       if (s.level >= 1) {
         const slots = [...(h.slots || [0,0,0,0,0,0,0,0,0])];
         while (slots.length < 9) slots.push(0);
@@ -2609,53 +2834,57 @@
           const dmgRes = rollDiceFormula(s.dice, 0);
           dmgPart = ` | Урон: ${dmgRes.total} (${dmgRes.detail}${s.tag ? ', ' + s.tag : ''})`;
         }
+        const detail = `✨ ${s.name} (${lvlLabel}): Атака 1d20 [${d20}] ${signStr}${dmgPart}`;
         await pushRollLogEntry({
           roller: h.name,
-          detail: `✨ ${s.name} (${lvlLabel}): Атака 1d20 [${d20}] ${signStr}${dmgPart}`,
+          detail,
           total: totalAtk,
           isCrit: d20 === 20,
           isFumble: d20 === 1,
           secret: false,
           createdAt: Date.now()
-        });
+        }, { sides: 20, finalDisplay: totalAtk, caption: detail, isCrit: d20 === 20, isFumble: d20 === 1 });
       } else if (s.rollType === 'save') {
-        const dmgRes = s.dice ? rollDiceFormula(s.dice, 0) : { total: spellDc, detail: 'эффект' };
+        const dmgRes = s.dice ? rollDiceFormula(s.dice, 0) : { total: spellDc, detail: 'эффект', sides: 20 };
+        const detail = `✨ ${s.name} (${lvlLabel}, Сл ${spellDc}${s.tag ? ' — ' + s.tag : ''}): ${dmgRes.detail}`;
         await pushRollLogEntry({
           roller: h.name,
-          detail: `✨ ${s.name} (${lvlLabel}, Сл ${spellDc}${s.tag ? ' — ' + s.tag : ''}): ${dmgRes.detail}`,
+          detail,
           total: dmgRes.total,
           isCrit: false,
           isFumble: false,
           secret: false,
           createdAt: Date.now()
-        });
+        }, { sides: dmgRes.sides, finalDisplay: dmgRes.total, caption: detail });
       } else if (s.rollType === 'heal') {
         const healRes = rollDiceFormula(s.dice || '1d8', spellMod);
+        const detail = `💚 ${s.name} (${lvlLabel}, лечение): ${healRes.detail}`;
         await pushRollLogEntry({
           roller: h.name,
-          detail: `💚 ${s.name} (${lvlLabel}, лечение): ${healRes.detail}`,
+          detail,
           total: healRes.total,
           isCrit: false,
           isFumble: false,
           secret: false,
           createdAt: Date.now()
-        });
+        }, { sides: healRes.sides, finalDisplay: healRes.total, caption: detail });
       } else {
         const utilRes = s.dice ? rollDiceFormula(s.dice, 0) : null;
+        const detail = `✨ Сотворено: ${s.name} (${lvlLabel})${utilRes ? ' — ' + utilRes.detail : ''}`;
         await pushRollLogEntry({
           roller: h.name,
-          detail: `✨ Сотворено: ${s.name} (${lvlLabel})${utilRes ? ' — ' + utilRes.detail : ''}`,
+          detail,
           total: utilRes ? utilRes.total : '✓',
           isCrit: false,
           isFumble: false,
           secret: false,
           createdAt: Date.now()
-        });
+        }, { sides: utilRes ? utilRes.sides : 20, finalDisplay: utilRes ? utilRes.total : '✓', caption: detail });
       }
       renderHeroSheet();
     };
 
-    async function pushRollLogEntry(entry) {
+    async function pushRollLogEntry(entry, stageAnim = null) {
       if (isOnline) {
         await addDoc(collection(db, 'rolls'), entry);
       } else {
@@ -2663,6 +2892,9 @@
         saveLocalState();
       }
       openDiceModal();
+      if (stageAnim) {
+        triggerDiceStageAnimation(stageAnim);
+      }
     }
 
     // ================= ADMIN PANEL ACTIONS =================
@@ -2698,8 +2930,8 @@
         ? heroes.map((h) => `
             <div class="row" style="justify-content:space-between; padding:8px 10px; background:var(--bg-card-alt); border-radius:10px; margin-bottom:6px;">
               <div style="min-width:0;">
-                <strong style="color:var(--gold);">${h.name}</strong>
-                <div class="muted" style="font-size:0.75rem;">${h.race} • ${h.heroClass} • Ур. ${h.level || 1}</div>
+                <strong style="color:var(--gold);">${escapeHtml(h.name)}</strong>
+                <div class="muted" style="font-size:0.75rem;">${escapeHtml(h.race)} • ${escapeHtml(h.heroClass)} • Ур. ${h.level || 1}</div>
               </div>
               <div class="row">
                 <button class="btn btn-xs" onclick="resetHeroPinByAdmin('${h.id}')" title="Сбросить забытый PIN игрока">🔑 PIN</button>
@@ -2810,12 +3042,6 @@
       logout();
     };
 
-    window.deleteHeroByDm = async (heroId) => {
-      if (session.role !== 'dm') return;
-      await performDeleteHero(heroId);
-      renderAll();
-    };
-
     window.deleteHeroByAdmin = async (heroId) => {
       if (session.role !== 'admin') return;
       await performDeleteHero(heroId);
@@ -2900,13 +3126,13 @@
 
       document.getElementById('xpCustomList').innerHTML = heroes.map((h) => `
         <div class="row" style="justify-content:space-between; margin-bottom:6px; background:var(--bg-card-alt); padding:6px 8px; border-radius:8px;">
-          <span style="font-size:0.86rem;"><strong>${h.name}</strong> <span class="muted">(Ур. ${h.level || 1})</span></span>
+          <span style="font-size:0.86rem;"><strong>${escapeHtml(h.name)}</strong> <span class="muted">(Ур. ${h.level || 1})</span></span>
           <input type="number" data-xp-hero-id="${h.id}" placeholder="0" style="width:95px; padding:5px 8px;" />
         </div>
       `).join('');
 
       document.getElementById('xpSingleHeroSelect').innerHTML = heroes.map((h) =>
-        `<option value="${h.id}">${h.name} (Ур. ${h.level || 1}, сейчас ${h.xp ?? 0} XP)</option>`
+        `<option value="${h.id}">${escapeHtml(h.name)} (Ур. ${h.level || 1}, сейчас ${h.xp ?? 0} XP)</option>`
       ).join('');
 
       document.getElementById('xpAwardMode').value = 'equal';
@@ -3025,9 +3251,10 @@
         outcomeText = `Провал (${ds.failure}/3)`;
       }
 
+      const detail = `Спасбросок от смерти: 1d20 [${d20}] — ${outcomeText}`;
       const entry = {
         roller: h.name,
-        detail: `Спасбросок от смерти: 1d20 [${d20}] — ${outcomeText}`,
+        detail,
         total: d20,
         isCrit: d20 === 20,
         isFumble: d20 === 1,
@@ -3047,6 +3274,14 @@
         await saveDmPatch({ combatLog });
       }
       renderAll();
+      openDiceModal();
+      triggerDiceStageAnimation({
+        sides: 20,
+        finalDisplay: d20,
+        caption: `${h.name}: ${outcomeText}`,
+        isCrit: d20 === 20,
+        isFumble: d20 === 1
+      });
     };
 
     function calcSaveBonus(h, statKey) {
@@ -3075,16 +3310,17 @@
       const d20 = Math.floor(Math.random() * 20) + 1;
       const total = d20 + bonus;
       const signStr = bonus >= 0 ? `+ ${bonus}` : `- ${Math.abs(bonus)}`;
+      const detail = `Спасбросок (${st.fullName}): 1d20 [${d20}] ${signStr}`;
 
       await pushRollLogEntry({
         roller: h.name,
-        detail: `Спасбросок (${st.fullName}): 1d20 [${d20}] ${signStr}`,
+        detail,
         total,
         isCrit: d20 === 20,
         isFumble: d20 === 1,
         secret: false,
         createdAt: Date.now()
-      });
+      }, { sides: 20, finalDisplay: total, caption: detail, isCrit: d20 === 20, isFumble: d20 === 1 });
     };
 
     function calcSkillBonus(h, skill) {
@@ -3122,16 +3358,17 @@
       const d20 = Math.floor(Math.random() * 20) + 1;
       const total = d20 + bonus;
       const signStr = bonus >= 0 ? `+ ${bonus}` : `- ${Math.abs(bonus)}`;
+      const detail = `${skill.name}: 1d20 [${d20}] ${signStr}`;
 
       await pushRollLogEntry({
         roller: h.name,
-        detail: `${skill.name}: 1d20 [${d20}] ${signStr}`,
+        detail,
         total,
         isCrit: d20 === 20,
         isFumble: d20 === 1,
         secret: false,
         createdAt: Date.now()
-      });
+      }, { sides: 20, finalDisplay: total, caption: detail, isCrit: d20 === 20, isFumble: d20 === 1 });
     };
 
     window.handleAvatarUpload = async (e) => {
@@ -3267,7 +3504,9 @@
       document.getElementById('heroHpMax').textContent = h.hpMax;
       document.getElementById('rationsCountDisplay').textContent = h.rations ?? 5;
 
-      // XP & Level Progress Bar
+      // Apply smooth green -> amber -> red gradient background based on HP percentage
+      applyHpBoxGradient(h.hpCur, h.hpMax);
+
       const curFloor = xpTable[Math.min(19, lvl - 1)] || 0;
       const nextCap = lvl < 20 ? (xpTable[lvl] ?? curFloor) : curFloor;
       const lvlUpBtn = document.getElementById('levelUpBtn');
@@ -3290,7 +3529,6 @@
         }
       }
 
-      // Death Saves Panel
       const dsPanel = document.getElementById('heroDeathSavesPanel');
       if ((h.hpCur || 0) === 0) {
         dsPanel.classList.remove('hidden');
@@ -4285,7 +4523,6 @@
     function renderDmScreen() {
       const heroes = Object.values(state.heroes);
 
-      // Compact strip on Combat tab
       document.getElementById('dmCompactPartyStrip').innerHTML = heroes.length
         ? `<div class="row" style="flex-wrap:wrap; gap:6px;">` + heroes.map((h) => `
             <div style="background:var(--bg-card-alt); border:1px solid rgba(212,175,55,0.2); border-radius:8px; padding:5px 8px; font-size:0.78rem;">
@@ -4294,7 +4531,7 @@
           `).join('') + `</div>`
         : '<p class="muted">Игроки ещё не создали персонажей.</p>';
 
-      // Detailed list on Party & XP tab
+      // DM Party & XP overview (hero deletion removed — available only in Admin tab)
       document.getElementById('dmPartyOverview').innerHTML = heroes.length
         ? heroes.map((h) => `
             <div class="row" style="justify-content:space-between; padding:7px 9px; background:var(--bg-card-alt); border-radius:9px; margin-bottom:6px;">
@@ -4302,11 +4539,8 @@
                 <strong>${escapeHtml(h.name)}</strong> <span class="muted">(${escapeHtml(h.heroClass)}, Ур. ${h.level || 1})</span>
                 <div class="muted" style="font-size:0.72rem;">✨ ${(h.xp ?? 0).toLocaleString('ru-RU')} XP • 🍖 ${h.rations ?? 5} рац.</div>
               </div>
-              <div class="row">
-                <div style="font-size:0.84rem; white-space:nowrap;">
-                  ❤️ <strong>${h.hpCur}/${h.hpMax}</strong> • 🛡️ <strong>${h.ac}</strong>
-                </div>
-                <button class="btn btn-danger btn-xs" onclick="deleteHeroByDm('${h.id}')" title="Удалить персонажа">🗑️</button>
+              <div style="font-size:0.84rem; white-space:nowrap;">
+                ❤️ <strong>${h.hpCur}/${h.hpMax}</strong> • 🛡️ <strong>${h.ac}</strong>
               </div>
             </div>
           `).join('')
@@ -4431,6 +4665,17 @@
 
       if (mod !== 0) detail += mod > 0 ? ` + ${mod}` : ` - ${Math.abs(mod)}`;
 
+      const isCrit = sides === 20 && count === 1 && rolls[0] === 20;
+      const isFumble = sides === 20 && count === 1 && rolls[0] === 1;
+
+      triggerDiceStageAnimation({
+        sides,
+        finalDisplay: total,
+        caption: detail,
+        isCrit,
+        isFumble
+      });
+
       const roller = session.role === 'dm'
         ? '👑 Мастер'
         : (session.role === 'admin' ? '🛡️ Админ' : (state.heroes[session.heroId]?.name || 'Странник'));
@@ -4439,8 +4684,8 @@
         roller,
         detail,
         total,
-        isCrit: sides === 20 && count === 1 && rolls[0] === 20,
-        isFumble: sides === 20 && count === 1 && rolls[0] === 1,
+        isCrit,
+        isFumble,
         secret: isSecret,
         createdAt: Date.now()
       };
