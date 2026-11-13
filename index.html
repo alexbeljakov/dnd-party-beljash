@@ -140,7 +140,7 @@
       padding: 9px 11px;
       color: var(--text-main);
       font-family: inherit;
-      font-size: 0.92rem;
+      font-size: 0.9rem;
       outline: none;
     }
     input:focus, select:focus, textarea:focus {
@@ -215,7 +215,27 @@
       gap: 8px;
     }
 
-    /* Sub-tabs & Tags */
+    /* Segmented Sub-tabs */
+    .subtab-bar-4 {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 4px;
+      background: rgba(0, 0, 0, 0.42);
+      border: 1px solid rgba(212, 175, 55, 0.22);
+      padding: 4px;
+      border-radius: 12px;
+      margin-bottom: 12px;
+    }
+    .subtab-bar-3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 5px;
+      background: rgba(0, 0, 0, 0.42);
+      border: 1px solid rgba(212, 175, 55, 0.22);
+      padding: 4px;
+      border-radius: 12px;
+      margin-bottom: 12px;
+    }
     .subtab-bar {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -227,18 +247,21 @@
     }
     .subtab-btn {
       background: transparent;
-      border: none;
+      border: 1px solid transparent;
       color: var(--text-muted);
-      padding: 7px 8px;
+      padding: 7px 4px;
       border-radius: 8px;
-      font-size: 0.82rem;
+      font-size: 0.76rem;
       font-weight: 700;
       cursor: pointer;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
     }
     .subtab-btn.active {
       background: rgba(212, 175, 55, 0.22);
       color: var(--gold);
-      border: 1px solid rgba(212, 175, 55, 0.4);
+      border-color: rgba(212, 175, 55, 0.45);
     }
 
     .tag-chip {
@@ -257,6 +280,38 @@
     .tag-chip.active {
       background: var(--gold);
       color: #120f0a;
+    }
+
+    /* Weapons, Spells & Class Resources */
+    .item-card {
+      background: var(--bg-card-alt);
+      border: 1px solid rgba(212, 175, 55, 0.2);
+      border-radius: 10px;
+      padding: 10px;
+      margin-bottom: 8px;
+    }
+    .magic-stat-box {
+      background: var(--bg-card-alt);
+      border: 1px solid rgba(212, 175, 55, 0.25);
+      border-radius: 10px;
+      padding: 7px 6px;
+      text-align: center;
+    }
+    .magic-stat-val {
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: var(--gold);
+      margin-top: 2px;
+    }
+    .spell-lvl-badge {
+      display: inline-block;
+      padding: 2px 6px;
+      border-radius: 6px;
+      font-size: 0.68rem;
+      font-weight: 700;
+      background: rgba(212, 175, 55, 0.18);
+      color: var(--gold);
+      border: 1px solid rgba(212, 175, 55, 0.35);
     }
 
     /* Rations Counter Box */
@@ -314,8 +369,8 @@
       flex-shrink: 0;
     }
     .avatar-upload-wrap .avatar-circle {
-      width: 72px;
-      height: 72px;
+      width: 68px;
+      height: 68px;
       margin: 0;
     }
     .avatar-edit-badge {
@@ -335,7 +390,7 @@
       background: rgba(212, 175, 55, 0.08);
       border: 1px solid rgba(212, 175, 55, 0.28);
       border-radius: 10px;
-      padding: 8px 10px;
+      padding: 7px 10px;
       margin-top: 10px;
     }
     .lvl-badge {
@@ -351,11 +406,11 @@
     }
     .xp-bar-track {
       width: 100%;
-      height: 6px;
+      height: 5px;
       background: rgba(0, 0, 0, 0.55);
       border-radius: 999px;
       overflow: hidden;
-      margin-top: 6px;
+      margin-top: 5px;
     }
     .xp-bar-fill {
       height: 100%;
@@ -367,12 +422,12 @@
       background: rgba(185, 28, 28, 0.14);
       border: 1px solid rgba(239, 68, 68, 0.35);
       border-radius: 12px;
-      padding: 12px;
+      padding: 10px 12px;
       text-align: center;
-      margin: 10px 0;
+      margin-top: 10px;
     }
     .hp-value {
-      font-size: 1.9rem;
+      font-size: 1.75rem;
       font-weight: 800;
       color: #fca5a5;
       line-height: 1.1;
@@ -407,10 +462,6 @@
       border: 1.5px solid rgba(255, 255, 255, 0.28);
       background: rgba(0, 0, 0, 0.35);
       cursor: pointer;
-      transition: transform 0.08s ease;
-    }
-    .ds-pip:active {
-      transform: scale(0.9);
     }
     .ds-pip.succ {
       border-color: #34d399;
@@ -533,9 +584,6 @@
       overflow: hidden;
       text-overflow: ellipsis;
     }
-    .skill-name-btn:active {
-      color: var(--gold);
-    }
     .skill-stat-tag {
       font-size: 0.68rem;
       color: var(--text-muted);
@@ -557,11 +605,12 @@
     }
     .slot-pips {
       display: flex;
-      gap: 6px;
+      gap: 5px;
+      flex-wrap: wrap;
     }
     .slot-pip {
-      width: 22px;
-      height: 22px;
+      width: 20px;
+      height: 20px;
       border-radius: 50%;
       border: 1.5px solid var(--gold);
       background: transparent;
@@ -675,9 +724,6 @@
       font-size: 0.8rem;
       cursor: pointer;
     }
-    .init-pill:active {
-      background: rgba(212, 175, 55, 0.3);
-    }
     .death-save-toggle {
       display: inline-flex;
       align-items: center;
@@ -734,6 +780,22 @@
       padding: 4px 0;
       border-bottom: 1px solid rgba(255, 255, 255, 0.04);
       line-height: 1.35;
+    }
+
+    /* Secret Notes Search Matches */
+    .notes-search-hits {
+      margin-top: 8px;
+      padding: 8px;
+      border-radius: 9px;
+      background: rgba(212, 175, 55, 0.07);
+      border: 1px solid rgba(212, 175, 55, 0.25);
+      font-size: 0.8rem;
+    }
+    mark.hl {
+      background: rgba(212, 175, 55, 0.38);
+      color: #fff7d6;
+      padding: 0 2px;
+      border-radius: 3px;
     }
 
     /* Floating Dice Button & Bottom Nav */
@@ -884,8 +946,9 @@
       </div>
     </section>
 
-    <!-- ================= TAB 1: CHARACTER SHEET ================= -->
+    <!-- ================= TAB 1: CHARACTER SHEET (WITH 4 SUB-TABS) ================= -->
     <section id="tabHero" class="hidden">
+      <!-- Fixed Hero Header (Avatar, Level/XP, HP/Death Saves) -->
       <div class="card">
         <div class="hero-banner">
           <label class="avatar-upload-wrap" title="Загрузить аватар">
@@ -896,7 +959,7 @@
           </label>
           <div style="flex:1; min-width:0;">
             <div class="row" style="justify-content:space-between; align-items:flex-start;">
-              <h2 id="heroNameDisplay" style="font-size:1.22rem; color:var(--gold); line-height:1.2;">Имя Героя</h2>
+              <h2 id="heroNameDisplay" style="font-size:1.18rem; color:var(--gold); line-height:1.2;">Имя Героя</h2>
               <button class="btn btn-sm" onclick="openEditHeroModal()">Изм.</button>
             </div>
             <div id="heroMetaDisplay" class="muted">Раса • Класс</div>
@@ -911,7 +974,7 @@
         <!-- Level & XP Bar -->
         <div class="xp-panel">
           <div class="row" style="justify-content:space-between; flex-wrap:wrap;">
-            <div style="font-size:0.8rem;">
+            <div style="font-size:0.78rem;">
               <span class="muted">Опыт:</span> <strong id="heroXpDisplay" style="color:var(--gold);">0 / 300 XP</strong>
             </div>
             <div class="row">
@@ -924,11 +987,14 @@
           </div>
         </div>
 
-        <!-- HP Tracker + Death Saves (auto-shown at 0 HP) -->
+        <!-- HP Tracker + Death Saves -->
         <div class="hp-box">
-          <div class="muted" style="text-transform:uppercase; font-size:0.72rem; letter-spacing:0.06em;">Здоровье (Хиты)</div>
+          <div class="row" style="justify-content:space-between;">
+            <span class="muted" style="text-transform:uppercase; font-size:0.7rem; letter-spacing:0.06em;">Здоровье (ОЗ)</span>
+            <button class="btn btn-xs" onclick="restoreSpellSlots()">⛺ Долгий отдых</button>
+          </div>
           <div class="hp-value">
-            <span id="heroHpCur">20</span> <span style="font-size:1.1rem; color:var(--text-muted);">/ <span id="heroHpMax">20</span></span>
+            <span id="heroHpCur">20</span> <span style="font-size:1.05rem; color:var(--text-muted);">/ <span id="heroHpMax">20</span></span>
           </div>
           <div class="hp-controls">
             <button class="btn btn-danger btn-sm" onclick="changeHp(-5)">-5</button>
@@ -938,80 +1004,160 @@
           </div>
           <div id="heroDeathSavesPanel" class="death-saves-panel hidden"></div>
         </div>
-
-        <!-- 6 Stats -->
-        <div class="grid-3" id="statsGrid"></div>
       </div>
 
-      <!-- 6 Saving Throws D&D 5e -->
-      <div class="card">
-        <div class="card-header">
-          <span class="card-title">Спасброски (5e)</span>
-          <span class="muted" style="font-size:0.72rem;">Тап по названию = бросок d20</span>
-        </div>
-        <div id="savingThrowsGrid" class="saves-grid"></div>
+      <!-- 4 Sub-tabs for Hero Sheet -->
+      <div class="subtab-bar-4">
+        <button id="heroSubCombatBtn" class="subtab-btn active" onclick="switchHeroSubtab('combat')">⚔️ Бой</button>
+        <button id="heroSubStatsBtn" class="subtab-btn" onclick="switchHeroSubtab('stats')">📊 Статы</button>
+        <button id="heroSubMagicBtn" class="subtab-btn" onclick="switchHeroSubtab('magic')">✨ Магия</button>
+        <button id="heroSubGearBtn" class="subtab-btn" onclick="switchHeroSubtab('gear')">🎒 Сумка</button>
       </div>
 
-      <!-- 18 Skills D&D 5e -->
-      <div class="card">
-        <div class="card-header">
-          <div>
-            <span class="card-title">Навыки (5e)</span>
-            <div class="muted" style="font-size:0.72rem;">Пасс. Внимат.: <strong id="passivePerceptionVal" style="color:var(--gold);">10</strong></div>
+      <!-- HERO SUBTAB 1: COMBAT, WEAPONS & CLASS RESOURCES -->
+      <div id="heroSubCombatPanel">
+        <!-- Arsenal / Weapons -->
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">⚔️ Оружие и Атаки</span>
+            <button class="btn btn-primary btn-xs" onclick="openAddWeaponModal()">+ Оружие</button>
           </div>
-          <div class="row">
-            <span class="muted">БМ:</span>
-            <button class="btn btn-xs" onclick="changeProfBonus(-1)">-</button>
-            <strong id="profBonusDisplay" style="color:var(--gold); min-width:22px; text-align:center;">+2</strong>
-            <button class="btn btn-xs" onclick="changeProfBonus(1)">+</button>
-          </div>
+          <div id="heroWeaponsList"></div>
         </div>
-        <p class="muted" style="margin-bottom:8px; font-size:0.74rem;">Кружок: владение / компетентность (×2). Нажмите на навык для броска d20.</p>
-        <div id="skillsGrid" class="skills-grid"></div>
-      </div>
 
-      <!-- Spell Slots & Gold -->
-      <div class="card">
-        <div class="card-header">
-          <span class="card-title">Ячейки заклинаний и Казна</span>
-          <button class="btn btn-sm" onclick="restoreSpellSlots()">Долгий отдых</button>
-        </div>
-        <div id="spellSlotsContainer"></div>
-        <div class="grid-3 mt-12">
-          <div>
-            <label class="muted">Золото (ЗМ)</label>
-            <input type="number" id="goldInput" onchange="saveWallet()" />
+        <!-- Class Resources (Rage, Ki, Bardic Inspiration, Lay on Hands, etc.) -->
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">🔥 Классовые ресурсы</span>
+            <button class="btn btn-xs" onclick="addClassResource()">+ Ресурс</button>
           </div>
-          <div>
-            <label class="muted">Серебро (СМ)</label>
-            <input type="number" id="silverInput" onchange="saveWallet()" />
-          </div>
-          <div>
-            <label class="muted">Медь (ММ)</label>
-            <input type="number" id="copperInput" onchange="saveWallet()" />
-          </div>
+          <div id="heroResourcesList"></div>
         </div>
       </div>
 
-      <!-- Rations & Inventory -->
-      <div class="card">
-        <div class="card-header">
-          <span class="card-title">Снаряжение и Припасы</span>
+      <!-- HERO SUBTAB 2: STATS, SAVING THROWS & 18 SKILLS -->
+      <div id="heroSubStatsPanel" class="hidden">
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">Характеристики</span>
+            <div class="row">
+              <span class="muted">БМ:</span>
+              <button class="btn btn-xs" onclick="changeProfBonus(-1)">-</button>
+              <strong id="profBonusDisplay" style="color:var(--gold); min-width:22px; text-align:center;">+2</strong>
+              <button class="btn btn-xs" onclick="changeProfBonus(1)">+</button>
+            </div>
+          </div>
+          <div class="grid-3" id="statsGrid"></div>
         </div>
 
-        <div class="rations-bar">
-          <div>
-            <strong style="font-size:0.9rem;">🍖 Рационы (дней)</strong>
-            <div class="muted" style="font-size:0.72rem;">Списание при длительном отдыхе</div>
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">Спасброски (5e)</span>
+            <span class="muted" style="font-size:0.72rem;">Тап = бросок d20</span>
           </div>
-          <div class="row">
-            <button class="btn btn-danger btn-sm" onclick="changeRations(-1)">-1</button>
-            <strong id="rationsCountDisplay" style="font-size:1.15rem; color:var(--gold); min-width:28px; text-align:center;">5</strong>
-            <button class="btn btn-sm" onclick="changeRations(1)">+1</button>
+          <div id="savingThrowsGrid" class="saves-grid"></div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">Навыки (18)</span>
+            <span class="muted" style="font-size:0.72rem;">Пасс. Внимат.: <strong id="passivePerceptionVal" style="color:var(--gold);">10</strong></span>
+          </div>
+          <p class="muted" style="margin-bottom:8px; font-size:0.72rem;">Кружок: владение / компетентность (×2). Нажмите на навык для броска d20.</p>
+          <div id="skillsGrid" class="skills-grid"></div>
+        </div>
+      </div>
+
+      <!-- HERO SUBTAB 3: MAGIC, SPELL SLOTS (1-9) & CANTRIPS/SPELLS GRIMOIRE -->
+      <div id="heroSubMagicPanel" class="hidden">
+        <!-- Spellcasting Stats -->
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">Магические параметры</span>
+            <select id="spellAbilitySelect" style="width:auto; padding:4px 8px; font-size:0.8rem;" onchange="changeSpellAbility(this.value)">
+              <option value="INT">База: ИНТ</option>
+              <option value="WIS">База: МУД</option>
+              <option value="CHA">База: ХАР</option>
+            </select>
+          </div>
+          <div class="grid-3">
+            <div class="magic-stat-box">
+              <div class="stat-label">Мод. магии</div>
+              <div id="spellModDisplay" class="magic-stat-val">+2</div>
+            </div>
+            <div class="magic-stat-box">
+              <div class="stat-label">Сл спасброска</div>
+              <div id="spellDcDisplay" class="magic-stat-val">12</div>
+            </div>
+            <div class="magic-stat-box">
+              <div class="stat-label">Атака закл.</div>
+              <div id="spellAtkDisplay" class="magic-stat-val">+4</div>
+            </div>
           </div>
         </div>
 
-        <textarea id="heroInventoryInput" placeholder="Оружие, зелья, артефакты и заметки персонажа..." onchange="saveHeroNotes()"></textarea>
+        <!-- Spell Slots 1-9 -->
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">Ячейки заклинаний (1–9 круг)</span>
+            <button class="btn btn-xs" onclick="toggleShowAllSpellCircles()">Все круги</button>
+          </div>
+          <div id="spellSlotsContainer"></div>
+        </div>
+
+        <!-- Known Cantrips & Spells -->
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">📖 Фокусы и Заклинания</span>
+            <button class="btn btn-primary btn-xs" onclick="openAddSpellModal()">+ Заклинание</button>
+          </div>
+          <div id="heroSpellsList"></div>
+        </div>
+      </div>
+
+      <!-- HERO SUBTAB 4: TRAITS, RATIONS, WALLET & INVENTORY -->
+      <div id="heroSubGearPanel" class="hidden">
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">🧬 Умения Расы и Класса</span>
+          </div>
+          <textarea id="heroTraitsInput" style="min-height:110px;" placeholder="Расовые особенности (Тёмное зрение, сопротивления) и умения класса..." onchange="saveHeroTraits()"></textarea>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">💰 Казна, Рационы и Снаряжение</span>
+          </div>
+
+          <div class="grid-3" style="margin-bottom:10px;">
+            <div>
+              <label class="muted">Золото (ЗМ)</label>
+              <input type="number" id="goldInput" onchange="saveWallet()" />
+            </div>
+            <div>
+              <label class="muted">Серебро (СМ)</label>
+              <input type="number" id="silverInput" onchange="saveWallet()" />
+            </div>
+            <div>
+              <label class="muted">Медь (ММ)</label>
+              <input type="number" id="copperInput" onchange="saveWallet()" />
+            </div>
+          </div>
+
+          <div class="rations-bar">
+            <div>
+              <strong style="font-size:0.9rem;">🍖 Рационы (дней)</strong>
+              <div class="muted" style="font-size:0.72rem;">Списание при длительном отдыхе</div>
+            </div>
+            <div class="row">
+              <button class="btn btn-danger btn-sm" onclick="changeRations(-1)">-1</button>
+              <strong id="rationsCountDisplay" style="font-size:1.15rem; color:var(--gold); min-width:28px; text-align:center;">5</strong>
+              <button class="btn btn-sm" onclick="changeRations(1)">+1</button>
+            </div>
+          </div>
+
+          <textarea id="heroInventoryInput" style="min-height:110px;" placeholder="Оружие, зелья, артефакты и заметки персонажа..." onchange="saveHeroNotes()"></textarea>
+        </div>
       </div>
     </section>
 
@@ -1088,7 +1234,6 @@
         <div id="sharedDocsGrid" class="doc-grid"></div>
       </div>
 
-      <!-- Chronicle with Search, Tags & Moderation -->
       <div class="card">
         <div class="card-header">
           <span class="card-title">Летопись и Квесты партии</span>
@@ -1110,89 +1255,116 @@
       </div>
     </section>
 
-    <!-- ================= TAB 4: DUNGEON MASTER SCREEN (DM ONLY) ================= -->
+    <!-- ================= TAB 4: DUNGEON MASTER SCREEN (3 SUB-TABS) ================= -->
     <section id="tabDm" class="hidden">
-      <div class="card">
-        <div class="card-header">
-          <span class="card-title">Сводка по партии</span>
-          <div class="row" style="flex-wrap:wrap; justify-content:flex-end;">
-            <button class="btn btn-primary btn-xs" onclick="openAwardXpModal()">✨ Выдать XP</button>
-            <button class="btn btn-xs" onclick="openXpConfigModal()">📊 Шкала XP</button>
-            <button class="btn btn-xs" onclick="changeDmPinOnly()">🔑 PIN ДМа</button>
-          </div>
-        </div>
-        <div id="dmPartyOverview"></div>
+      <!-- 3 Main Sub-tabs for DM -->
+      <div class="subtab-bar-3">
+        <button id="dmMainCombatBtn" class="subtab-btn active" onclick="switchDmMainTab('combat')">⚔️ Бой</button>
+        <button id="dmMainPartyBtn" class="subtab-btn" onclick="switchDmMainTab('party')">👥 Партия и XP</button>
+        <button id="dmMainNotesBtn" class="subtab-btn" onclick="switchDmMainTab('notes')">📖 Записи и NPC</button>
       </div>
 
-      <!-- Full Combat Tracker -->
-      <div class="card">
-        <div class="card-header">
-          <span class="card-title">Бой • Раунд <span id="roundCounter">1</span></span>
-          <div class="row">
-            <button class="btn btn-xs" onclick="resetCombatTurnToTop()" title="Поставить ход на самого быстрого">1-й ход</button>
-            <button class="btn btn-sm" onclick="addPartyToInitiative()">+ Партия</button>
-            <button class="btn btn-primary btn-sm" onclick="nextTurn()">Ход ➔</button>
+      <!-- DM SUBTAB 1: COMBAT TRACKER & QUICK PARTY STATUS -->
+      <div id="dmMainCombatPanel">
+        <!-- Compact Live Party Strip -->
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">Статус партии</span>
+            <button class="btn btn-xs" onclick="addPartyToInitiative()">+ Всех в бой</button>
           </div>
+          <div id="dmCompactPartyStrip"></div>
         </div>
 
-        <div class="bestiary-box">
-          <div class="muted" style="font-size:0.72rem; margin-bottom:5px; color:var(--gold);">🐉 Быстрый бестиарий (автобросок инициативы, ОЗ и КД):</div>
-          <div class="row">
-            <select id="bestiarySelect" style="flex:2;" onchange="previewBestiaryMonster()"></select>
-            <button class="btn btn-primary btn-sm" style="flex:1; white-space:nowrap;" onclick="addFromBestiary()">+ В бой</button>
+        <!-- Full Combat Tracker -->
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">Бой • Раунд <span id="roundCounter">1</span></span>
+            <div class="row">
+              <button class="btn btn-xs" onclick="resetCombatTurnToTop()" title="Поставить ход на самого быстрого">1-й ход</button>
+              <button class="btn btn-primary btn-sm" onclick="nextTurn()">Ход ➔</button>
+            </div>
           </div>
-          <div id="bestiaryHint" class="muted" style="font-size:0.74rem; margin-top:5px;"></div>
-        </div>
 
-        <div style="background:rgba(0,0,0,0.25); padding:8px; border-radius:10px; margin-bottom:10px;">
-          <div class="row">
-            <input type="text" id="initNameInput" placeholder="Свой враг / NPC" style="flex:2.2;" />
-            <input type="number" id="initValInput" placeholder="Иниц." style="flex:1;" />
+          <div class="bestiary-box">
+            <div class="muted" style="font-size:0.72rem; margin-bottom:5px; color:var(--gold);">🐉 Быстрый бестиарий (автобросок инициативы, ОЗ и КД):</div>
+            <div class="row">
+              <select id="bestiarySelect" style="flex:2;" onchange="previewBestiaryMonster()"></select>
+              <button class="btn btn-primary btn-sm" style="flex:1; white-space:nowrap;" onclick="addFromBestiary()">+ В бой</button>
+            </div>
+            <div id="bestiaryHint" class="muted" style="font-size:0.74rem; margin-top:5px;"></div>
           </div>
-          <div class="row mt-8">
-            <input type="number" id="initHpInput" placeholder="ОЗ (HP)" style="flex:1;" />
-            <input type="number" id="initAcInput" placeholder="КД (AC)" style="flex:1;" />
-            <button class="btn btn-sm" style="flex:1.2;" onclick="addInitiativeCombatant()">+ Свой</button>
-          </div>
-        </div>
 
-        <div id="initiativeList"></div>
-
-        <div class="card-header mt-12">
-          <span class="card-title" style="font-size:0.8rem;">📜 Журнал боя</span>
-          <div class="row">
-            <button class="btn btn-xs" onclick="exportCombatToChronicle()" title="Сохранить итоги боя в общую летопись">В летопись</button>
-            <button class="btn btn-danger btn-xs" onclick="clearInitiative()">Сброс боя</button>
+          <div style="background:rgba(0,0,0,0.25); padding:8px; border-radius:10px; margin-bottom:10px;">
+            <div class="row">
+              <input type="text" id="initNameInput" placeholder="Свой враг / NPC" style="flex:2.2;" />
+              <input type="number" id="initValInput" placeholder="Иниц." style="flex:1;" />
+            </div>
+            <div class="row mt-8">
+              <input type="number" id="initHpInput" placeholder="ОЗ (HP)" style="flex:1;" />
+              <input type="number" id="initAcInput" placeholder="КД (AC)" style="flex:1;" />
+              <button class="btn btn-sm" style="flex:1.2;" onclick="addInitiativeCombatant()">+ Свой</button>
+            </div>
           </div>
+
+          <div id="initiativeList"></div>
+
+          <div class="card-header mt-12">
+            <span class="card-title" style="font-size:0.8rem;">📜 Журнал боя</span>
+            <div class="row">
+              <button class="btn btn-xs" onclick="exportCombatToChronicle()" title="Сохранить итоги боя в общую летопись">В летопись</button>
+              <button class="btn btn-danger btn-xs" onclick="clearInitiative()">Сброс боя</button>
+            </div>
+          </div>
+          <div id="combatLogBox" class="combat-log-box"></div>
         </div>
-        <div id="combatLogBox" class="combat-log-box"></div>
       </div>
 
-      <!-- DM Secret Notes & NPC Database -->
-      <div class="card">
-        <div class="subtab-bar">
-          <button id="dmSubNotesBtn" class="subtab-btn active" onclick="switchDmSubtab('notes')">📝 Тайные записи</button>
-          <button id="dmSubNpcBtn" class="subtab-btn" onclick="switchDmSubtab('npc')">🎭 База NPC</button>
-        </div>
-
-        <div id="dmSubNotesPanel">
-          <textarea id="dmSecretNotes" style="min-height:150px;" placeholder="Сюжетные повороты, тайны мира, ловушки и лут..." onchange="saveDmNotes()"></textarea>
-        </div>
-
-        <div id="dmSubNpcPanel" class="hidden">
-          <div class="grid-2">
-            <input type="text" id="newNpcNameInput" placeholder="Имя NPC..." />
-            <input type="text" id="newNpcTagsInput" placeholder="Теги (таверна, враг, гильдия)" />
+      <!-- DM SUBTAB 2: PARTY MANAGEMENT, XP AWARD & XP CONFIG -->
+      <div id="dmMainPartyPanel" class="hidden">
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">Герои и Опыт</span>
+            <div class="row" style="flex-wrap:wrap; justify-content:flex-end;">
+              <button class="btn btn-primary btn-xs" onclick="openAwardXpModal()">✨ Выдать XP</button>
+              <button class="btn btn-xs" onclick="openXpConfigModal()">📊 Шкала XP</button>
+              <button class="btn btn-xs" onclick="changeDmPinOnly()">🔑 PIN ДМа</button>
+            </div>
           </div>
-          <textarea id="newNpcDescInput" class="mt-8" style="min-height:62px;" placeholder="Внешность, характер, мотивы, секреты..."></textarea>
-          <button class="btn btn-primary btn-sm btn-block mt-8" onclick="addDmNpc()">+ Добавить NPC в базу</button>
+          <div id="dmPartyOverview"></div>
+        </div>
+      </div>
 
-          <div style="margin-top:12px; padding-top:10px; border-top:1px solid rgba(212,175,55,0.14);">
-            <input type="text" id="npcSearchInput" placeholder="🔍 Поиск NPC по имени, описанию или тегам..." oninput="renderDmNpcList()" />
-            <div id="npcTagCloud" class="row mt-8" style="flex-wrap:wrap;"></div>
+      <!-- DM SUBTAB 3: SECRET NOTES (WITH SEARCH) & NPC DATABASE -->
+      <div id="dmMainNotesPanel" class="hidden">
+        <div class="card">
+          <div class="subtab-bar">
+            <button id="dmSubNotesBtn" class="subtab-btn active" onclick="switchDmSubtab('notes')">📝 Тайные записи</button>
+            <button id="dmSubNpcBtn" class="subtab-btn" onclick="switchDmSubtab('npc')">🎭 База NPC</button>
           </div>
 
-          <div id="dmNpcList" class="mt-12"></div>
+          <!-- Subtab A: Secret Notes with Search -->
+          <div id="dmSubNotesPanel">
+            <input type="text" id="dmNotesSearchInput" placeholder="🔍 Поиск по тайным записям Мастера..." oninput="renderDmNotesSearch()" />
+            <div id="dmNotesSearchHits" class="notes-search-hits hidden"></div>
+            <textarea id="dmSecretNotes" class="mt-8" style="min-height:220px;" placeholder="Сюжетные повороты, тайны мира, ловушки, загадки и лут..." oninput="renderDmNotesSearch()" onchange="saveDmNotes()"></textarea>
+          </div>
+
+          <!-- Subtab B: Tagged & Searchable NPC Database -->
+          <div id="dmSubNpcPanel" class="hidden">
+            <div class="grid-2">
+              <input type="text" id="newNpcNameInput" placeholder="Имя NPC..." />
+              <input type="text" id="newNpcTagsInput" placeholder="Теги (таверна, враг, гильдия)" />
+            </div>
+            <textarea id="newNpcDescInput" class="mt-8" style="min-height:62px;" placeholder="Внешность, характер, мотивы, секреты..."></textarea>
+            <button class="btn btn-primary btn-sm btn-block mt-8" onclick="addDmNpc()">+ Добавить NPC в базу</button>
+
+            <div style="margin-top:12px; padding-top:10px; border-top:1px solid rgba(212,175,55,0.14);">
+              <input type="text" id="npcSearchInput" placeholder="🔍 Поиск NPC по имени, описанию или тегам..." oninput="renderDmNpcList()" />
+              <div id="npcTagCloud" class="row mt-8" style="flex-wrap:wrap;"></div>
+            </div>
+
+            <div id="dmNpcList" class="mt-12"></div>
+          </div>
         </div>
       </div>
     </section>
@@ -1303,35 +1475,68 @@
     </div>
   </div>
 
-  <!-- ================= MODAL: CREATE HERO ================= -->
+  <!-- ================= MODAL: CREATE HERO (WITH 5E RACES & CLASSES) ================= -->
   <div id="createHeroModal" class="modal-backdrop" onclick="if(event.target===this) this.classList.remove('open')">
     <div class="modal-box">
       <div class="card-header">
-        <span class="card-title">Создание персонажа</span>
+        <span class="card-title">Создание персонажа D&D 5e</span>
         <button class="btn btn-sm" onclick="document.getElementById('createHeroModal').classList.remove('open')">✕</button>
       </div>
       <div class="mt-8">
         <label class="muted">Имя героя</label>
         <input type="text" id="newHeroName" placeholder="Например: Торин Дубощит" />
       </div>
+
       <div class="grid-2 mt-8">
         <div>
           <label class="muted">Раса</label>
-          <input type="text" id="newHeroRace" placeholder="Дварф" />
+          <select id="newHeroRaceSelect" onchange="onCreateRaceOrClassChange()">
+            <option value="human">Человек (+1 ко всем, 30 фт)</option>
+            <option value="elf">Эльф (+2 Лов, +1 Инт/Муд, 30 фт)</option>
+            <option value="drow">Дроу (+2 Лов, +1 Хар, 30 фт)</option>
+            <option value="dwarf">Дварф (+2 Тел, +1 Муд/Сил, 25 фт)</option>
+            <option value="halfling">Полурослик (+2 Лов, +1 Хар/Тел, 25 фт)</option>
+            <option value="tiefling">Тифлинг (+2 Хар, +1 Инт, 30 фт)</option>
+            <option value="dragonborn">Драконорождённый (+2 Сил, +1 Хар, 30 фт)</option>
+            <option value="halforc">Полуорк (+2 Сил, +1 Тел, 30 фт)</option>
+            <option value="gnome">Гном (+2 Инт, +1 Лов/Тел, 25 фт)</option>
+            <option value="halfelf">Полуэльф (+2 Хар, +1 к двум, 30 фт)</option>
+            <option value="aasimar">Аасимар (+2 Хар, +1 Муд/Тел, 30 фт)</option>
+            <option value="custom">Свой вариант (хоумбрю)</option>
+          </select>
+          <input type="text" id="newHeroCustomRace" class="mt-8 hidden" placeholder="Название своей расы..." />
         </div>
         <div>
           <label class="muted">Класс</label>
-          <input type="text" id="newHeroClass" placeholder="Воин" />
+          <select id="newHeroClassSelect" onchange="onCreateRaceOrClassChange()">
+            <option value="barbarian">Варвар (d12, Ярость)</option>
+            <option value="bard">Бард (d8, Хар, Вдохновение)</option>
+            <option value="cleric">Жрец (d8, Муд, Божеств. канал)</option>
+            <option value="druid">Друид (d8, Муд, Дикий облик)</option>
+            <option value="fighter">Воин (d10, Второе дыхание)</option>
+            <option value="monk">Монах (d8, Ци)</option>
+            <option value="paladin">Паладин (d10, Хар, Наложение рук)</option>
+            <option value="ranger">Следопыт (d10, Муд)</option>
+            <option value="rogue">Плут (d8, Скрытая атака)</option>
+            <option value="sorcerer">Чародей (d6, Хар, Единицы чар)</option>
+            <option value="warlock">Колдун (d8, Хар, Магия договора)</option>
+            <option value="wizard">Волшебник (d6, Инт, Маг. восстановление)</option>
+            <option value="custom">Свой класс</option>
+          </select>
+          <input type="text" id="newHeroCustomClass" class="mt-8 hidden" placeholder="Название своего класса..." />
         </div>
       </div>
+
+      <div id="createPresetHint" class="muted mt-8" style="font-size:0.74rem; color:var(--gold);"></div>
+
       <div class="grid-3 mt-8">
         <div>
           <label class="muted">Уровень</label>
-          <input type="number" id="newHeroLevel" value="1" min="1" max="20" />
+          <input type="number" id="newHeroLevel" value="1" min="1" max="20" onchange="onCreateRaceOrClassChange()" />
         </div>
         <div>
           <label class="muted">Макс. ОЗ (HP)</label>
-          <input type="number" id="newHeroHp" value="24" />
+          <input type="number" id="newHeroHp" value="14" />
         </div>
         <div>
           <label class="muted">PIN (4 цифры)</label>
@@ -1343,6 +1548,111 @@
         <input type="file" id="newHeroAvatarFile" accept="image/*" />
       </div>
       <button class="btn btn-primary btn-block mt-12" onclick="createNewHero()">Создать и войти</button>
+    </div>
+  </div>
+
+  <!-- ================= MODAL: ADD WEAPON ================= -->
+  <div id="addWeaponModal" class="modal-backdrop" onclick="if(event.target===this) this.classList.remove('open')">
+    <div class="modal-box">
+      <div class="card-header">
+        <span class="card-title">⚔️ Добавить оружие / атаку</span>
+        <button class="btn btn-sm" onclick="document.getElementById('addWeaponModal').classList.remove('open')">✕</button>
+      </div>
+      <div class="mt-8">
+        <label class="muted">Название оружия</label>
+        <input type="text" id="wpnName" placeholder="Например: Длинный меч / Длинный лук" />
+      </div>
+      <div class="grid-2 mt-8">
+        <div>
+          <label class="muted">Характеристика</label>
+          <select id="wpnStat">
+            <option value="STR">Сила (ближний бой)</option>
+            <option value="DEX">Ловкость (стрелковое/фехт.)</option>
+            <option value="SPELL">Магическая характеристика</option>
+          </select>
+        </div>
+        <div>
+          <label class="muted">Владение оружием</label>
+          <select id="wpnProf">
+            <option value="yes">Владею (+БМ к атаке)</option>
+            <option value="no">Нет владения</option>
+          </select>
+        </div>
+      </div>
+      <div class="grid-3 mt-8">
+        <div>
+          <label class="muted">Кость урона</label>
+          <input type="text" id="wpnDice" value="1d8" placeholder="1d8 / 2d6" />
+        </div>
+        <div>
+          <label class="muted">Бонус (+1/+2)</label>
+          <input type="number" id="wpnMagicBonus" value="0" />
+        </div>
+        <div>
+          <label class="muted">Тип урона</label>
+          <input type="text" id="wpnDmgType" value="рубящий" placeholder="колющий" />
+        </div>
+      </div>
+      <div class="mt-8">
+        <label class="muted">Свойства / заметка</label>
+        <input type="text" id="wpnProps" placeholder="Универсальное (1d10), Дистанция 150/600 фт..." />
+      </div>
+      <button class="btn btn-primary btn-block mt-12" onclick="saveNewWeapon()">Добавить в арсенал</button>
+    </div>
+  </div>
+
+  <!-- ================= MODAL: ADD SPELL / CANTRIP ================= -->
+  <div id="addSpellModal" class="modal-backdrop" onclick="if(event.target===this) this.classList.remove('open')">
+    <div class="modal-box">
+      <div class="card-header">
+        <span class="card-title">✨ Добавить фокус или заклинание</span>
+        <button class="btn btn-sm" onclick="document.getElementById('addSpellModal').classList.remove('open')">✕</button>
+      </div>
+      <div class="mt-8">
+        <label class="muted">Название</label>
+        <input type="text" id="splName" placeholder="Например: Огненный снаряд / Огненный шар" />
+      </div>
+      <div class="grid-2 mt-8">
+        <div>
+          <label class="muted">Круг заклинания</label>
+          <select id="splLevel">
+            <option value="0">0 круг (Фокус — без ячейки)</option>
+            <option value="1">1 круг</option>
+            <option value="2">2 круг</option>
+            <option value="3">3 круг</option>
+            <option value="4">4 круг</option>
+            <option value="5">5 круг</option>
+            <option value="6">6 круг</option>
+            <option value="7">7 круг</option>
+            <option value="8">8 круг</option>
+            <option value="9">9 круг</option>
+          </select>
+        </div>
+        <div>
+          <label class="muted">Тип броска при сотворении</label>
+          <select id="splRollType">
+            <option value="attack">Бросок атаки заклинанием</option>
+            <option value="save">Спасбросок цели (Сл героя)</option>
+            <option value="heal">Лечение (+мод. магии)</option>
+            <option value="utility">Без броска (бафф/утилита)</option>
+          </select>
+        </div>
+      </div>
+      <div class="grid-2 mt-8">
+        <div>
+          <label class="muted">Формула урона / лечения</label>
+          <input type="text" id="splDice" placeholder="Напр. 1d10 или 8d6 (пусто если нет)" />
+        </div>
+        <div>
+          <label class="muted">Тип урона / Спасбросок</label>
+          <input type="text" id="splTag" placeholder="огонь / Спас Ловкости" />
+        </div>
+      </div>
+      <div class="mt-8">
+        <label class="muted">Описание эффекта / дистанция / концентрация</label>
+        <textarea id="splDesc" style="min-height:66px;" placeholder="Дистанция 120 фт, мгновенное..."></textarea>
+      </div>
+      <button class="btn btn-primary btn-block mt-12" onclick="saveNewSpell()">Добавить в гримуар</button>
     </div>
   </div>
 
@@ -1512,6 +1822,125 @@
       85000, 100000, 120000, 140000, 165000, 195000, 225000, 265000, 305000, 355000
     ];
 
+    // 5e Races & Classes Presets
+    const RACES_5E = {
+      human: { name: 'Человек', speed: 30, stats: { STR: 11, DEX: 11, CON: 11, INT: 11, WIS: 11, CHA: 11 }, traits: '• Адаптивность: +1 ко всем характеристикам.' },
+      elf: { name: 'Эльф', speed: 30, stats: { STR: 10, DEX: 12, CON: 10, INT: 11, WIS: 11, CHA: 10 }, traits: '• Тёмное зрение (60 фт)\n• Наследие фей: преимущество от очарования, иммунитет к маг. сну\n• Транс (4 часа отдыха)' },
+      drow: { name: 'Дроу', speed: 30, stats: { STR: 10, DEX: 12, CON: 10, INT: 10, WIS: 10, CHA: 11 }, traits: '• Превосходное тёмное зрение (120 фт)\n• Наследие фей\n• Магия дроу: Пляшущие огоньки (фокус)' },
+      dwarf: { name: 'Дварф', speed: 25, stats: { STR: 11, DEX: 10, CON: 12, INT: 10, WIS: 11, CHA: 10 }, traits: '• Тёмное зрение (60 фт)\n• Дварфская устойчивость: сопротивление яду и преимущество на спасброски от яда' },
+      halfling: { name: 'Полурослик', speed: 25, stats: { STR: 10, DEX: 12, CON: 11, INT: 10, WIS: 10, CHA: 11 }, traits: '• Везучий: переброс 1 на d20 при атаке, проверке или спасброске\n• Храбрый: преимущество против испуга\n• Проворство полуросликов' },
+      tiefling: { name: 'Тифлинг', speed: 30, stats: { STR: 10, DEX: 10, CON: 10, INT: 11, WIS: 10, CHA: 12 }, traits: '• Тёмное зрение (60 фт)\n• Адское сопротивление: сопротивление урону огнём\n• Дьявольское наследие: Тауматургия' },
+      dragonborn: { name: 'Драконорождённый', speed: 30, stats: { STR: 12, DEX: 10, CON: 10, INT: 10, WIS: 10, CHA: 11 }, traits: '• Оружие дыхания (2d6 стихийного урона по области, Спас Сл 8 + Тел + БМ)\n• Сопротивление стихии наследия' },
+      halforc: { name: 'Полуорк', speed: 30, stats: { STR: 12, DEX: 10, CON: 11, INT: 10, WIS: 10, CHA: 10 }, traits: '• Тёмное зрение (60 фт)\n• Непоколебимая стойкость: 1 раз в долгий отдых остаётся 1 ОЗ вместо 0\n• Свирепые атаки: +1 кость урона при крите в ближнем бою' },
+      gnome: { name: 'Гном', speed: 25, stats: { STR: 10, DEX: 11, CON: 11, INT: 12, WIS: 10, CHA: 10 }, traits: '• Тёмное зрение (60 фт)\n• Гномья хитрость: преимущество на спасброски Инт, Муд и Хар против магии' },
+      halfelf: { name: 'Полуэльф', speed: 30, stats: { STR: 10, DEX: 11, CON: 11, INT: 10, WIS: 10, CHA: 12 }, traits: '• Тёмное зрение (60 фт)\n• Наследие фей\n• Универсальность навыков: владение 2 навыками на выбор' },
+      aasimar: { name: 'Аасимар', speed: 30, stats: { STR: 10, DEX: 10, CON: 10, INT: 10, WIS: 11, CHA: 12 }, traits: '• Тёмное зрение (60 фт)\n• Небесное сопротивление: некротика и излучение\n• Исцеляющие руки (лечение = уровню)' },
+      custom: { name: '', speed: 30, stats: { STR: 10, DEX: 10, CON: 10, INT: 10, WIS: 10, CHA: 10 }, traits: '' }
+    };
+
+    const CLASSES_5E = {
+      barbarian: {
+        name: 'Варвар', hitDie: 12, saves: { STR: true, CON: true }, spellAbility: 'CHA',
+        slotsMax: [0,0,0,0,0,0,0,0,0],
+        resource: { name: 'Ярость', cur: 2, max: 2 },
+        weapon: { name: 'Секира', stat: 'STR', prof: true, dice: '1d12', bonus: 0, dmgType: 'рубящий', props: 'Тяжёлое, двуручное' },
+        spell: null,
+        traits: '• Ярость (бон. действие): преимущество на проверки/спасброски Силы, +2 к урону ближнего боя, сопротивление физ. урону.\n• Защита без доспехов: КД = 10 + Лов + Тел.'
+      },
+      bard: {
+        name: 'Бард', hitDie: 8, saves: { DEX: true, CHA: true }, spellAbility: 'CHA',
+        slotsMax: [2,0,0,0,0,0,0,0,0],
+        resource: { name: 'Вдохновение барда (d6)', cur: 3, max: 3 },
+        weapon: { name: 'Рапира', stat: 'DEX', prof: true, dice: '1d8', bonus: 0, dmgType: 'колющий', props: 'Фехтовальное' },
+        spell: { name: 'Злая насмешка', level: 0, rollType: 'save', dice: '1d4', tag: 'психич. / Спас Муд', desc: '60 фт: при провале урон и помеха на следующую атаку цели.' },
+        traits: '• Вдохновение барда (бон. действие): союзник в 60 фт получает кость d6 к броску.'
+      },
+      cleric: {
+        name: 'Жрец', hitDie: 8, saves: { WIS: true, CHA: true }, spellAbility: 'WIS',
+        slotsMax: [2,0,0,0,0,0,0,0,0],
+        resource: { name: 'Божественный канал', cur: 1, max: 1 },
+        weapon: { name: 'Булава', stat: 'STR', prof: true, dice: '1d6', bonus: 0, dmgType: 'дробящий', props: 'Одноручное' },
+        spell: { name: 'Священное пламя', level: 0, rollType: 'save', dice: '1d8', tag: 'излучение / Спас Лов', desc: '60 фт: игнорирует укрытия.' },
+        traits: '• Использование заклинаний (Мудрость)\n• Божественный домен'
+      },
+      druid: {
+        name: 'Друид', hitDie: 8, saves: { INT: true, WIS: true }, spellAbility: 'WIS',
+        slotsMax: [2,0,0,0,0,0,0,0,0],
+        resource: { name: 'Дикий облик', cur: 2, max: 2 },
+        weapon: { name: 'Скимитар', stat: 'DEX', prof: true, dice: '1d6', bonus: 0, dmgType: 'рубящий', props: 'Фехтовальное, лёгкое' },
+        spell: { name: 'Терновый кнут', level: 0, rollType: 'attack', dice: '1d6', tag: 'колющий', desc: '30 фт: при попадании притягивает цель на 10 фт.' },
+        traits: '• Друидический язык\n• Дикий облик (со 2 уровня)'
+      },
+      fighter: {
+        name: 'Воин', hitDie: 10, saves: { STR: true, CON: true }, spellAbility: 'INT',
+        slotsMax: [0,0,0,0,0,0,0,0,0],
+        resource: { name: 'Второе дыхание (1d10+ур)', cur: 1, max: 1 },
+        weapon: { name: 'Длинный меч', stat: 'STR', prof: true, dice: '1d8', bonus: 0, dmgType: 'рубящий', props: 'Универсальное (1d10)' },
+        spell: null,
+        traits: '• Боевой стиль\n• Второе дыхание (бон. действие, раз в кор. отдых): лечение 1d10 + уровень воина.'
+      },
+      monk: {
+        name: 'Монах', hitDie: 8, saves: { STR: true, DEX: true }, spellAbility: 'WIS',
+        slotsMax: [0,0,0,0,0,0,0,0,0],
+        resource: { name: 'Очки Ци', cur: 2, max: 2 },
+        weapon: { name: 'Безоружный удар / Посох', stat: 'DEX', prof: true, dice: '1d6', bonus: 0, dmgType: 'дробящий', props: 'Боевые искусства' },
+        spell: null,
+        traits: '• Защита без доспехов: КД = 10 + Лов + Муд.\n• Боевые искусства: бонусный безоружный удар.'
+      },
+      paladin: {
+        name: 'Паладин', hitDie: 10, saves: { WIS: true, CHA: true }, spellAbility: 'CHA',
+        slotsMax: [0,0,0,0,0,0,0,0,0],
+        resource: { name: 'Наложение рук (пул ОЗ)', cur: 5, max: 5 },
+        weapon: { name: 'Боевой молот', stat: 'STR', prof: true, dice: '1d8', bonus: 0, dmgType: 'дробящий', props: 'Универсальное (1d10)' },
+        spell: { name: 'Божественная кара', level: 1, rollType: 'utility', dice: '2d8', tag: 'излучение', desc: 'При попадании оружием тратится ячейка: +2d8 излучения (+1d8 против нежити/исчадий).' },
+        traits: '• Божественное чувство\n• Наложение рук (пул = 5 × уровень паладина)'
+      },
+      ranger: {
+        name: 'Следопыт', hitDie: 10, saves: { STR: true, DEX: true }, spellAbility: 'WIS',
+        slotsMax: [0,0,0,0,0,0,0,0,0],
+        resource: { name: 'Природная осведомлённость', cur: 1, max: 1 },
+        weapon: { name: 'Длинный лук', stat: 'DEX', prof: true, dice: '1d8', bonus: 0, dmgType: 'колющий', props: 'Дистанция 150/600 фт' },
+        spell: { name: 'Метка охотника', level: 1, rollType: 'utility', dice: '1d6', tag: 'доп. урон', desc: 'Бон. действие, Конц. 1 час: +1d6 урона по цели при каждом попадании.' },
+        traits: '• Избранный враг и Исследователь природы'
+      },
+      rogue: {
+        name: 'Плут', hitDie: 8, saves: { DEX: true, INT: true }, spellAbility: 'INT',
+        slotsMax: [0,0,0,0,0,0,0,0,0],
+        resource: { name: 'Скрытая атака (кости d6)', cur: 1, max: 1 },
+        weapon: { name: 'Кинжал / Короткий меч', stat: 'DEX', prof: true, dice: '1d6', bonus: 0, dmgType: 'колющий', props: 'Фехтовальное, лёгкое' },
+        spell: null,
+        traits: '• Скрытая атака: 1 раз в ход +1d6 урона (растёт с уровнем) при преимуществе или союзнике рядом с целью.\n• Компетентность (×2 БМ в 2 навыках).'
+      },
+      sorcerer: {
+        name: 'Чародей', hitDie: 6, saves: { CON: true, CHA: true }, spellAbility: 'CHA',
+        slotsMax: [2,0,0,0,0,0,0,0,0],
+        resource: { name: 'Единицы чародейства', cur: 2, max: 2 },
+        weapon: { name: 'Лёгкий арбалет', stat: 'DEX', prof: true, dice: '1d8', bonus: 0, dmgType: 'колющий', props: 'Дистанция 80/320 фт' },
+        spell: { name: 'Огненный снаряд', level: 0, rollType: 'attack', dice: '1d10', tag: 'огонь', desc: '120 фт: поджигает незакреплённые горючие предметы.' },
+        traits: '• Происхождение чар\n• Гибкая магия и Метамагия (со 2–3 уровня)'
+      },
+      warlock: {
+        name: 'Колдун', hitDie: 8, saves: { WIS: true, CHA: true }, spellAbility: 'CHA',
+        slotsMax: [1,0,0,0,0,0,0,0,0],
+        resource: { name: 'Ячейки договора (короткий отдых)', cur: 1, max: 1 },
+        weapon: { name: 'Кинжал', stat: 'DEX', prof: true, dice: '1d4', bonus: 0, dmgType: 'колющий', props: 'Фехтовальное, метательное' },
+        spell: { name: 'Мистический заряд', level: 0, rollType: 'attack', dice: '1d10', tag: 'силовое поле', desc: '120 фт: лучший боевой фокус колдуна.' },
+        traits: '• Потусторонний покровитель\n• Магия договора: ячейки восстанавливаются на коротком отдыхе.'
+      },
+      wizard: {
+        name: 'Волшебник', hitDie: 6, saves: { INT: true, WIS: true }, spellAbility: 'INT',
+        slotsMax: [2,0,0,0,0,0,0,0,0],
+        resource: { name: 'Магическое восстановление', cur: 1, max: 1 },
+        weapon: { name: 'Боевой посох', stat: 'STR', prof: true, dice: '1d6', bonus: 0, dmgType: 'дробящий', props: 'Универсальное (1d8)' },
+        spell: { name: 'Волшебная стрела', level: 1, rollType: 'utility', dice: '3d4+3', tag: 'силовое поле', desc: '120 фт: 3 дротика попадают автоматически (по 1d4+1 каждый).' },
+        traits: '• Книга заклинаний (Интеллект)\n• Магическое восстановление: раз в день на коротком отдыхе возвращает ячейки (суммарно до половины ур. волшебника).'
+      },
+      custom: {
+        name: '', hitDie: 8, saves: {}, spellAbility: 'INT',
+        slotsMax: [2,0,0,0,0,0,0,0,0], resource: null, weapon: null, spell: null, traits: ''
+      }
+    };
+
     const BESTIARY_5E = [
       { id: 'goblin', name: 'Гоблин', cr: '1/4', hp: 7, ac: 15, initMod: 2, note: 'Ятаган/Лук +4 (1d6+2), Ловкий побег' },
       { id: 'kobold', name: 'Кобольд', cr: '1/8', hp: 5, ac: 12, initMod: 2, note: 'Кинжал/Праща +4 (1d4+2), Тактика стаи' },
@@ -1563,6 +1992,7 @@
     let isOnline = false;
     let activeChronicleTag = '';
     let activeNpcTag = '';
+    let showAllSpellCircles = false;
 
     let state = {
       heroes: {},
@@ -1585,7 +2015,7 @@
     };
 
     let session = {
-      role: null, // 'hero' | 'dm' | 'admin' | 'guest'
+      role: null,
       heroId: null
     };
 
@@ -1620,6 +2050,36 @@
           .map((t) => t.trim().replace(/^#/, '').toLowerCase())
           .filter(Boolean)
       )];
+    }
+
+    function escapeHtml(str) {
+      return String(str || '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;');
+    }
+
+    // Dice expression evaluator: e.g. "2d6+3", "1d8", "3d4+3"
+    function rollDiceFormula(formula, extraBonus = 0) {
+      const clean = String(formula || '1d6').replace(/\s+/g, '').toLowerCase();
+      const match = clean.match(/^(\d*)d(\d+)([+-]\d+)?$/);
+      if (!match) {
+        const flat = (parseInt(clean, 10) || 0) + extraBonus;
+        return { total: flat, detail: `${flat}` };
+      }
+      const count = Math.max(1, Math.min(30, parseInt(match[1] || '1', 10)));
+      const sides = Math.max(2, Math.min(100, parseInt(match[2], 10)));
+      const inlineMod = parseInt(match[3] || '0', 10);
+      const rolls = [];
+      for (let i = 0; i < count; i++) {
+        rolls.push(Math.floor(Math.random() * sides) + 1);
+      }
+      const sum = rolls.reduce((a, b) => a + b, 0);
+      const totalMod = inlineMod + extraBonus;
+      const total = Math.max(0, sum + totalMod);
+      let detail = `${count}d${sides} [${rolls.join(', ')}]`;
+      if (totalMod !== 0) detail += totalMod > 0 ? ` + ${totalMod}` : ` - ${Math.abs(totalMod)}`;
+      return { total, detail };
     }
 
     const bestiarySel = document.getElementById('bestiarySelect');
@@ -1741,18 +2201,49 @@
     // ================= AUTH & NAVIGATION =================
     window.openCreateHeroModal = () => {
       document.getElementById('createHeroModal').classList.add('open');
+      onCreateRaceOrClassChange();
+    };
+
+    window.onCreateRaceOrClassChange = () => {
+      const rKey = document.getElementById('newHeroRaceSelect').value;
+      const cKey = document.getElementById('newHeroClassSelect').value;
+      const lvl = Math.max(1, Math.min(20, parseInt(document.getElementById('newHeroLevel').value) || 1));
+
+      document.getElementById('newHeroCustomRace').classList.toggle('hidden', rKey !== 'custom');
+      document.getElementById('newHeroCustomClass').classList.toggle('hidden', cKey !== 'custom');
+
+      const rPreset = RACES_5E[rKey] || RACES_5E.custom;
+      const cPreset = CLASSES_5E[cKey] || CLASSES_5E.custom;
+      const conMod = Math.floor(((rPreset.stats?.CON ?? 10) - 10) / 2);
+      const hitDie = cPreset.hitDie || 8;
+      const avgPerLvl = Math.floor(hitDie / 2) + 1;
+      const suggestedHp = Math.max(1, hitDie + conMod + (lvl - 1) * (avgPerLvl + conMod));
+
+      document.getElementById('newHeroHp').value = suggestedHp;
+      document.getElementById('createPresetHint').textContent =
+        `Автозаполнение: Скорость ${rPreset.speed} фт • Кость хитов d${hitDie} • Стартовые ячейки и базовое оружие/фокус добавятся автоматически.`;
     };
 
     window.createNewHero = async () => {
       const name = document.getElementById('newHeroName').value.trim();
-      const race = document.getElementById('newHeroRace').value.trim() || 'Человек';
-      const heroClass = document.getElementById('newHeroClass').value.trim() || 'Искатель приключений';
+      if (!name) return alert('Введите имя персонажа');
+
+      const rKey = document.getElementById('newHeroRaceSelect').value;
+      const cKey = document.getElementById('newHeroClassSelect').value;
+      const rPreset = RACES_5E[rKey] || RACES_5E.custom;
+      const cPreset = CLASSES_5E[cKey] || CLASSES_5E.custom;
+
+      const race = rKey === 'custom'
+        ? (document.getElementById('newHeroCustomRace').value.trim() || 'Своя раса')
+        : rPreset.name;
+      const heroClass = cKey === 'custom'
+        ? (document.getElementById('newHeroCustomClass').value.trim() || 'Свой класс')
+        : cPreset.name;
+
       const level = Math.max(1, Math.min(20, parseInt(document.getElementById('newHeroLevel').value) || 1));
       const hpMax = parseInt(document.getElementById('newHeroHp').value) || 20;
       const pin = document.getElementById('newHeroPin').value.trim() || '1234';
       const avatarFile = document.getElementById('newHeroAvatarFile').files[0];
-
-      if (!name) return alert('Введите имя персонажа');
 
       let avatar = '';
       if (avatarFile) {
@@ -1762,16 +2253,24 @@
       const id = 'hero_' + Date.now();
       const xpTable = getActiveXpTable();
       const startXp = xpTable[level - 1] || 0;
+      const slotsMax = [...(cPreset.slotsMax || [0,0,0,0,0,0,0,0,0])];
+      const combinedTraits = [rPreset.traits, cPreset.traits].filter(Boolean).join('\n\n');
+
       const heroObj = {
         id, name, race, heroClass, level, xp: startXp, pin, avatar,
-        hpCur: hpMax, hpMax, ac: 14, speed: 30,
+        hpCur: hpMax, hpMax, ac: 13, speed: rPreset.speed || 30,
         profBonus: profBonusForLevel(level),
-        stats: { STR: 10, DEX: 14, CON: 14, INT: 10, WIS: 12, CHA: 10 },
-        saves: {},
+        stats: { ...(rPreset.stats || { STR: 10, DEX: 10, CON: 10, INT: 10, WIS: 10, CHA: 10 }) },
+        saves: { ...(cPreset.saves || {}) },
         skills: {},
+        spellAbility: cPreset.spellAbility || 'INT',
+        slots: [...slotsMax],
+        slotsMax,
+        weapons: cPreset.weapon ? [{ id: 'wpn_' + Date.now(), ...cPreset.weapon }] : [],
+        spells: cPreset.spell ? [{ id: 'spl_' + Date.now(), ...cPreset.spell }] : [],
+        resources: cPreset.resource ? [{ id: 'res_' + Date.now(), ...cPreset.resource }] : [],
+        traits: combinedTraits,
         deathSaves: { success: 0, failure: 0 },
-        slots: [2, 0, 0, 0],
-        slotsMax: [2, 0, 0, 0],
         gold: 15, silver: 0, copper: 0,
         rations: 5,
         inventory: 'Походный рюкзак, спальник, факелы.'
@@ -1865,7 +2364,6 @@
     };
 
     window.switchTab = (tabId, navId) => {
-      // Жёсткая защита: в ширму Мастера может войти только role === 'dm'
       if (tabId === 'tabDm' && session.role !== 'dm') return;
       if (tabId === 'tabAdmin' && session.role !== 'admin') return;
 
@@ -1877,7 +2375,297 @@
       if (navId) document.getElementById(navId).classList.add('active');
     };
 
-    // ================= ADMIN PANEL ACTIONS (NO DM SPOILERS) =================
+    // ================= HERO SUB-TABS, WEAPONS, SPELLS & RESOURCES =================
+    window.switchHeroSubtab = (sub) => {
+      const map = {
+        combat: ['heroSubCombatBtn', 'heroSubCombatPanel'],
+        stats: ['heroSubStatsBtn', 'heroSubStatsPanel'],
+        magic: ['heroSubMagicBtn', 'heroSubMagicPanel'],
+        gear: ['heroSubGearBtn', 'heroSubGearPanel']
+      };
+      Object.keys(map).forEach((k) => {
+        document.getElementById(map[k][0]).classList.toggle('active', k === sub);
+        document.getElementById(map[k][1]).classList.toggle('hidden', k !== sub);
+      });
+    };
+
+    function getHeroSpellMod(h) {
+      const ab = h.spellAbility || 'INT';
+      const score = h.stats?.[ab] ?? 10;
+      return Math.floor((score - 10) / 2);
+    }
+
+    function getWeaponAttackBonus(h, w) {
+      const statKey = w.stat === 'SPELL' ? (h.spellAbility || 'INT') : (w.stat || 'STR');
+      const statMod = Math.floor(((h.stats?.[statKey] ?? 10) - 10) / 2);
+      const prof = w.prof ? (h.profBonus ?? 2) : 0;
+      const magic = parseInt(w.bonus) || 0;
+      return statMod + prof + magic;
+    }
+
+    function getWeaponDamageBonus(h, w) {
+      const statKey = w.stat === 'SPELL' ? (h.spellAbility || 'INT') : (w.stat || 'STR');
+      const statMod = Math.floor(((h.stats?.[statKey] ?? 10) - 10) / 2);
+      const magic = parseInt(w.bonus) || 0;
+      return statMod + magic;
+    }
+
+    window.openAddWeaponModal = () => {
+      document.getElementById('wpnName').value = '';
+      document.getElementById('wpnDice').value = '1d8';
+      document.getElementById('wpnMagicBonus').value = '0';
+      document.getElementById('wpnDmgType').value = 'рубящий';
+      document.getElementById('wpnProps').value = '';
+      document.getElementById('addWeaponModal').classList.add('open');
+    };
+
+    window.saveNewWeapon = async () => {
+      const h = state.heroes[session.heroId];
+      if (!h) return;
+      const name = document.getElementById('wpnName').value.trim();
+      if (!name) return alert('Введите название оружия');
+
+      const wpn = {
+        id: 'wpn_' + Date.now(),
+        name,
+        stat: document.getElementById('wpnStat').value,
+        prof: document.getElementById('wpnProf').value === 'yes',
+        dice: document.getElementById('wpnDice').value.trim() || '1d6',
+        bonus: parseInt(document.getElementById('wpnMagicBonus').value) || 0,
+        dmgType: document.getElementById('wpnDmgType').value.trim() || '',
+        props: document.getElementById('wpnProps').value.trim() || ''
+      };
+
+      const weapons = [...(h.weapons || []), wpn];
+      await saveHeroPatch({ weapons });
+      document.getElementById('addWeaponModal').classList.remove('open');
+      renderHeroSheet();
+    };
+
+    window.deleteHeroWeapon = async (wpnId) => {
+      const h = state.heroes[session.heroId];
+      if (!h || !confirm('Удалить это оружие?')) return;
+      const weapons = (h.weapons || []).filter((w) => w.id !== wpnId);
+      await saveHeroPatch({ weapons });
+      renderHeroSheet();
+    };
+
+    window.rollWeaponAttack = async (wpnId) => {
+      const h = state.heroes[session.heroId];
+      const w = (h?.weapons || []).find((x) => x.id === wpnId);
+      if (!h || !w) return;
+
+      const atkBonus = getWeaponAttackBonus(h, w);
+      const d20 = Math.floor(Math.random() * 20) + 1;
+      const total = d20 + atkBonus;
+      const signStr = atkBonus >= 0 ? `+ ${atkBonus}` : `- ${Math.abs(atkBonus)}`;
+
+      const entry = {
+        roller: h.name,
+        detail: `🎯 Атака (${w.name}): 1d20 [${d20}] ${signStr}`,
+        total,
+        isCrit: d20 === 20,
+        isFumble: d20 === 1,
+        secret: false,
+        createdAt: Date.now()
+      };
+      await pushRollLogEntry(entry);
+    };
+
+    window.rollWeaponDamage = async (wpnId) => {
+      const h = state.heroes[session.heroId];
+      const w = (h?.weapons || []).find((x) => x.id === wpnId);
+      if (!h || !w) return;
+
+      const dmgBonus = getWeaponDamageBonus(h, w);
+      const res = rollDiceFormula(w.dice, dmgBonus);
+      const entry = {
+        roller: h.name,
+        detail: `💥 Урон (${w.name}, ${w.dmgType || 'физ.'}): ${res.detail}`,
+        total: res.total,
+        isCrit: false,
+        isFumble: false,
+        secret: false,
+        createdAt: Date.now()
+      };
+      await pushRollLogEntry(entry);
+    };
+
+    // Class Resources
+    window.addClassResource = async () => {
+      const h = state.heroes[session.heroId];
+      if (!h) return;
+      const name = prompt('Название ресурса (напр. Ярость, Ци, Вдохновение, Порыв действий):');
+      if (!name || !name.trim()) return;
+      const max = Math.max(1, parseInt(prompt('Максимум зарядов / очков:', '2')) || 1);
+      const resources = [...(h.resources || []), { id: 'res_' + Date.now(), name: name.trim(), cur: max, max }];
+      await saveHeroPatch({ resources });
+      renderHeroSheet();
+    };
+
+    window.changeClassResource = async (resId, delta) => {
+      const h = state.heroes[session.heroId];
+      if (!h) return;
+      const resources = (h.resources || []).map((r) => {
+        if (r.id !== resId) return r;
+        const next = Math.max(0, Math.min(r.max, (r.cur ?? r.max) + delta));
+        return { ...r, cur: next };
+      });
+      await saveHeroPatch({ resources });
+      renderHeroSheet();
+    };
+
+    window.deleteClassResource = async (resId) => {
+      const h = state.heroes[session.heroId];
+      if (!h) return;
+      const resources = (h.resources || []).filter((r) => r.id !== resId);
+      await saveHeroPatch({ resources });
+      renderHeroSheet();
+    };
+
+    // Spells & Cantrips
+    window.changeSpellAbility = async (ab) => {
+      await saveHeroPatch({ spellAbility: ab });
+      renderHeroSheet();
+    };
+
+    window.toggleShowAllSpellCircles = () => {
+      showAllSpellCircles = !showAllSpellCircles;
+      renderHeroSheet();
+    };
+
+    window.openAddSpellModal = () => {
+      document.getElementById('splName').value = '';
+      document.getElementById('splLevel').value = '0';
+      document.getElementById('splRollType').value = 'attack';
+      document.getElementById('splDice').value = '';
+      document.getElementById('splTag').value = '';
+      document.getElementById('splDesc').value = '';
+      document.getElementById('addSpellModal').classList.add('open');
+    };
+
+    window.saveNewSpell = async () => {
+      const h = state.heroes[session.heroId];
+      if (!h) return;
+      const name = document.getElementById('splName').value.trim();
+      if (!name) return alert('Введите название заклинания или фокуса');
+
+      const spl = {
+        id: 'spl_' + Date.now(),
+        name,
+        level: parseInt(document.getElementById('splLevel').value, 10) || 0,
+        rollType: document.getElementById('splRollType').value,
+        dice: document.getElementById('splDice').value.trim(),
+        tag: document.getElementById('splTag').value.trim(),
+        desc: document.getElementById('splDesc').value.trim()
+      };
+
+      const spells = [...(h.spells || []), spl].sort((a, b) => a.level - b.level);
+      await saveHeroPatch({ spells });
+      document.getElementById('addSpellModal').classList.remove('open');
+      renderHeroSheet();
+    };
+
+    window.deleteHeroSpell = async (splId) => {
+      const h = state.heroes[session.heroId];
+      if (!h || !confirm('Удалить это заклинание из гримуара?')) return;
+      const spells = (h.spells || []).filter((s) => s.id !== splId);
+      await saveHeroPatch({ spells });
+      renderHeroSheet();
+    };
+
+    window.castHeroSpell = async (splId) => {
+      const h = state.heroes[session.heroId];
+      const s = (h?.spells || []).find((x) => x.id === splId);
+      if (!h || !s) return;
+
+      // Списание ячейки, если круг >= 1
+      if (s.level >= 1) {
+        const slots = [...(h.slots || [0,0,0,0,0,0,0,0,0])];
+        while (slots.length < 9) slots.push(0);
+        const idx = s.level - 1;
+        if ((slots[idx] || 0) <= 0) {
+          if (!confirm(`У вас закончились ячейки ${s.level} круга! Всё равно сотворить (например, ритуалом или за счёт черты)?`)) {
+            return;
+          }
+        } else {
+          slots[idx] = Math.max(0, slots[idx] - 1);
+          await saveHeroPatch({ slots });
+        }
+      }
+
+      const spellMod = getHeroSpellMod(h);
+      const prof = h.profBonus ?? 2;
+      const spellAtk = spellMod + prof;
+      const spellDc = 8 + spellMod + prof;
+      const lvlLabel = s.level === 0 ? 'Фокус' : `${s.level} круг`;
+
+      if (s.rollType === 'attack') {
+        const d20 = Math.floor(Math.random() * 20) + 1;
+        const totalAtk = d20 + spellAtk;
+        const signStr = spellAtk >= 0 ? `+ ${spellAtk}` : `- ${Math.abs(spellAtk)}`;
+        let dmgPart = '';
+        if (s.dice) {
+          const dmgRes = rollDiceFormula(s.dice, 0);
+          dmgPart = ` | Урон: ${dmgRes.total} (${dmgRes.detail}${s.tag ? ', ' + s.tag : ''})`;
+        }
+        await pushRollLogEntry({
+          roller: h.name,
+          detail: `✨ ${s.name} (${lvlLabel}): Атака 1d20 [${d20}] ${signStr}${dmgPart}`,
+          total: totalAtk,
+          isCrit: d20 === 20,
+          isFumble: d20 === 1,
+          secret: false,
+          createdAt: Date.now()
+        });
+      } else if (s.rollType === 'save') {
+        const dmgRes = s.dice ? rollDiceFormula(s.dice, 0) : { total: spellDc, detail: 'эффект' };
+        await pushRollLogEntry({
+          roller: h.name,
+          detail: `✨ ${s.name} (${lvlLabel}, Сл ${spellDc}${s.tag ? ' — ' + s.tag : ''}): ${dmgRes.detail}`,
+          total: dmgRes.total,
+          isCrit: false,
+          isFumble: false,
+          secret: false,
+          createdAt: Date.now()
+        });
+      } else if (s.rollType === 'heal') {
+        const healRes = rollDiceFormula(s.dice || '1d8', spellMod);
+        await pushRollLogEntry({
+          roller: h.name,
+          detail: `💚 ${s.name} (${lvlLabel}, лечение): ${healRes.detail}`,
+          total: healRes.total,
+          isCrit: false,
+          isFumble: false,
+          secret: false,
+          createdAt: Date.now()
+        });
+      } else {
+        const utilRes = s.dice ? rollDiceFormula(s.dice, 0) : null;
+        await pushRollLogEntry({
+          roller: h.name,
+          detail: `✨ Сотворено: ${s.name} (${lvlLabel})${utilRes ? ' — ' + utilRes.detail : ''}`,
+          total: utilRes ? utilRes.total : '✓',
+          isCrit: false,
+          isFumble: false,
+          secret: false,
+          createdAt: Date.now()
+        });
+      }
+      renderHeroSheet();
+    };
+
+    async function pushRollLogEntry(entry) {
+      if (isOnline) {
+        await addDoc(collection(db, 'rolls'), entry);
+      } else {
+        state.rolls.unshift(entry);
+        saveLocalState();
+      }
+      openDiceModal();
+    }
+
+    // ================= ADMIN PANEL ACTIONS =================
     window.changeAdminPinOnly = async () => {
       const nextPin = prompt('Новый PIN-код Админа (минимум 4 символа):');
       if (!nextPin || nextPin.trim().length < 4) return alert('PIN должен содержать минимум 4 символа');
@@ -2288,7 +3076,7 @@
       const total = d20 + bonus;
       const signStr = bonus >= 0 ? `+ ${bonus}` : `- ${Math.abs(bonus)}`;
 
-      const entry = {
+      await pushRollLogEntry({
         roller: h.name,
         detail: `Спасбросок (${st.fullName}): 1d20 [${d20}] ${signStr}`,
         total,
@@ -2296,15 +3084,7 @@
         isFumble: d20 === 1,
         secret: false,
         createdAt: Date.now()
-      };
-
-      if (isOnline) {
-        await addDoc(collection(db, 'rolls'), entry);
-      } else {
-        state.rolls.unshift(entry);
-        saveLocalState();
-      }
-      openDiceModal();
+      });
     };
 
     function calcSkillBonus(h, skill) {
@@ -2343,7 +3123,7 @@
       const total = d20 + bonus;
       const signStr = bonus >= 0 ? `+ ${bonus}` : `- ${Math.abs(bonus)}`;
 
-      const entry = {
+      await pushRollLogEntry({
         roller: h.name,
         detail: `${skill.name}: 1d20 [${d20}] ${signStr}`,
         total,
@@ -2351,15 +3131,7 @@
         isFumble: d20 === 1,
         secret: false,
         createdAt: Date.now()
-      };
-
-      if (isOnline) {
-        await addDoc(collection(db, 'rolls'), entry);
-      } else {
-        state.rolls.unshift(entry);
-        saveLocalState();
-      }
-      openDiceModal();
+      });
     };
 
     window.handleAvatarUpload = async (e) => {
@@ -2394,7 +3166,8 @@
     window.toggleSpellSlot = (lvlIdx, slotIdx) => {
       const h = state.heroes[session.heroId];
       if (!h) return;
-      const slots = [...(h.slots || [2, 0, 0, 0])];
+      const slots = [...(h.slots || [0,0,0,0,0,0,0,0,0])];
+      while (slots.length < 9) slots.push(0);
       slots[lvlIdx] = slotIdx < slots[lvlIdx] ? slotIdx : slotIdx + 1;
       saveHeroPatch({ slots });
       renderHeroSheet();
@@ -2403,8 +3176,10 @@
     window.changeMaxSlot = (lvlIdx, delta) => {
       const h = state.heroes[session.heroId];
       if (!h) return;
-      const slotsMax = [...(h.slotsMax || [2, 0, 0, 0])];
-      const slots = [...(h.slots || [2, 0, 0, 0])];
+      const slotsMax = [...(h.slotsMax || [0,0,0,0,0,0,0,0,0])];
+      const slots = [...(h.slots || [0,0,0,0,0,0,0,0,0])];
+      while (slotsMax.length < 9) slotsMax.push(0);
+      while (slots.length < 9) slots.push(0);
       slotsMax[lvlIdx] = Math.max(0, Math.min(6, slotsMax[lvlIdx] + delta));
       slots[lvlIdx] = Math.min(slots[lvlIdx], slotsMax[lvlIdx]);
       saveHeroPatch({ slotsMax, slots });
@@ -2414,10 +3189,14 @@
     window.restoreSpellSlots = () => {
       const h = state.heroes[session.heroId];
       if (!h) return;
+      const slotsMax = [...(h.slotsMax || [0,0,0,0,0,0,0,0,0])];
+      while (slotsMax.length < 9) slotsMax.push(0);
+      const resources = (h.resources || []).map((r) => ({ ...r, cur: r.max }));
       saveHeroPatch({
         hpCur: h.hpMax,
         deathSaves: { success: 0, failure: 0 },
-        slots: [...(h.slotsMax || [2, 0, 0, 0])]
+        slots: slotsMax,
+        resources
       });
       renderHeroSheet();
     };
@@ -2432,6 +3211,10 @@
 
     window.saveHeroNotes = () => {
       saveHeroPatch({ inventory: document.getElementById('heroInventoryInput').value });
+    };
+
+    window.saveHeroTraits = () => {
+      saveHeroPatch({ traits: document.getElementById('heroTraitsInput').value });
     };
 
     function renderDeathSavesControls(heroId, dsObj) {
@@ -2484,6 +3267,7 @@
       document.getElementById('heroHpMax').textContent = h.hpMax;
       document.getElementById('rationsCountDisplay').textContent = h.rations ?? 5;
 
+      // XP & Level Progress Bar
       const curFloor = xpTable[Math.min(19, lvl - 1)] || 0;
       const nextCap = lvl < 20 ? (xpTable[lvl] ?? curFloor) : curFloor;
       const lvlUpBtn = document.getElementById('levelUpBtn');
@@ -2506,6 +3290,7 @@
         }
       }
 
+      // Death Saves Panel
       const dsPanel = document.getElementById('heroDeathSavesPanel');
       if ((h.hpCur || 0) === 0) {
         dsPanel.classList.remove('hidden');
@@ -2526,6 +3311,51 @@
         ph.classList.remove('hidden');
       }
 
+      // Subtab 1: Weapons & Resources
+      const weapons = h.weapons || [];
+      document.getElementById('heroWeaponsList').innerHTML = weapons.length
+        ? weapons.map((w) => {
+            const atk = getWeaponAttackBonus(h, w);
+            const dmg = getWeaponDamageBonus(h, w);
+            const atkStr = atk >= 0 ? `+${atk}` : `${atk}`;
+            const dmgModStr = dmg === 0 ? '' : (dmg > 0 ? `+${dmg}` : `${dmg}`);
+            return `
+              <div class="item-card">
+                <div class="row" style="justify-content:space-between;">
+                  <div>
+                    <strong style="color:var(--gold); font-size:0.95rem;">${escapeHtml(w.name)}</strong>
+                    ${w.props ? `<div class="muted" style="font-size:0.72rem;">${escapeHtml(w.props)}</div>` : ''}
+                  </div>
+                  <button class="btn btn-danger btn-xs" onclick="deleteHeroWeapon('${w.id}')">✕</button>
+                </div>
+                <div class="row mt-8" style="justify-content:space-between; flex-wrap:wrap;">
+                  <span class="muted" style="font-size:0.78rem;">Урон: <strong style="color:var(--text-main);">${escapeHtml(w.dice)}${dmgModStr}</strong> (${escapeHtml(w.dmgType || 'физ.')})</span>
+                  <div class="row">
+                    <button class="btn btn-primary btn-xs" onclick="rollWeaponAttack('${w.id}')">🎯 Атака ${atkStr}</button>
+                    <button class="btn btn-danger btn-xs" onclick="rollWeaponDamage('${w.id}')">💥 Урон</button>
+                  </div>
+                </div>
+              </div>
+            `;
+          }).join('')
+        : '<p class="muted">Арсенал пуст. Нажмите «+ Оружие», чтобы добавить клинок, лук или жезл.</p>';
+
+      const resources = h.resources || [];
+      document.getElementById('heroResourcesList').innerHTML = resources.length
+        ? resources.map((r) => `
+            <div class="row" style="justify-content:space-between; padding:7px 8px; background:var(--bg-card-alt); border-radius:9px; margin-bottom:6px;">
+              <span style="font-size:0.86rem; font-weight:600;">${escapeHtml(r.name)}</span>
+              <div class="row">
+                <button class="btn btn-danger btn-xs" onclick="changeClassResource('${r.id}', -1)">-1</button>
+                <strong style="color:var(--gold); min-width:42px; text-align:center;">${r.cur} / ${r.max}</strong>
+                <button class="btn btn-xs" onclick="changeClassResource('${r.id}', 1)">+1</button>
+                <button class="btn btn-danger btn-xs" onclick="deleteClassResource('${r.id}')">✕</button>
+              </div>
+            </div>
+          `).join('')
+        : '<p class="muted">Нет отслеживаемых классовых ресурсов (Ярость, Ци, Вдохновение и др.).</p>';
+
+      // Subtab 2: Stats, Saving Throws & 18 Skills
       const labels = { STR: 'Сила', DEX: 'Ловк', CON: 'Тел', INT: 'Инт', WIS: 'Мудр', CHA: 'Хар' };
       const grid = document.getElementById('statsGrid');
       grid.innerHTML = Object.keys(labels).map((k) => {
@@ -2576,25 +3406,69 @@
         `;
       }).join('');
 
-      const slotsMax = h.slotsMax || [2, 0, 0, 0];
-      const slots = h.slots || [2, 0, 0, 0];
-      document.getElementById('spellSlotsContainer').innerHTML = slotsMax.map((max, idx) => {
+      // Subtab 3: Magic, Slots (1-9) & Spells
+      const ab = h.spellAbility || 'INT';
+      document.getElementById('spellAbilitySelect').value = ab;
+      const spellMod = getHeroSpellMod(h);
+      const spellDc = 8 + profBonus + spellMod;
+      const spellAtk = profBonus + spellMod;
+      document.getElementById('spellModDisplay').textContent = spellMod >= 0 ? `+${spellMod}` : `${spellMod}`;
+      document.getElementById('spellDcDisplay').textContent = spellDc;
+      document.getElementById('spellAtkDisplay').textContent = spellAtk >= 0 ? `+${spellAtk}` : `${spellAtk}`;
+
+      const slotsMax = [...(h.slotsMax || [0,0,0,0,0,0,0,0,0])];
+      const slots = [...(h.slots || [0,0,0,0,0,0,0,0,0])];
+      while (slotsMax.length < 9) slotsMax.push(0);
+      while (slots.length < 9) slots.push(0);
+
+      const visibleCircles = [];
+      for (let i = 0; i < 9; i++) {
+        if (showAllSpellCircles || slotsMax[i] > 0 || i === 0) visibleCircles.push(i);
+      }
+
+      document.getElementById('spellSlotsContainer').innerHTML = visibleCircles.map((idx) => {
+        const max = slotsMax[idx];
         let pips = '';
         for (let i = 0; i < max; i++) {
           pips += `<div class="slot-pip ${i < slots[idx] ? 'filled' : ''}" onclick="toggleSpellSlot(${idx}, ${i})"></div>`;
         }
         return `
           <div class="spell-slot-row">
-            <span class="muted">${idx + 1} круг</span>
-            <div class="slot-pips">${pips || '<span class="muted">нет</span>'}</div>
+            <span class="muted" style="min-width:54px;">${idx + 1} круг</span>
+            <div class="slot-pips">${pips || '<span class="muted" style="font-size:0.74rem;">нет ячеек</span>'}</div>
             <div class="row">
-              <button class="btn btn-sm" onclick="changeMaxSlot(${idx}, -1)">-</button>
-              <button class="btn btn-sm" onclick="changeMaxSlot(${idx}, 1)">+</button>
+              <button class="btn btn-xs" onclick="changeMaxSlot(${idx}, -1)">-</button>
+              <button class="btn btn-xs" onclick="changeMaxSlot(${idx}, 1)">+</button>
             </div>
           </div>
         `;
       }).join('');
 
+      const spells = [...(h.spells || [])].sort((a, b) => a.level - b.level);
+      document.getElementById('heroSpellsList').innerHTML = spells.length
+        ? spells.map((s) => {
+            const lvlText = s.level === 0 ? 'Фокус' : `${s.level} круг`;
+            return `
+              <div class="item-card">
+                <div class="row" style="justify-content:space-between; align-items:flex-start;">
+                  <div>
+                    <span class="spell-lvl-badge">${lvlText}</span>
+                    <strong style="color:var(--gold); margin-left:4px;">${escapeHtml(s.name)}</strong>
+                    ${(s.dice || s.tag) ? `<div class="muted" style="font-size:0.74rem; margin-top:3px;">${escapeHtml(s.dice)} ${s.tag ? '• ' + escapeHtml(s.tag) : ''}</div>` : ''}
+                  </div>
+                  <div class="row">
+                    <button class="btn btn-primary btn-xs" onclick="castHeroSpell('${s.id}')">✨ Сотворить</button>
+                    <button class="btn btn-danger btn-xs" onclick="deleteHeroSpell('${s.id}')">✕</button>
+                  </div>
+                </div>
+                ${s.desc ? `<div class="muted" style="font-size:0.76rem; margin-top:5px;">${escapeHtml(s.desc)}</div>` : ''}
+              </div>
+            `;
+          }).join('')
+        : '<p class="muted">Гримуар пуст. Нажмите «+ Заклинание», чтобы добавить фокусы (0 круг) и заклинания.</p>';
+
+      // Subtab 4: Traits, Wallet, Rations & Inventory
+      document.getElementById('heroTraitsInput').value = h.traits || '';
       document.getElementById('goldInput').value = h.gold ?? 0;
       document.getElementById('silverInput').value = h.silver ?? 0;
       document.getElementById('copperInput').value = h.copper ?? 0;
@@ -2713,7 +3587,7 @@
       alert(`«${npcName}» добавлен в Базу NPC Мастера!`);
     };
 
-    // ================= SHARED DOCS & CHRONICLE (STRICT PERMISSIONS) =================
+    // ================= SHARED DOCS & CHRONICLE =================
     function currentActorIdentity() {
       if (session.role === 'dm') return { author: 'Мастер', ownerId: 'dm' };
       if (session.role === 'admin') return { author: 'Админ', ownerId: 'admin' };
@@ -2805,7 +3679,7 @@
       if (d.type === 'image') {
         body.innerHTML = `<img src="${d.content}" style="max-width:100%; border-radius:10px;" />`;
       } else {
-        body.innerHTML = `<pre style="white-space:pre-wrap; text-align:left; font-family:inherit; line-height:1.5;">${d.content}</pre>`;
+        body.innerHTML = `<pre style="white-space:pre-wrap; text-align:left; font-family:inherit; line-height:1.5;">${escapeHtml(d.content)}</pre>`;
       }
       document.getElementById('previewModal').classList.add('open');
     };
@@ -2841,10 +3715,10 @@
           <div class="doc-card">
             ${d.type === 'image'
               ? `<img class="doc-thumb" src="${d.content}" onclick="openDocPreview('${d.id}')" />`
-              : `<div class="doc-text-preview" onclick="openDocPreview('${d.id}')">${d.content || 'Пустой документ'}</div>`
+              : `<div class="doc-text-preview" onclick="openDocPreview('${d.id}')">${escapeHtml(d.content) || 'Пустой документ'}</div>`
             }
             <div class="doc-meta">
-              <span class="doc-title" onclick="openDocPreview('${d.id}')">${d.title}</span>
+              <span class="doc-title" onclick="openDocPreview('${d.id}')">${escapeHtml(d.title)}</span>
               ${allowed ? `
                 <button class="btn btn-xs" style="padding:2px 5px;" onclick="renameSharedDoc('${d.id}')" title="Переименовать">✏️</button>
                 <button class="btn btn-danger btn-xs" style="padding:2px 5px;" onclick="deleteSharedDoc('${d.id}')" title="Удалить">✕</button>
@@ -2953,17 +3827,29 @@
         return `
           <div style="padding:9px 0; border-bottom:1px solid rgba(255,255,255,0.06);">
             <div class="row" style="justify-content:space-between; align-items:flex-start;">
-              <div style="font-size:0.9rem; flex:1;">${c.text}</div>
+              <div style="font-size:0.9rem; flex:1;">${escapeHtml(c.text)}</div>
               ${modControls}
             </div>
             ${tagsHtml ? `<div class="row mt-8" style="flex-wrap:wrap;">${tagsHtml}</div>` : ''}
-            <div class="muted" style="font-size:0.72rem; margin-top:4px;">— ${c.author}</div>
+            <div class="muted" style="font-size:0.72rem; margin-top:4px;">— ${escapeHtml(c.author)}</div>
           </div>
         `;
       }).join('') || '<p class="muted">Записей по вашему фильтру не найдено.</p>';
     }
 
-    // ================= DM SCREEN: NOTES vs NPC SUB-TABS & COMBAT =================
+    // ================= DM SCREEN: 3 MAIN TABS, NOTES SEARCH, NPC & COMBAT =================
+    window.switchDmMainTab = (tab) => {
+      const map = {
+        combat: ['dmMainCombatBtn', 'dmMainCombatPanel'],
+        party: ['dmMainPartyBtn', 'dmMainPartyPanel'],
+        notes: ['dmMainNotesBtn', 'dmMainNotesPanel']
+      };
+      Object.keys(map).forEach((k) => {
+        document.getElementById(map[k][0]).classList.toggle('active', k === tab);
+        document.getElementById(map[k][1]).classList.toggle('hidden', k !== tab);
+      });
+    };
+
     window.switchDmSubtab = (tab) => {
       const isNotes = tab === 'notes';
       document.getElementById('dmSubNotesBtn').classList.toggle('active', isNotes);
@@ -2971,6 +3857,33 @@
       document.getElementById('dmSubNotesPanel').classList.toggle('hidden', !isNotes);
       document.getElementById('dmSubNpcPanel').classList.toggle('hidden', isNotes);
       if (!isNotes) renderDmNpcList();
+    };
+
+    window.renderDmNotesSearch = () => {
+      const queryRaw = (document.getElementById('dmNotesSearchInput')?.value || '').trim();
+      const box = document.getElementById('dmNotesSearchHits');
+      if (!queryRaw) {
+        box.classList.add('hidden');
+        box.innerHTML = '';
+        return;
+      }
+      const text = document.getElementById('dmSecretNotes')?.value || '';
+      const lines = text.split('\n').filter((l) => l.trim().length > 0);
+      const qLower = queryRaw.toLowerCase();
+      const matches = lines.filter((l) => l.toLowerCase().includes(qLower));
+
+      box.classList.remove('hidden');
+      if (!matches.length) {
+        box.innerHTML = '<span class="muted">Совпадений в тайных записях не найдено.</span>';
+        return;
+      }
+      const escapedQ = queryRaw.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+      const regex = new RegExp(`(${escapedQ})`, 'gi');
+      box.innerHTML = `<div class="muted" style="font-size:0.72rem; margin-bottom:4px; color:var(--gold);">Найдено строк: ${matches.length}</div>` +
+        matches.slice(0, 12).map((line) => {
+          const highlighted = escapeHtml(line).replace(regex, '<mark class="hl">$1</mark>');
+          return `<div style="padding:3px 0; border-bottom:1px solid rgba(255,255,255,0.05);">${highlighted}</div>`;
+        }).join('');
     };
 
     window.addDmNpc = async () => {
@@ -3048,13 +3961,13 @@
         return `
           <div style="background:var(--bg-card-alt); border:1px solid rgba(212,175,55,0.22); border-radius:10px; padding:10px; margin-bottom:8px;">
             <div class="row" style="justify-content:space-between;">
-              <strong style="color:var(--gold); font-family:'Cinzel', serif;">${n.name}</strong>
+              <strong style="color:var(--gold); font-family:'Cinzel', serif;">${escapeHtml(n.name)}</strong>
               <div class="row">
                 <button class="btn btn-xs" onclick="editDmNpc('${n.id}')" title="Редактировать NPC">✏️</button>
                 <button class="btn btn-danger btn-xs" onclick="deleteDmNpc('${n.id}')" title="Удалить NPC">✕</button>
               </div>
             </div>
-            ${n.desc ? `<div style="font-size:0.84rem; margin-top:5px; white-space:pre-wrap;">${n.desc}</div>` : ''}
+            ${n.desc ? `<div style="font-size:0.84rem; margin-top:5px; white-space:pre-wrap;">${escapeHtml(n.desc)}</div>` : ''}
             ${tagsHtml ? `<div class="row mt-8" style="flex-wrap:wrap;">${tagsHtml}</div>` : ''}
           </div>
         `;
@@ -3371,11 +4284,22 @@
 
     function renderDmScreen() {
       const heroes = Object.values(state.heroes);
+
+      // Compact strip on Combat tab
+      document.getElementById('dmCompactPartyStrip').innerHTML = heroes.length
+        ? `<div class="row" style="flex-wrap:wrap; gap:6px;">` + heroes.map((h) => `
+            <div style="background:var(--bg-card-alt); border:1px solid rgba(212,175,55,0.2); border-radius:8px; padding:5px 8px; font-size:0.78rem;">
+              <strong style="color:var(--gold);">${escapeHtml(h.name)}</strong> • ❤️${h.hpCur}/${h.hpMax} • 🛡️${h.ac}
+            </div>
+          `).join('') + `</div>`
+        : '<p class="muted">Игроки ещё не создали персонажей.</p>';
+
+      // Detailed list on Party & XP tab
       document.getElementById('dmPartyOverview').innerHTML = heroes.length
         ? heroes.map((h) => `
-            <div class="row" style="justify-content:space-between; padding:6px 8px; background:var(--bg-card-alt); border-radius:8px; margin-bottom:5px;">
+            <div class="row" style="justify-content:space-between; padding:7px 9px; background:var(--bg-card-alt); border-radius:9px; margin-bottom:6px;">
               <div style="min-width:0;">
-                <strong>${h.name}</strong> <span class="muted">(${h.heroClass}, Ур. ${h.level || 1})</span>
+                <strong>${escapeHtml(h.name)}</strong> <span class="muted">(${escapeHtml(h.heroClass)}, Ур. ${h.level || 1})</span>
                 <div class="muted" style="font-size:0.72rem;">✨ ${(h.xp ?? 0).toLocaleString('ru-RU')} XP • 🍖 ${h.rations ?? 5} рац.</div>
               </div>
               <div class="row">
@@ -3405,7 +4329,7 @@
             const deathSavesOn = isHero && (c.deathSaves !== false);
             const willSkip = !shouldTakeTurn(c);
             const conds = (c.conditions || []).map((cond, cIdx) =>
-              `<span class="cond-pill" onclick="removeCombatCondition(${idx}, ${cIdx})">${cond} ✕</span>`
+              `<span class="cond-pill" onclick="removeCombatCondition(${idx}, ${cIdx})">${escapeHtml(cond)} ✕</span>`
             ).join(' ');
 
             const dmDeathSavesBlock = (isHero && heroData && hpCur === 0)
@@ -3416,7 +4340,7 @@
               <div class="combatant-card ${idx === curIdx ? 'active-turn' : ''} ${hpCur === 0 ? 'is-dead' : ''}">
                 <div class="row" style="justify-content:space-between;">
                   <div>
-                    <span>${idx === curIdx ? '▶ ' : ''}<strong style="color:${isHero ? 'var(--gold)' : 'var(--text-main)'};">${name}</strong></span>
+                    <span>${idx === curIdx ? '▶ ' : ''}<strong style="color:${isHero ? 'var(--gold)' : 'var(--text-main)'};">${escapeHtml(name)}</strong></span>
                     <span class="muted" style="margin-left:6px;">🛡️ ${ac}</span>
                     ${willSkip ? `<span class="muted" style="margin-left:4px; color:#f87171;">(пропуск)</span>` : ''}
                   </div>
@@ -3427,7 +4351,7 @@
                   </div>
                 </div>
 
-                ${c.note ? `<div class="muted" style="font-size:0.72rem; margin-top:3px;">⚔️ ${c.note}</div>` : ''}
+                ${c.note ? `<div class="muted" style="font-size:0.72rem; margin-top:3px;">⚔️ ${escapeHtml(c.note)}</div>` : ''}
 
                 <div class="hp-bar-track">
                   <div class="hp-bar-fill" style="width:${pct}%; background:${barColor};"></div>
@@ -3458,14 +4382,15 @@
               </div>
             `;
           }).join('')
-        : '<p class="muted">Выберите монстра из бестиария или нажмите «+ Партия».</p>';
+        : '<p class="muted">Выберите монстра из бестиария или нажмите «+ Всех в бой».</p>';
 
       const logs = state.dm.combatLog || [];
       document.getElementById('combatLogBox').innerHTML = logs.length
-        ? logs.map((line) => `<div class="combat-log-line">${line}</div>`).join('')
+        ? logs.map((line) => `<div class="combat-log-line">${escapeHtml(line)}</div>`).join('')
         : '<div class="muted">События боя будут записываться сюда автоматически...</div>';
 
       document.getElementById('dmSecretNotes').value = state.dm.notes || '';
+      renderDmNotesSearch();
       renderDmNpcList();
     }
 
@@ -3541,8 +4466,8 @@
         ? visible.map((r) => `
             <div class="roll-log-item">
               <div>
-                <strong>${r.roller}</strong> ${r.secret ? '🔒' : ''}
-                <div class="muted" style="font-size:0.75rem;">${r.detail}</div>
+                <strong>${escapeHtml(r.roller)}</strong> ${r.secret ? '🔒' : ''}
+                <div class="muted" style="font-size:0.75rem;">${escapeHtml(r.detail)}</div>
               </div>
               <div style="font-size:1.25rem; font-weight:800;" class="${r.isCrit ? 'roll-crit' : r.isFumble ? 'roll-fumble' : ''}">
                 ${r.total}
@@ -3563,11 +4488,11 @@
       container.innerHTML = heroes.map((h) => `
         <div class="char-select-card" onclick="loginAsHero('${h.id}')">
           ${h.avatar
-            ? `<img class="avatar-circle" src="${h.avatar}" alt="${h.name}" />`
-            : `<div class="avatar-circle">${h.name[0]?.toUpperCase() || '?'}</div>`
+            ? `<img class="avatar-circle" src="${h.avatar}" alt="${escapeHtml(h.name)}" />`
+            : `<div class="avatar-circle">${escapeHtml(h.name[0]?.toUpperCase() || '?')}</div>`
           }
-          <div style="font-weight:700; color:var(--gold); font-size:0.95rem;">${h.name}</div>
-          <div class="muted" style="font-size:0.75rem;">${h.heroClass} • Ур. ${h.level || 1}</div>
+          <div style="font-weight:700; color:var(--gold); font-size:0.95rem;">${escapeHtml(h.name)}</div>
+          <div class="muted" style="font-size:0.75rem;">${escapeHtml(h.heroClass)} • Ур. ${h.level || 1}</div>
         </div>
       `).join('');
     }
