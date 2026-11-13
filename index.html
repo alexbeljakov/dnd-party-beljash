@@ -30,6 +30,7 @@
       --crimson: #b91c1c;
       --crimson-bright: #ef4444;
       --emerald: #059669;
+      --cyan-temp: #38bdf8;
       --text-main: #f3efe6;
       --text-muted: #9ca3af;
       --safe-top: env(safe-area-inset-top, 12px);
@@ -185,6 +186,11 @@
       background: rgba(5, 150, 105, 0.22);
       color: #6ee7b7;
     }
+    .btn-temp {
+      border-color: rgba(56, 189, 248, 0.5);
+      background: rgba(2, 132, 199, 0.22);
+      color: #7dd3fc;
+    }
     .btn-sm {
       padding: 5px 9px;
       font-size: 0.78rem;
@@ -251,7 +257,7 @@
       color: var(--text-muted);
       padding: 7px 4px;
       border-radius: 8px;
-      font-size: 0.76rem;
+      font-size: 0.74rem;
       font-weight: 700;
       cursor: pointer;
       white-space: nowrap;
@@ -312,6 +318,54 @@
       background: rgba(212, 175, 55, 0.18);
       color: var(--gold);
       border: 1px solid rgba(212, 175, 55, 0.35);
+    }
+
+    /* Combat Cheat Sheet */
+    .cheatsheet-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+    }
+    @media (max-width: 390px) {
+      .cheatsheet-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+    .cheat-pill {
+      background: rgba(0, 0, 0, 0.3);
+      border: 1px solid rgba(212, 175, 55, 0.16);
+      border-radius: 8px;
+      padding: 7px 8px;
+      font-size: 0.74rem;
+      line-height: 1.3;
+    }
+    .cheat-pill strong {
+      color: var(--gold);
+      display: block;
+      margin-bottom: 2px;
+    }
+
+    /* Public Player Initiative Board (NO HP/AC/INDICATORS FOR MONSTERS) */
+    .pub-combat-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 7px 9px;
+      background: var(--bg-card-alt);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-left: 3px solid rgba(212, 175, 55, 0.3);
+      border-radius: 9px;
+      margin-bottom: 5px;
+      font-size: 0.84rem;
+    }
+    .pub-combat-row.is-active {
+      border-color: var(--gold);
+      border-left: 4px solid var(--gold);
+      background: linear-gradient(90deg, rgba(212, 175, 55, 0.16), var(--bg-card-alt));
+    }
+    .pub-combat-row.is-fallen {
+      opacity: 0.5;
+      text-decoration: line-through;
     }
 
     /* Rations Counter Box */
@@ -418,7 +472,7 @@
       transition: width 0.25s ease;
     }
 
-    /* Dynamic Gradient HP Box (Green -> Amber -> Crimson) */
+    /* Dynamic Gradient HP Box (Green -> Amber -> Crimson) + Temp HP */
     .hp-box {
       background: linear-gradient(155deg, rgba(16, 185, 129, 0.24) 0%, rgba(16, 185, 129, 0.08) 100%);
       border: 1px solid rgba(16, 185, 129, 0.45);
@@ -433,7 +487,21 @@
       font-weight: 800;
       color: #6ee7b7;
       line-height: 1.1;
+      margin: 4px 0;
       transition: color 0.35s ease;
+    }
+    .temp-hp-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 2px 9px;
+      border-radius: 999px;
+      background: rgba(2, 132, 199, 0.26);
+      border: 1px solid rgba(56, 189, 248, 0.55);
+      color: #7dd3fc;
+      font-size: 0.76rem;
+      font-weight: 700;
+      cursor: pointer;
     }
     .hp-controls {
       display: grid;
@@ -1152,15 +1220,26 @@
           </div>
         </div>
 
-        <!-- Dynamic Gradient HP Tracker + Death Saves -->
+        <!-- Dynamic Gradient HP Tracker + Temp HP + Short/Long Rest + Death Saves -->
         <div id="heroHpBox" class="hp-box">
-          <div class="row" style="justify-content:space-between;">
+          <div class="row" style="justify-content:space-between; flex-wrap:wrap;">
             <span class="muted" style="text-transform:uppercase; font-size:0.7rem; letter-spacing:0.06em;">Здоровье (ОЗ)</span>
-            <button class="btn btn-xs" onclick="restoreSpellSlots()">⛺ Долгий отдых</button>
+            <div class="row">
+              <button class="btn btn-xs" onclick="openShortRestModal()" title="Потратить кость хитов и восстановить ресурсы короткого отдыха">☕ Короткий</button>
+              <button class="btn btn-xs" onclick="restoreSpellSlots()" title="Полное восстановление здоровья, ячеек и ресурсов">⛺ Долгий</button>
+            </div>
           </div>
+
           <div id="heroHpValue" class="hp-value">
             <span id="heroHpCur">20</span> <span style="font-size:1.05rem; color:var(--text-muted);">/ <span id="heroHpMax">20</span></span>
           </div>
+
+          <div>
+            <button class="temp-hp-pill" onclick="setHeroTempHp()" title="Временные ОЗ списываются первыми при уроне">
+              🛡️ Врем. ОЗ: <span id="heroTempHpDisplay">0</span> (+ задать)
+            </button>
+          </div>
+
           <div class="hp-controls">
             <button class="btn btn-danger btn-sm" onclick="changeHp(-5)">-5</button>
             <button class="btn btn-danger btn-sm" onclick="changeHp(-1)">-1</button>
@@ -1179,7 +1258,7 @@
         <button id="heroSubGearBtn" class="subtab-btn" onclick="switchHeroSubtab('gear')">🎒 Сумка</button>
       </div>
 
-      <!-- HERO SUBTAB 1: COMBAT, WEAPONS & CLASS RESOURCES -->
+      <!-- HERO SUBTAB 1: COMBAT, WEAPONS, CLASS RESOURCES & ACTION CHEAT SHEET -->
       <div id="heroSubCombatPanel">
         <div class="card">
           <div class="card-header">
@@ -1195,6 +1274,24 @@
             <button class="btn btn-xs" onclick="addClassResource()">+ Ресурс</button>
           </div>
           <div id="heroResourcesList"></div>
+        </div>
+
+        <!-- Action Economy Cheat Sheet D&D 5e -->
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">📖 Памятка: Что сделать в ход</span>
+            <button class="btn btn-xs" onclick="toggleCombatCheatSheet()">Свернуть / Показать</button>
+          </div>
+          <div id="combatCheatSheetBody" class="cheatsheet-grid">
+            <div class="cheat-pill"><strong>⚔️ Атака (Действие)</strong>Удар оружием или захват/толчок вместо одной из атак.</div>
+            <div class="cheat-pill"><strong>✨ Заклинание (Действие)</strong>Сотворение заклинания со временем накладывания «1 действие».</div>
+            <div class="cheat-pill"><strong>🛡️ Уклонение (Действие)</strong>До вашего след. хода атаки по вам с помехой, спас Лов с преим.</div>
+            <div class="cheat-pill"><strong>💨 Рывок (Действие)</strong>Удваивает вашу скорость передвижения на текущий ход.</div>
+            <div class="cheat-pill"><strong>👣 Отход (Действие)</strong>Ваше перемещение не провоцирует атаки по возможности в этот ход.</div>
+            <div class="cheat-pill"><strong>🤝 Помощь (Действие)</strong>Даёт союзнику преимущество на проверку или следующую атаку.</div>
+            <div class="cheat-pill"><strong>🥷 Засада (Действие)</strong>Проверка Ловкости (Скрытность), чтобы спрятаться от врагов.</div>
+            <div class="cheat-pill"><strong>⚡ Бон. действие и Реакция</strong>1 бонусное действие в ход и 1 реакция за раунд (атака по возм., Щит).</div>
+          </div>
         </div>
       </div>
 
@@ -1389,8 +1486,17 @@
       <div id="generatedNamesList"></div>
     </section>
 
-    <!-- ================= TAB 3: SHARED HUB (DOCS + CHRONICLE) ================= -->
+    <!-- ================= TAB 3: SHARED HUB (PUBLIC COMBAT BOARD + DOCS + CHRONICLE) ================= -->
     <section id="tabShared" class="hidden">
+      <!-- Public Combat Initiative Board (NO HP, AC, OR HEALTH INDICATORS FOR ENEMIES!) -->
+      <div id="publicCombatCard" class="card hidden">
+        <div class="card-header">
+          <span class="card-title">⚔️ Текущий бой • Раунд <span id="pubRoundCounter">1</span></span>
+          <span class="muted" style="font-size:0.72rem;">Очередь ходов</span>
+        </div>
+        <div id="publicInitiativeList"></div>
+      </div>
+
       <div class="card">
         <div class="card-header">
           <span class="card-title">Общие документы и Карты</span>
@@ -1428,15 +1534,16 @@
       </div>
     </section>
 
-    <!-- ================= TAB 4: DUNGEON MASTER SCREEN (3 SUB-TABS) ================= -->
+    <!-- ================= TAB 4: DUNGEON MASTER SCREEN (4 SUB-TABS) ================= -->
     <section id="tabDm" class="hidden">
-      <div class="subtab-bar-3">
+      <div class="subtab-bar-4">
         <button id="dmMainCombatBtn" class="subtab-btn active" onclick="switchDmMainTab('combat')">⚔️ Бой</button>
-        <button id="dmMainPartyBtn" class="subtab-btn" onclick="switchDmMainTab('party')">👥 Партия и XP</button>
-        <button id="dmMainNotesBtn" class="subtab-btn" onclick="switchDmMainTab('notes')">📖 Записи и NPC</button>
+        <button id="dmMainPartyBtn" class="subtab-btn" onclick="switchDmMainTab('party')">👥 Партия</button>
+        <button id="dmMainNotesBtn" class="subtab-btn" onclick="switchDmMainTab('notes')">📖 Записи</button>
+        <button id="dmMainGenBtn" class="subtab-btn" onclick="switchDmMainTab('gen')">🎲 Генератор</button>
       </div>
 
-      <!-- DM SUBTAB 1: COMBAT TRACKER & SELECTIVE PARTY ADD -->
+      <!-- DM SUBTAB 1: COMBAT TRACKER, BESTIARY ATTACKS & CUSTOM MONSTERS -->
       <div id="dmMainCombatPanel">
         <div class="card">
           <div class="card-header">
@@ -1458,8 +1565,12 @@
             </div>
           </div>
 
+          <!-- Bestiary + Custom Monster Builder -->
           <div class="bestiary-box">
-            <div class="muted" style="font-size:0.72rem; margin-bottom:5px; color:var(--gold);">🐉 Быстрый бестиарий (автобросок инициативы, ОЗ и КД):</div>
+            <div class="row" style="justify-content:space-between; margin-bottom:5px;">
+              <span class="muted" style="font-size:0.72rem; color:var(--gold);">🐉 Бестиарий (статы + автобросок атаки):</span>
+              <button class="btn btn-xs" onclick="openCustomMonsterModal()">+ Свой монстр</button>
+            </div>
             <div class="row">
               <select id="bestiarySelect" style="flex:2;" onchange="previewBestiaryMonster()"></select>
               <button class="btn btn-primary btn-sm" style="flex:1; white-space:nowrap;" onclick="addFromBestiary()">+ В бой</button>
@@ -1467,15 +1578,16 @@
             <div id="bestiaryHint" class="muted" style="font-size:0.74rem; margin-top:5px;"></div>
           </div>
 
+          <!-- Quick One-off Enemy / NPC Form -->
           <div style="background:rgba(0,0,0,0.25); padding:8px; border-radius:10px; margin-bottom:10px;">
             <div class="row">
-              <input type="text" id="initNameInput" placeholder="Свой враг / NPC" style="flex:2.2;" />
+              <input type="text" id="initNameInput" placeholder="Быстрый враг / NPC" style="flex:2.2;" />
               <input type="number" id="initValInput" placeholder="Иниц." style="flex:1;" />
             </div>
             <div class="row mt-8">
               <input type="number" id="initHpInput" placeholder="ОЗ (HP)" style="flex:1;" />
               <input type="number" id="initAcInput" placeholder="КД (AC)" style="flex:1;" />
-              <button class="btn btn-sm" style="flex:1.2;" onclick="addInitiativeCombatant()">+ Свой</button>
+              <button class="btn btn-sm" style="flex:1.2;" onclick="addInitiativeCombatant()">+ В бой</button>
             </div>
           </div>
 
@@ -1507,7 +1619,7 @@
         </div>
       </div>
 
-      <!-- DM SUBTAB 3: SECRET NOTES (WITH FILES, PHOTOS, SHARE TO PLAYERS) & NPC DATABASE -->
+      <!-- DM SUBTAB 3: SECRET NOTES (WITH FILES, PHOTOS, SHARE) & NPC DATABASE -->
       <div id="dmMainNotesPanel" class="hidden">
         <div class="card">
           <div class="subtab-bar">
@@ -1515,7 +1627,6 @@
             <button id="dmSubNpcBtn" class="subtab-btn" onclick="switchDmSubtab('npc')">🎭 База NPC</button>
           </div>
 
-          <!-- Subtab A: Structured Secret Notes with Photo/File Upload & Share -->
           <div id="dmSubNotesPanel">
             <div class="grid-2">
               <input type="text" id="newDmNoteTitle" placeholder="Заголовок записи / раздатки..." />
@@ -1545,7 +1656,6 @@
             </div>
           </div>
 
-          <!-- Subtab B: Tagged & Searchable NPC Database -->
           <div id="dmSubNpcPanel" class="hidden">
             <div class="grid-2">
               <input type="text" id="newNpcNameInput" placeholder="Имя NPC..." />
@@ -1561,6 +1671,34 @@
 
             <div id="dmNpcList" class="mt-12"></div>
           </div>
+        </div>
+      </div>
+
+      <!-- DM SUBTAB 4: LOOT, TAVERN & RUMORS GENERATOR -->
+      <div id="dmMainGenPanel" class="hidden">
+        <!-- Loot Generator -->
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">💰 Генератор случайного лута</span>
+          </div>
+          <div class="row">
+            <select id="lootTierSelect" style="flex:1.6;">
+              <option value="low">Уровень угрозы CR 0–4 (Начинающие)</option>
+              <option value="mid">Уровень угрозы CR 5–10 (Герои королевства)</option>
+              <option value="high">Уровень угрозы CR 11+ (Сокровищница дракона)</option>
+            </select>
+            <button class="btn btn-primary btn-sm" style="flex:1;" onclick="generateDmLoot()">🎲 Сгенерировать</button>
+          </div>
+          <div id="dmLootOutput" class="mt-12"></div>
+        </div>
+
+        <!-- Tavern & Rumors Generator -->
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">🍺 Генератор таверны и слухов</span>
+            <button class="btn btn-primary btn-xs" onclick="generateDmTavern()">🎲 Новая таверна</button>
+          </div>
+          <div id="dmTavernOutput"></div>
         </div>
       </div>
     </section>
@@ -1618,6 +1756,94 @@
       <span>Админ</span>
     </button>
   </nav>
+
+  <!-- ================= MODAL: SHORT REST (HIT DICE & RESOURCES) ================= -->
+  <div id="shortRestModal" class="modal-backdrop" onclick="if(event.target===this) this.classList.remove('open')">
+    <div class="modal-box">
+      <div class="card-header">
+        <span class="card-title">☕ Короткий отдых</span>
+        <button class="btn btn-sm" onclick="document.getElementById('shortRestModal').classList.remove('open')">✕</button>
+      </div>
+      <p class="muted">Потратьте кости хитов, чтобы восстановить здоровье (`1dX + модификатор Телосложения`), и восстановите ресурсы короткого отдыха.</p>
+
+      <div class="item-card mt-8">
+        <div class="row" style="justify-content:space-between;">
+          <span>Доступно костей хитов:</span>
+          <strong id="shortRestHdAvailable" style="color:var(--gold);">1 / 1 (d8)</strong>
+        </div>
+        <div class="row mt-8">
+          <button class="btn btn-heal btn-block btn-sm" onclick="spendOneHitDie()">🎲 Потратить 1 кость хитов и полечиться</button>
+        </div>
+        <div id="shortRestHealLog" class="muted mt-8" style="color:#6ee7b7;"></div>
+      </div>
+
+      <div class="mt-8">
+        <label style="display:flex; align-items:center; gap:8px; font-size:0.84rem; color:var(--gold);">
+          <input type="checkbox" id="shortRestRestoreResCheck" checked style="width:auto;" />
+          Восстановить классовые ресурсы (Ци, Второе дыхание и др.)
+        </label>
+        <label style="display:flex; align-items:center; gap:8px; font-size:0.84rem; color:var(--gold); margin-top:6px;">
+          <input type="checkbox" id="shortRestWarlockSlotsCheck" style="width:auto;" />
+          Восстановить ячейки заклинаний (для Колдуна)
+        </label>
+      </div>
+
+      <button class="btn btn-primary btn-block mt-12" onclick="finishShortRest()">Завершить короткий отдых</button>
+    </div>
+  </div>
+
+  <!-- ================= MODAL: CUSTOM MONSTER TO BESTIARY ================= -->
+  <div id="customMonsterModal" class="modal-backdrop" onclick="if(event.target===this) this.classList.remove('open')">
+    <div class="modal-box">
+      <div class="card-header">
+        <span class="card-title">🐉 Добавить монстра в Бестиарий</span>
+        <button class="btn btn-sm" onclick="document.getElementById('customMonsterModal').classList.remove('open')">✕</button>
+      </div>
+      <div class="grid-2 mt-8">
+        <div>
+          <label class="muted">Название существа</label>
+          <input type="text" id="cmName" placeholder="Напр. Вожак хобгоблинов" />
+        </div>
+        <div>
+          <label class="muted">Опасность (CR)</label>
+          <input type="text" id="cmCr" value="3" placeholder="3" />
+        </div>
+      </div>
+      <div class="grid-3 mt-8">
+        <div>
+          <label class="muted">ОЗ (HP)</label>
+          <input type="number" id="cmHp" value="52" />
+        </div>
+        <div>
+          <label class="muted">КД (AC)</label>
+          <input type="number" id="cmAc" value="17" />
+        </div>
+        <div>
+          <label class="muted">Мод. иниц.</label>
+          <input type="number" id="cmInitMod" value="2" />
+        </div>
+      </div>
+      <div class="grid-3 mt-8">
+        <div>
+          <label class="muted">Название атаки</label>
+          <input type="text" id="cmAtkName" value="Двуручный меч" />
+        </div>
+        <div>
+          <label class="muted">Бонус атаки (+)</label>
+          <input type="number" id="cmAtkBonus" value="5" />
+        </div>
+        <div>
+          <label class="muted">Формула урона</label>
+          <input type="text" id="cmDmgDice" value="2d6+3" />
+        </div>
+      </div>
+      <div class="mt-8">
+        <label class="muted">Особые свойства / заметка</label>
+        <input type="text" id="cmNote" placeholder="Мультиатака (2 удара), Лидерство..." />
+      </div>
+      <button class="btn btn-primary btn-block mt-12" onclick="saveCustomBestiaryMonster()">Сохранить в Бестиарий</button>
+    </div>
+  </div>
 
   <!-- ================= MODAL: SELECT SPECIFIC PLAYERS FOR COMBAT ================= -->
   <div id="selectCombatPartyModal" class="modal-backdrop" onclick="if(event.target===this) this.classList.remove('open')">
@@ -2163,21 +2389,21 @@
       }
     };
 
-    const BESTIARY_5E = [
-      { id: 'goblin', name: 'Гоблин', cr: '1/4', hp: 7, ac: 15, initMod: 2, note: 'Ятаган/Лук +4 (1d6+2), Ловкий побег' },
-      { id: 'kobold', name: 'Кобольд', cr: '1/8', hp: 5, ac: 12, initMod: 2, note: 'Кинжал/Праща +4 (1d4+2), Тактика стаи' },
-      { id: 'skeleton', name: 'Скелет', cr: '1/4', hp: 13, ac: 13, initMod: 2, note: 'Короткий меч/Лук +4 (1d6+2), Уязв. дробящему' },
-      { id: 'zombie', name: 'Зомби', cr: '1/4', hp: 22, ac: 8, initMod: -2, note: 'Удар +3 (1d6+1), Стойкость нежити (Спас Тел)' },
-      { id: 'bandit', name: 'Бандит', cr: '1/8', hp: 11, ac: 12, initMod: 1, note: 'Ятаган/Арбалет +3 (1d6+1 / 1d8+1)' },
-      { id: 'wolf', name: 'Волк', cr: '1/4', hp: 11, ac: 13, initMod: 2, note: 'Укус +4 (2d4+2), Сбивание с ног, Тактика стаи' },
-      { id: 'giant_spider', name: 'Гигантский паук', cr: '1', hp: 26, ac: 14, initMod: 3, note: 'Укус +5 (1d8+3 + 2d8 яд), Паутина (Сл 12)' },
-      { id: 'orc', name: 'Орк', cr: '1/2', hp: 15, ac: 13, initMod: 1, note: 'Секира +5 (1d12+3), Агрессивный рывок' },
-      { id: 'hobgoblin', name: 'Хобгоблин', cr: '1/2', hp: 11, ac: 18, initMod: 1, note: 'Длинный меч +3 (1d8+1), Воинское превосходство +2d6' },
-      { id: 'ghoul', name: 'Вурдалак', cr: '1', hp: 22, ac: 12, initMod: 2, note: 'Когти +4 (2d4+2), Паралич (Спас Тел Сл 10)' },
-      { id: 'owlbear', name: 'Медвесыч', cr: '3', hp: 59, ac: 13, initMod: 1, note: 'Мультиатака: Клюв +7 (1d10+5) и Когти +7 (2d8+5)' },
-      { id: 'ogre', name: 'Огр', cr: '2', hp: 59, ac: 11, initMod: -1, note: 'Палица / Метат. копьё +6 (2d8+4)' },
-      { id: 'minotaur', name: 'Минотавр', cr: '3', hp: 76, ac: 14, initMod: 0, note: 'Секира +6 (2d12+4), Разбег (+2d8 и сбивание)' },
-      { id: 'troll', name: 'Тролль', cr: '5', hp: 84, ac: 15, initMod: 1, note: '3 атаки +7 (1d6+4 и 2×2d6+4), Регенерация 10 ОЗ' }
+    const BUILTIN_BESTIARY_5E = [
+      { id: 'goblin', name: 'Гоблин', cr: '1/4', hp: 7, ac: 15, initMod: 2, atkName: 'Ятаган', atkBonus: 4, dmgDice: '1d6+2', note: 'Ятаган +4 (1d6+2), Ловкий побег' },
+      { id: 'kobold', name: 'Кобольд', cr: '1/8', hp: 5, ac: 12, initMod: 2, atkName: 'Кинжал', atkBonus: 4, dmgDice: '1d4+2', note: 'Кинжал +4 (1d4+2), Тактика стаи' },
+      { id: 'skeleton', name: 'Скелет', cr: '1/4', hp: 13, ac: 13, initMod: 2, atkName: 'Короткий меч', atkBonus: 4, dmgDice: '1d6+2', note: 'Короткий меч +4 (1d6+2), Уязв. дробящему' },
+      { id: 'zombie', name: 'Зомби', cr: '1/4', hp: 22, ac: 8, initMod: -2, atkName: 'Удар', atkBonus: 3, dmgDice: '1d6+1', note: 'Удар +3 (1d6+1), Стойкость нежити (Спас Тел)' },
+      { id: 'bandit', name: 'Бандит', cr: '1/8', hp: 11, ac: 12, initMod: 1, atkName: 'Ятаган', atkBonus: 3, dmgDice: '1d6+1', note: 'Ятаган +3 (1d6+1) / Арбалет (1d8+1)' },
+      { id: 'wolf', name: 'Волк', cr: '1/4', hp: 11, ac: 13, initMod: 2, atkName: 'Укус', atkBonus: 4, dmgDice: '2d4+2', note: 'Укус +4 (2d4+2), Сбивание с ног, Тактика стаи' },
+      { id: 'giant_spider', name: 'Гигантский паук', cr: '1', hp: 26, ac: 14, initMod: 3, atkName: 'Укус', atkBonus: 5, dmgDice: '1d8+3', note: 'Укус +5 (1d8+3 + 2d8 яд), Паутина (Сл 12)' },
+      { id: 'orc', name: 'Орк', cr: '1/2', hp: 15, ac: 13, initMod: 1, atkName: 'Секира', atkBonus: 5, dmgDice: '1d12+3', note: 'Секира +5 (1d12+3), Агрессивный рывок' },
+      { id: 'hobgoblin', name: 'Хобгоблин', cr: '1/2', hp: 11, ac: 18, initMod: 1, atkName: 'Длинный меч', atkBonus: 3, dmgDice: '1d8+1', note: 'Длинный меч +3 (1d8+1), Превосходство +2d6' },
+      { id: 'ghoul', name: 'Вурдалак', cr: '1', hp: 22, ac: 12, initMod: 2, atkName: 'Когти', atkBonus: 4, dmgDice: '2d4+2', note: 'Когти +4 (2d4+2), Паралич (Спас Тел Сл 10)' },
+      { id: 'owlbear', name: 'Медвесыч', cr: '3', hp: 59, ac: 13, initMod: 1, atkName: 'Когти', atkBonus: 7, dmgDice: '2d8+5', note: 'Клюв +7 (1d10+5) и Когти +7 (2d8+5)' },
+      { id: 'ogre', name: 'Огр', cr: '2', hp: 59, ac: 11, initMod: -1, atkName: 'Палица', atkBonus: 6, dmgDice: '2d8+4', note: 'Палица / Метат. копьё +6 (2d8+4)' },
+      { id: 'minotaur', name: 'Минотавр', cr: '3', hp: 76, ac: 14, initMod: 0, atkName: 'Секира', atkBonus: 6, dmgDice: '2d12+4', note: 'Секира +6 (2d12+4), Разбег (+2d8 и сбивание)' },
+      { id: 'troll', name: 'Тролль', cr: '5', hp: 84, ac: 15, initMod: 1, atkName: 'Когти', atkBonus: 7, dmgDice: '2d6+4', note: '3 атаки +7 (1d6+4 и 2×2d6+4), Регенерация 10 ОЗ' }
     ];
 
     const SAVING_THROWS_5E = [
@@ -2229,6 +2455,7 @@
         adminPin: '1111',
         xpMode: 'canon',
         customXpTable: [...CANON_XP_5E],
+        customMonsters: [],
         notes: 'Секретные заметки Мастера:\n',
         noteCards: [],
         npcs: [],
@@ -2243,6 +2470,32 @@
     let session = {
       role: null,
       heroId: null
+    };
+
+    function getFullBestiary() {
+      return [...(state.dm.customMonsters || []), ...BUILTIN_BESTIARY_5E];
+    }
+
+    function renderBestiaryDropdown() {
+      const sel = document.getElementById('bestiarySelect');
+      if (!sel) return;
+      const curVal = sel.value;
+      const list = getFullBestiary();
+      sel.innerHTML = list.map((m) => {
+        const modStr = m.initMod >= 0 ? `+${m.initMod}` : `${m.initMod}`;
+        const star = m.isCustom ? '⭐ ' : '';
+        return `<option value="${m.id}">${star}${m.name} (ОЗ ${m.hp}, КД ${m.ac}, Иниц ${modStr})</option>`;
+      }).join('');
+      if (curVal && list.some((m) => m.id === curVal)) sel.value = curVal;
+      previewBestiaryMonster();
+    }
+
+    window.previewBestiaryMonster = () => {
+      const sel = document.getElementById('bestiarySelect');
+      const m = getFullBestiary().find((x) => x.id === sel?.value);
+      const hint = document.getElementById('bestiaryHint');
+      if (!m || !hint) return;
+      hint.textContent = `CR ${m.cr} • ${m.note || `${m.atkName} +${m.atkBonus} (${m.dmgDice})`}`;
     };
 
     // ==================== DYNAMIC GRADIENT HP STYLING ====================
@@ -2394,18 +2647,7 @@
       return { total, detail, sides };
     }
 
-    const bestiarySel = document.getElementById('bestiarySelect');
-    bestiarySel.innerHTML = BESTIARY_5E.map((m) => {
-      const modStr = m.initMod >= 0 ? `+${m.initMod}` : `${m.initMod}`;
-      return `<option value="${m.id}">${m.name} (ОЗ ${m.hp}, КД ${m.ac}, Иниц ${modStr})</option>`;
-    }).join('');
-
-    window.previewBestiaryMonster = () => {
-      const m = BESTIARY_5E.find((x) => x.id === bestiarySel.value);
-      if (!m) return;
-      document.getElementById('bestiaryHint').textContent = `CR ${m.cr} • ${m.note}`;
-    };
-    previewBestiaryMonster();
+    renderBestiaryDropdown();
 
     if (firebaseConfig.apiKey && firebaseConfig.projectId) {
       try {
@@ -2469,7 +2711,9 @@
         } else {
           setDoc(doc(db, 'meta', 'dm'), state.dm);
         }
+        renderBestiaryDropdown();
         renderHeroSheet();
+        renderPublicCombatBoard();
         renderDmScreen();
       });
     }
@@ -2508,6 +2752,13 @@
 
     function profBonusForLevel(lvl) {
       return Math.floor((Math.max(1, lvl) - 1) / 4) + 2;
+    }
+
+    function guessHitDieForHero(h) {
+      if (h.hitDie) return h.hitDie;
+      const cls = (h.heroClass || '').toLowerCase();
+      const found = Object.values(CLASSES_5E).find((c) => c.name && cls.includes(c.name.toLowerCase()));
+      return found ? found.hitDie : 8;
     }
 
     // ================= AUTH & NAVIGATION =================
@@ -2570,7 +2821,10 @@
 
       const heroObj = {
         id, name, race, heroClass, level, xp: startXp, pin, avatar,
-        hpCur: hpMax, hpMax, ac: 13, speed: rPreset.speed || 30,
+        hpCur: hpMax, hpMax, tempHp: 0,
+        hitDie: cPreset.hitDie || 8,
+        hitDiceLeft: level,
+        ac: 13, speed: rPreset.speed || 30,
         profBonus: profBonusForLevel(level),
         stats: { ...(rPreset.stats || { STR: 10, DEX: 10, CON: 10, INT: 10, WIS: 10, CHA: 10 }) },
         saves: { ...(cPreset.saves || {}) },
@@ -2685,6 +2939,83 @@
       document.querySelectorAll('.nav-btn').forEach((b) => b.classList.remove('active'));
       document.getElementById(tabId).classList.remove('hidden');
       if (navId) document.getElementById(navId).classList.add('active');
+    };
+
+    // ================= TEMP HP & SHORT REST =================
+    window.setHeroTempHp = async () => {
+      const h = state.heroes[session.heroId];
+      if (!h) return;
+      const raw = prompt('Задать временные хиты (Temp HP, по правилам 5e не складываются, а заменяются):', h.tempHp || 0);
+      if (raw === null || raw.trim() === '') return;
+      const val = Math.max(0, parseInt(raw, 10) || 0);
+      await saveHeroPatch({ tempHp: val });
+      renderHeroSheet();
+    };
+
+    window.openShortRestModal = () => {
+      const h = state.heroes[session.heroId];
+      if (!h) return;
+      const lvl = h.level || 1;
+      const hd = guessHitDieForHero(h);
+      const left = h.hitDiceLeft !== undefined ? h.hitDiceLeft : lvl;
+      document.getElementById('shortRestHdAvailable').textContent = `${left} / ${lvl} (d${hd})`;
+      document.getElementById('shortRestHealLog').textContent = '';
+      document.getElementById('shortRestWarlockSlotsCheck').checked = (h.heroClass || '').toLowerCase().includes('колдун');
+      document.getElementById('shortRestModal').classList.add('open');
+    };
+
+    window.spendOneHitDie = async () => {
+      const h = state.heroes[session.heroId];
+      if (!h) return;
+      const lvl = h.level || 1;
+      const hd = guessHitDieForHero(h);
+      const left = h.hitDiceLeft !== undefined ? h.hitDiceLeft : lvl;
+      if (left <= 0) {
+        return alert('Кости хитов закончились! Восстановите их долгим отдыхом.');
+      }
+      const conMod = Math.floor(((h.stats?.CON ?? 10) - 10) / 2);
+      const roll = Math.floor(Math.random() * hd) + 1;
+      const heal = Math.max(1, roll + conMod);
+      const nextHp = Math.min(h.hpMax, (h.hpCur || 0) + heal);
+      const nextLeft = left - 1;
+
+      await saveHeroPatch({
+        hpCur: nextHp,
+        hitDiceLeft: nextLeft,
+        deathSaves: nextHp > 0 ? { success: 0, failure: 0 } : h.deathSaves
+      });
+
+      document.getElementById('shortRestHdAvailable').textContent = `${nextLeft} / ${lvl} (d${hd})`;
+      const modStr = conMod >= 0 ? `+${conMod}` : `${conMod}`;
+      document.getElementById('shortRestHealLog').textContent = `☕ Бросок 1d${hd} [${roll}] ${modStr} = +${heal} ОЗ (теперь ${nextHp}/${h.hpMax})`;
+      renderHeroSheet();
+    };
+
+    window.finishShortRest = async () => {
+      const h = state.heroes[session.heroId];
+      if (!h) return;
+      const restoreRes = document.getElementById('shortRestRestoreResCheck').checked;
+      const restoreWarlock = document.getElementById('shortRestWarlockSlotsCheck').checked;
+      const patch = {};
+
+      if (restoreRes && Array.isArray(h.resources)) {
+        patch.resources = h.resources.map((r) => ({ ...r, cur: r.max }));
+      }
+      if (restoreWarlock) {
+        const slotsMax = [...(h.slotsMax || [0,0,0,0,0,0,0,0,0])];
+        while (slotsMax.length < 9) slotsMax.push(0);
+        patch.slots = slotsMax;
+      }
+
+      if (Object.keys(patch).length) {
+        await saveHeroPatch(patch);
+      }
+      document.getElementById('shortRestModal').classList.remove('open');
+      renderHeroSheet();
+    };
+
+    window.toggleCombatCheatSheet = () => {
+      document.getElementById('combatCheatSheetBody').classList.toggle('hidden');
     };
 
     // ================= HERO SUB-TABS, WEAPONS, SPELLS & RESOURCES =================
@@ -3026,7 +3357,7 @@
         : '<p class="muted">В партии пока нет созданных персонажей.</p>';
     }
 
-    // ================= EDIT & DELETE HERO + LEVEL / XP / RATIONS =================
+    // ================= EDIT & DELETE HERO + LEVEL / XP / RATIONS / TEMP HP DAMAGE =================
     async function saveHeroPatchById(id, patch) {
       if (!id || !state.heroes[id]) return;
       state.heroes[id] = { ...state.heroes[id], ...patch };
@@ -3039,6 +3370,31 @@
 
     function saveHeroPatch(patch) {
       return saveHeroPatchById(session.heroId, patch);
+    }
+
+    // Applies damage (consuming Temp HP first) or healing (resetting death saves)
+    function computeHeroHpAfterDelta(h, delta) {
+      let hpCur = h.hpCur || 0;
+      let tempHp = h.tempHp || 0;
+      let absorbed = 0;
+
+      if (delta < 0) {
+        let dmg = Math.abs(delta);
+        if (tempHp > 0) {
+          absorbed = Math.min(tempHp, dmg);
+          tempHp -= absorbed;
+          dmg -= absorbed;
+        }
+        hpCur = Math.max(0, hpCur - dmg);
+      } else if (delta > 0) {
+        hpCur = Math.min(h.hpMax + 20, hpCur + delta);
+      }
+
+      const patch = { hpCur, tempHp };
+      if (delta > 0 && hpCur > 0) {
+        patch.deathSaves = { success: 0, failure: 0 };
+      }
+      return { patch, absorbed, hpCur, tempHp };
     }
 
     window.changeRations = (delta) => {
@@ -3151,7 +3507,8 @@
       if (curLvl >= 20) return;
       const nextLvl = curLvl + 1;
       const suggestedProf = profBonusForLevel(nextLvl);
-      await saveHeroPatch({ level: nextLvl, profBonus: suggestedProf });
+      const nextHdLeft = (h.hitDiceLeft !== undefined ? h.hitDiceLeft : curLvl) + 1;
+      await saveHeroPatch({ level: nextLvl, profBonus: suggestedProf, hitDiceLeft: Math.min(nextLvl, nextHdLeft) });
       alert(`Поздравляем! ${h.name} достиг ${nextLvl} уровня! Бонус мастерства обновлён до +${suggestedProf}. Не забудьте увеличить макс. ОЗ в профиле.`);
       renderHeroSheet();
     };
@@ -3466,12 +3823,7 @@
     window.changeHp = (delta) => {
       const h = state.heroes[session.heroId];
       if (!h) return;
-      const prevHp = h.hpCur || 0;
-      const next = Math.max(0, Math.min(h.hpMax + 20, prevHp + delta));
-      const patch = { hpCur: next };
-      if (delta > 0 && next > 0) {
-        patch.deathSaves = { success: 0, failure: 0 };
-      }
+      const { patch } = computeHeroHpAfterDelta(h, delta);
       saveHeroPatch(patch);
       renderHeroSheet();
     };
@@ -3510,11 +3862,17 @@
     window.restoreSpellSlots = () => {
       const h = state.heroes[session.heroId];
       if (!h) return;
+      const lvl = h.level || 1;
       const slotsMax = [...(h.slotsMax || [0,0,0,0,0,0,0,0,0])];
       while (slotsMax.length < 9) slotsMax.push(0);
       const resources = (h.resources || []).map((r) => ({ ...r, cur: r.max }));
+      const curHd = h.hitDiceLeft !== undefined ? h.hitDiceLeft : lvl;
+      const restoredHd = Math.min(lvl, curHd + Math.max(1, Math.floor(lvl / 2)));
+
       saveHeroPatch({
         hpCur: h.hpMax,
+        tempHp: 0,
+        hitDiceLeft: restoredHd,
         deathSaves: { success: 0, failure: 0 },
         slots: slotsMax,
         resources
@@ -3586,6 +3944,7 @@
       document.getElementById('heroSpeedDisplay').textContent = h.speed || 30;
       document.getElementById('heroHpCur').textContent = h.hpCur;
       document.getElementById('heroHpMax').textContent = h.hpMax;
+      document.getElementById('heroTempHpDisplay').textContent = h.tempHp || 0;
       document.getElementById('rationsCountDisplay').textContent = h.rations ?? 5;
 
       applyHpBoxGradient(h.hpCur, h.hpMax);
@@ -3796,7 +4155,7 @@
       document.getElementById('heroInventoryInput').value = h.inventory || '';
     }
 
-    // ================= PHONETIC & MORPHEME NAME ENGINE (10,000+ COMBINATIONS) =================
+    // ================= PHONETIC & MORPHEME NAME ENGINE =================
     const RACE_PHONETICS = {
       human: {
         maleCanon: ['Алдрик', 'Бран', 'Вейн', 'Гаррет', 'Дарион', 'Йорик', 'Каэл', 'Лотар', 'Маркус', 'Рован', 'Седрик', 'Талин', 'Эдмунд', 'Рейнальд', 'Вальтер', 'Корвин', 'Олдвин', 'Стефан', 'Тристам', 'Харлан'],
@@ -3936,16 +4295,10 @@
     function synthesizeFirstName(pool, gender) {
       const g = gender === 'any' ? (Math.random() < 0.5 ? 'male' : 'female') : gender;
       if (g === 'male') {
-        const s = pick(pool.mStart);
-        const m = pick(pool.mMid);
-        const e = pick(pool.mEnd);
-        const raw = s + m + e;
+        const raw = pick(pool.mStart) + pick(pool.mMid) + pick(pool.mEnd);
         return raw.charAt(0).toUpperCase() + raw.slice(1);
       } else {
-        const s = pick(pool.fStart);
-        const m = pick(pool.fMid);
-        const e = pick(pool.fEnd);
-        const raw = s + m + e;
+        const raw = pick(pool.fStart) + pick(pool.fMid) + pick(pool.fEnd);
         return raw.charAt(0).toUpperCase() + raw.slice(1);
       }
     }
@@ -3960,7 +4313,6 @@
       if (style === 'noble' && Math.random() < 0.55) {
         return pick(pool.noble);
       }
-      // 70% составная фамилия из прилагательного и существительного, 30% из благородного списка
       if (Math.random() < 0.7) {
         return `${pick(pool.surAdj)} ${pick(pool.surNoun)}`;
       }
@@ -4037,6 +4389,45 @@
       await saveDmPatch({ npcs });
       alert(`«${npcName}» добавлен в Базу NPC Мастера!`);
     };
+
+    // ================= PUBLIC COMBAT BOARD (NO HP, AC, OR MONSTER HEALTH INDICATORS!) =================
+    function renderPublicCombatBoard() {
+      const card = document.getElementById('publicCombatCard');
+      const listEl = document.getElementById('publicInitiativeList');
+      const roundEl = document.getElementById('pubRoundCounter');
+      if (!card || !listEl) return;
+
+      const initList = state.dm.initiative || [];
+      if (!initList.length) {
+        card.classList.add('hidden');
+        return;
+      }
+
+      card.classList.remove('hidden');
+      roundEl.textContent = state.dm.round || 1;
+      const curIdx = state.dm.turnIndex || 0;
+
+      listEl.innerHTML = initList.map((c, idx) => {
+        const isHero = c.type === 'hero';
+        const heroData = isHero ? state.heroes[c.heroId] : null;
+        const name = heroData ? heroData.name : c.name;
+        const hpCur = heroData ? (heroData.hpCur ?? 0) : (c.hpCur ?? c.hpMax ?? 10);
+        const isFallen = hpCur === 0;
+        const conds = (c.conditions || []).map((cond) =>
+          `<span class="cond-pill" style="cursor:default;">${escapeHtml(cond)}</span>`
+        ).join(' ');
+
+        return `
+          <div class="pub-combat-row ${idx === curIdx ? 'is-active' : ''} ${isFallen ? 'is-fallen' : ''}">
+            <div style="min-width:0; flex:1;">
+              <span>${idx === curIdx ? '▶ ' : ''}<strong style="color:${isHero ? 'var(--gold)' : 'var(--text-main)'};">${escapeHtml(name)}</strong></span>
+              ${conds ? `<div class="row" style="flex-wrap:wrap; margin-top:4px;">${conds}</div>` : ''}
+            </div>
+            <span class="muted" style="font-size:0.75rem; font-weight:700;">🎲 ${c.init}</span>
+          </div>
+        `;
+      }).join('');
+    }
 
     // ================= SHARED DOCS & CHRONICLE =================
     function currentActorIdentity() {
@@ -4300,12 +4691,13 @@
       }).join('') || '<p class="muted">Записей по вашему фильтру не найдено.</p>';
     }
 
-    // ================= DM SCREEN: STRUCTURED NOTES, NPC & COMBAT =================
+    // ================= DM SCREEN: 4 TABS, LOOT/TAVERN GEN, CUSTOM BESTIARY & COMBAT =================
     window.switchDmMainTab = (tab) => {
       const map = {
         combat: ['dmMainCombatBtn', 'dmMainCombatPanel'],
         party: ['dmMainPartyBtn', 'dmMainPartyPanel'],
-        notes: ['dmMainNotesBtn', 'dmMainNotesPanel']
+        notes: ['dmMainNotesBtn', 'dmMainNotesPanel'],
+        gen: ['dmMainGenBtn', 'dmMainGenPanel']
       };
       Object.keys(map).forEach((k) => {
         document.getElementById(map[k][0]).classList.toggle('active', k === tab);
@@ -4320,6 +4712,233 @@
       document.getElementById('dmSubNotesPanel').classList.toggle('hidden', !isNotes);
       document.getElementById('dmSubNpcPanel').classList.toggle('hidden', isNotes);
       if (!isNotes) renderDmNpcList();
+    };
+
+    // Custom Monster Builder
+    window.openCustomMonsterModal = () => {
+      document.getElementById('cmName').value = '';
+      document.getElementById('cmCr').value = '3';
+      document.getElementById('cmHp').value = '45';
+      document.getElementById('cmAc').value = '15';
+      document.getElementById('cmInitMod').value = '2';
+      document.getElementById('cmAtkName').value = 'Удар';
+      document.getElementById('cmAtkBonus').value = '5';
+      document.getElementById('cmDmgDice').value = '2d6+3';
+      document.getElementById('cmNote').value = '';
+      document.getElementById('customMonsterModal').classList.add('open');
+    };
+
+    window.saveCustomBestiaryMonster = async () => {
+      const name = document.getElementById('cmName').value.trim();
+      if (!name) return alert('Введите название монстра');
+
+      const monster = {
+        id: 'cmon_' + Date.now(),
+        isCustom: true,
+        name,
+        cr: document.getElementById('cmCr').value.trim() || '1',
+        hp: Math.max(1, parseInt(document.getElementById('cmHp').value) || 20),
+        ac: parseInt(document.getElementById('cmAc').value) || 12,
+        initMod: parseInt(document.getElementById('cmInitMod').value) || 0,
+        atkName: document.getElementById('cmAtkName').value.trim() || 'Атака',
+        atkBonus: parseInt(document.getElementById('cmAtkBonus').value) || 3,
+        dmgDice: document.getElementById('cmDmgDice').value.trim() || '1d8+2',
+        note: document.getElementById('cmNote').value.trim()
+      };
+      if (!monster.note) {
+        monster.note = `${monster.atkName} +${monster.atkBonus} (${monster.dmgDice})`;
+      }
+
+      const customMonsters = [monster, ...(state.dm.customMonsters || [])];
+      await saveDmPatch({ customMonsters });
+      renderBestiaryDropdown();
+      document.getElementById('bestiarySelect').value = monster.id;
+      previewBestiaryMonster();
+      document.getElementById('customMonsterModal').classList.remove('open');
+    };
+
+    // Monster Attack Button in Combat Tracker
+    window.rollMonsterAttack = async (idx) => {
+      const list = state.dm.initiative || [];
+      const c = list[idx];
+      if (!c || c.type === 'hero') return;
+
+      const atkName = c.atkName || 'Атака';
+      const atkBonus = c.atkBonus ?? 4;
+      const dmgDice = c.dmgDice || '1d6+2';
+
+      const d20 = Math.floor(Math.random() * 20) + 1;
+      const atkTotal = d20 + atkBonus;
+      const isCrit = d20 === 20;
+      const isFumble = d20 === 1;
+
+      const dmgRes = rollDiceFormula(dmgDice, 0);
+      const dmgFinal = isCrit ? dmgRes.total * 2 : dmgRes.total;
+      const signStr = atkBonus >= 0 ? `+${atkBonus}` : `${atkBonus}`;
+      const critTag = isCrit ? ' 🔥 КРИТ!' : (isFumble ? ' 💀 ПРОМАХ (1)!' : '');
+
+      const logMsg = `👹 ${c.name} (${atkName}): бросок 1d20 [${d20}]${signStr} = ${atkTotal}${critTag} | Урон: ${dmgFinal} (${dmgRes.detail})`;
+      const combatLog = appendCombatLog(logMsg);
+      await saveDmPatch({ combatLog });
+
+      const rollEntry = {
+        roller: `👹 ${c.name}`,
+        detail: `${atkName}: 1d20 [${d20}]${signStr} | Урон: ${dmgFinal} (${dmgRes.detail})`,
+        total: atkTotal,
+        isCrit,
+        isFumble,
+        secret: false,
+        createdAt: Date.now()
+      };
+      if (isOnline) {
+        await addDoc(collection(db, 'rolls'), rollEntry);
+      } else {
+        state.rolls.unshift(rollEntry);
+        saveLocalState();
+      }
+    };
+
+    // Loot Generator
+    const LOOT_TABLES = {
+      low: {
+        coins: () => `${(Math.floor(Math.random() * 6) + 2) * 10} ЗМ, ${(Math.floor(Math.random() * 8) + 3) * 10} СМ`,
+        items: [
+          'Зелье лечения (2d4+2 ОЗ)',
+          'Свиток заклинания 1 круга (Волшебная стрела / Щит)',
+          'Серебряный кинжал с гравировкой ворона (25 ЗМ)',
+          'Кварцевый самоцвет (50 ЗМ)',
+          'Масло скольжения (1 флакон)',
+          'Колчан с 10 посеребрёнными стрелами',
+          'Алхимический огонь (2 колбы)',
+          'Мешочек с лечебными травами (+1 к проверкам Медицины)'
+        ]
+      },
+      mid: {
+        coins: () => `${(Math.floor(Math.random() * 12) + 5) * 25} ЗМ, ${(Math.floor(Math.random() * 5) + 1) * 10} ПМ`,
+        items: [
+          'Большое зелье лечения (4d4+4 ОЗ)',
+          'Оружие +1 (на выбор Мастера)',
+          'Плащ защиты (+1 КД и спасброски)',
+          'Сумка хранения (Bag of Holding)',
+          'Сапоги эльфийского рода (бесшумная походка)',
+          'Жемчужина силы (восстанавливает ячейку до 3 круга)',
+          'Свиток Огненного шара (3 круг)',
+          'Рубин в золотой оправе (250 ЗМ)'
+        ]
+      },
+      high: {
+        coins: () => `${(Math.floor(Math.random() * 20) + 10) * 100} ЗМ, ${(Math.floor(Math.random() * 15) + 5) * 50} ПМ`,
+        items: [
+          'Превосходное зелье лечения (8d4+8 ОЗ)',
+          'Оружие +2 с дополнительным 1d6 стихийного урона',
+          'Кольцо сопротивления (огонь / холод / молния)',
+          'Амулет здоровья (Телосложение становится 19)',
+          'Плащ летучей мыши (полёт в темноте)',
+          'Королевский бриллиант для воскрешения (1000 ЗМ)',
+          'Свиток Телепортации или Воскрешения'
+        ]
+      }
+    };
+
+    window.generateDmLoot = () => {
+      const tier = document.getElementById('lootTierSelect').value;
+      const tbl = LOOT_TABLES[tier] || LOOT_TABLES.low;
+      const coins = tbl.coins();
+      const chosen = new Set();
+      while (chosen.size < 3) {
+        chosen.add(pick(tbl.items));
+      }
+      const itemsList = [...chosen];
+      const textSummary = `💰 Найдена добыча: Монеты (${coins}). Предметы: ${itemsList.join('; ')}.`;
+
+      document.getElementById('dmLootOutput').innerHTML = `
+        <div class="item-card">
+          <div style="font-size:0.88rem; margin-bottom:6px;">
+            <strong style="color:var(--gold);">Монеты:</strong> ${escapeHtml(coins)}
+          </div>
+          <ul style="padding-left:18px; font-size:0.84rem; line-height:1.45; margin-bottom:10px;">
+            ${itemsList.map((it) => `<li>${escapeHtml(it)}</li>`).join('')}
+          </ul>
+          <button class="btn btn-primary btn-xs btn-block" onclick="publishGeneratedTextToChronicle('${textSummary.replace(/'/g, "\\'")}', 'лут')">
+            📢 Опубликовать добычу в Летопись партии
+          </button>
+        </div>
+      `;
+    };
+
+    // Tavern & Rumors Generator
+    const TAVERN_ADJ = ['Пьяный', 'Ржавый', 'Золотой', 'Хромой', 'Весёлый', 'Спящий', 'Серебряный', 'Тёмный', 'Старый', 'Морской'];
+    const TAVERN_NOUN = ['Грифон', 'Котёл', 'Дракон', 'Вепрь', 'Фонарь', 'Якорь', 'Единорог', 'Ворон', 'Кубок', 'Гоблин'];
+    const TAVERN_VIBE = [
+      'Шумно, пахнет жареным мясом и дешёвым элем, в углу бард настраивает лютню.',
+      'Полумрак, тяжёлые дубовые столы, посетители говорят шёпотом и косятся на новичков.',
+      'Уютный камин, чисто выметенный пол, за стойкой висит старый погнутый щит.',
+      'Дым коромыслом, двое дварфов спорят на кулаках, наёмники чистят снаряжение.'
+    ];
+    const TAVERN_DISH = [
+      'Рагу из кабанятины с чесночными гренками (4 мм)',
+      'Запечённый речной угорь и медовуха (6 мм)',
+      'Острый суп с грибами Подземья и тёмный эль (5 мм)',
+      'Пирог с дичью и пряный глинтвейн (7 мм)'
+    ];
+    const TAVERN_RUMORS = [
+      'На старом тракте пропал караван кузнеца — говорят, в овраге видели огни без факелов.',
+      'Местный бургомистр по ночам спускается в заброшенную часовню на краю кладбища.',
+      'В шахтах на севере пробили стену в древний склеп, и трое рудокопов не вернулись.',
+      'За голову вожака лесных разбойников гильдия купцов тайно назначила двойную награду.',
+      'Старый картограф ищет смельчаков, чтобы проверить координаты башни, которой нет на картах.'
+    ];
+
+    window.generateDmTavern = () => {
+      const tName = `«${pick(TAVERN_ADJ)} ${pick(TAVERN_NOUN)}»`;
+      const vibe = pick(TAVERN_VIBE);
+      const dish = pick(TAVERN_DISH);
+      const rumor = pick(TAVERN_RUMORS);
+      const keeperPool = RACE_PHONETICS.human;
+      const keeperName = `${pick(keeperPool.maleCanon)} ${pick(keeperPool.surAdj)} ${pick(keeperPool.surNoun)}`;
+      const safeKeeper = keeperName.replace(/'/g, "\\'");
+      const safeTavern = tName.replace(/'/g, "\\'");
+
+      document.getElementById('dmTavernOutput').innerHTML = `
+        <div class="item-card">
+          <div style="font-family:'Cinzel', serif; font-size:1rem; font-weight:700; color:var(--gold); margin-bottom:4px;">
+            🍺 Таверна ${escapeHtml(tName)}
+          </div>
+          <div class="muted" style="font-size:0.78rem; margin-bottom:6px;">${escapeHtml(vibe)}</div>
+          <div style="font-size:0.84rem; margin-bottom:4px;"><strong>Трактирщик:</strong> ${escapeHtml(keeperName)}</div>
+          <div style="font-size:0.84rem; margin-bottom:4px;"><strong>Блюдо дня:</strong> ${escapeHtml(dish)}</div>
+          <div style="font-size:0.84rem; color:#fde68a; margin-bottom:10px;"><strong>🗣️ Слух:</strong> ${escapeHtml(rumor)}</div>
+          <button class="btn btn-xs btn-block" onclick="saveTavernKeeperToNpc('${safeKeeper}', '${safeTavern}')">
+            + Сохранить трактирщика в Базу NPC
+          </button>
+        </div>
+      `;
+    };
+
+    window.saveTavernKeeperToNpc = async (keeperName, tavernName) => {
+      const npcs = [
+        {
+          id: 'npc_' + Date.now(),
+          name: keeperName,
+          tags: ['таверна', 'трактирщик'],
+          desc: `Хозяин таверны ${tavernName}.`,
+          createdAt: Date.now()
+        },
+        ...(state.dm.npcs || [])
+      ];
+      await saveDmPatch({ npcs });
+      alert(`Трактирщик «${keeperName}» добавлен в Базу NPC!`);
+    };
+
+    window.publishGeneratedTextToChronicle = async (text, tag) => {
+      const entry = { text, tags: [tag], author: 'Мастер', ownerId: 'dm', createdAt: Date.now() };
+      if (isOnline) {
+        await addDoc(collection(db, 'chronicle'), entry);
+      } else {
+        state.chronicle.unshift({ id: 'chr_' + Date.now(), ...entry });
+        saveLocalState();
+      }
+      alert('Опубликовано в Летопись партии!');
     };
 
     window.handleDmNoteFileSelect = async (e) => {
@@ -4652,7 +5271,7 @@
 
     window.addFromBestiary = () => {
       const monsterId = document.getElementById('bestiarySelect').value;
-      const m = BESTIARY_5E.find((x) => x.id === monsterId);
+      const m = getFullBestiary().find((x) => x.id === monsterId);
       if (!m) return;
 
       const existing = state.dm.initiative || [];
@@ -4669,6 +5288,9 @@
           type: 'npc',
           name: displayName,
           note: m.note,
+          atkName: m.atkName || 'Атака',
+          atkBonus: m.atkBonus ?? 4,
+          dmgDice: m.dmgDice || '1d6+2',
           init,
           hpCur: m.hp,
           hpMax: m.hp,
@@ -4693,7 +5315,19 @@
       const init = initVal !== '' ? parseInt(initVal) : (Math.floor(Math.random() * 20) + 1);
       const list = [
         ...(state.dm.initiative || []),
-        { uid: 'npc_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6), type: 'npc', name, init, hpCur: hpMax, hpMax, ac, conditions: [] }
+        {
+          uid: 'npc_' + Date.now() + '_' + Math.random().toString(36).slice(2, 6),
+          type: 'npc',
+          name,
+          atkName: 'Атака',
+          atkBonus: 4,
+          dmgDice: '1d6+2',
+          init,
+          hpCur: hpMax,
+          hpMax,
+          ac,
+          conditions: []
+        }
       ].sort((a, b) => Number(b.init) - Number(a.init));
 
       const turnIndex = state.dm.combatStarted ? (state.dm.turnIndex || 0) : 0;
@@ -4878,16 +5512,13 @@
       if (c.type === 'hero') {
         const h = state.heroes[c.heroId];
         if (!h) return;
-        const nextHp = Math.max(0, Math.min(h.hpMax + 20, (h.hpCur || 0) + delta));
-        const heroPatch = { hpCur: nextHp };
-        if (delta > 0 && nextHp > 0) {
-          heroPatch.deathSaves = { success: 0, failure: 0 };
-        }
-        await saveHeroPatchById(h.id, heroPatch);
-        const downNote = nextHp === 0 && delta < 0 ? ' — БЕЗ СОЗНАНИЯ!' : '';
+        const { patch, absorbed, hpCur } = computeHeroHpAfterDelta(h, delta);
+        await saveHeroPatchById(h.id, patch);
+        const absNote = absorbed > 0 ? ` (щит поглотил ${absorbed})` : '';
+        const downNote = hpCur === 0 && delta < 0 ? ' — БЕЗ СОЗНАНИЯ!' : '';
         const actionText = delta < 0
-          ? `💥 ${h.name} получает ${Math.abs(delta)} урона (${nextHp}/${h.hpMax} ОЗ)${downNote}`
-          : `💚 ${h.name} восстанавливает ${delta} ОЗ (${nextHp}/${h.hpMax} ОЗ)`;
+          ? `💥 ${h.name} получает ${Math.abs(delta)} урона${absNote} (${hpCur}/${h.hpMax} ОЗ)${downNote}`
+          : `💚 ${h.name} восстанавливает ${delta} ОЗ (${hpCur}/${h.hpMax} ОЗ)`;
         const combatLog = appendCombatLog(actionText);
         await saveDmPatch({ combatLog });
       } else {
@@ -4974,7 +5605,7 @@
       document.getElementById('dmCompactPartyStrip').innerHTML = heroes.length
         ? `<div class="row" style="flex-wrap:wrap; gap:6px;">` + heroes.map((h) => `
             <div style="background:var(--bg-card-alt); border:1px solid rgba(212,175,55,0.2); border-radius:8px; padding:5px 8px; font-size:0.78rem;">
-              <strong style="color:var(--gold);">${escapeHtml(h.name)}</strong> • ❤️${h.hpCur}/${h.hpMax} • 🛡️${h.ac}
+              <strong style="color:var(--gold);">${escapeHtml(h.name)}</strong> • ❤️${h.hpCur}/${h.hpMax}${h.tempHp ? `(+${h.tempHp})` : ''} • 🛡️${h.ac}
             </div>
           `).join('') + `</div>`
         : '<p class="muted">Игроки ещё не создали персонажей.</p>';
@@ -4987,7 +5618,7 @@
                 <div class="muted" style="font-size:0.72rem;">✨ ${(h.xp ?? 0).toLocaleString('ru-RU')} XP • 🍖 ${h.rations ?? 5} рац.</div>
               </div>
               <div style="font-size:0.84rem; white-space:nowrap;">
-                ❤️ <strong>${h.hpCur}/${h.hpMax}</strong> • 🛡️ <strong>${h.ac}</strong>
+                ❤️ <strong>${h.hpCur}/${h.hpMax}</strong>${h.tempHp ? ` <span style="color:#7dd3fc;">(+${h.tempHp})</span>` : ''} • 🛡️ <strong>${h.ac}</strong>
               </div>
             </div>
           `).join('')
@@ -5004,6 +5635,7 @@
             const name = heroData ? heroData.name : c.name;
             const hpCur = heroData ? heroData.hpCur : (c.hpCur ?? c.hpMax ?? 10);
             const hpMax = heroData ? heroData.hpMax : (c.hpMax ?? 10);
+            const tempHp = heroData ? (heroData.tempHp || 0) : 0;
             const ac = heroData ? heroData.ac : (c.ac ?? 12);
             const pct = Math.max(0, Math.min(100, Math.round((hpCur / Math.max(1, hpMax)) * 100)));
             const barColor = pct > 50 ? '#10b981' : pct > 25 ? '#f59e0b' : '#ef4444';
@@ -5015,6 +5647,10 @@
 
             const dmDeathSavesBlock = (isHero && heroData && hpCur === 0)
               ? `<div class="dm-ds-bar">${renderDeathSavesControls(heroData.id, heroData.deathSaves)}</div>`
+              : '';
+
+            const monsterAttackBtn = !isHero
+              ? `<button class="btn btn-primary btn-xs" onclick="rollMonsterAttack(${idx})" title="Бросить атаку и урон монстра">⚔️ ${escapeHtml(c.atkName || 'Атака')}</button>`
               : '';
 
             return `
@@ -5041,7 +5677,7 @@
                 <div class="row" style="justify-content:space-between; flex-wrap:wrap;">
                   <div class="row">
                     <span style="font-size:0.84rem; font-weight:700; color:${hpCur === 0 ? '#f87171' : '#fca5a5'};">
-                      ❤️ ${hpCur} / ${hpMax}
+                      ❤️ ${hpCur} / ${hpMax}${tempHp > 0 ? ` <span style="color:#7dd3fc;">(+${tempHp})</span>` : ''}
                     </span>
                     ${isHero ? `
                       <button class="death-save-toggle ${deathSavesOn ? 'on' : ''}" onclick="toggleHeroDeathSaves(${idx})" title="Останавливать ход на герое при 0 ОЗ для спасбросков от смерти">
@@ -5049,11 +5685,12 @@
                       </button>
                     ` : ''}
                   </div>
-                  <div class="row">
+                  <div class="row" style="flex-wrap:wrap;">
+                    ${monsterAttackBtn}
                     <button class="btn btn-danger btn-xs" onclick="applyCombatHp(${idx}, -5)">-5</button>
                     <button class="btn btn-danger btn-xs" onclick="applyCombatHp(${idx}, -1)">-1</button>
-                    <button class="btn btn-danger btn-xs" onclick="promptCustomCombatHp(${idx}, 'dmg')">⚔️ Урон</button>
-                    <button class="btn btn-heal btn-xs" onclick="promptCustomCombatHp(${idx}, 'heal')">💚 Леч</button>
+                    <button class="btn btn-danger btn-xs" onclick="promptCustomCombatHp(${idx}, 'dmg')">Урон</button>
+                    <button class="btn btn-heal btn-xs" onclick="promptCustomCombatHp(${idx}, 'heal')">Леч</button>
                     <button class="btn btn-xs" onclick="addCombatCondition(${idx})">+ Эффект</button>
                   </div>
                 </div>
@@ -5192,6 +5829,7 @@
     function renderAll() {
       renderPartyLoginList();
       renderHeroSheet();
+      renderPublicCombatBoard();
       renderSharedDocs();
       renderChronicle();
       renderDmScreen();
@@ -5200,6 +5838,7 @@
     }
 
     generateNamesBatch();
+    generateDmTavern();
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker.register('./sw.js').catch(() => {});
     }
