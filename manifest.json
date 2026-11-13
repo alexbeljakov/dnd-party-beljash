@@ -1,0 +1,19 @@
+{
+  "name": "Гримуар Партии — D&D 5e",
+  "short_name": "Гримуар D&D",
+  "description": "Платформа партии D&D: листы персонажей, ширма Мастера, общие документы и генератор имён",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0d0b0e",
+  "theme_color": "#0d0b0e",
+  "icons": [
+    {
+      "src": "data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' rx='112' fill='%23141118'/%3E%3Cpolygon points='256,56 436,160 436,352 256,456 76,352 76,160' fill='none' stroke='%23d4af37' stroke-width='22'/%3E%3Cpolygon points='256,56 368,256 256,456 144,256' fill='none' stroke='%23d4af37' stroke-width='14'/%3E%3Cline x1='76' y1='160' x2='436' y2='160' stroke='%23d4af37' stroke-width='12'/%3E%3Cline x1='76' y1='352' x2='436' y2='352' stroke='%23d4af37' stroke-width='12'/%3E%3Ctext x='256' y='282' font-family='Georgia,serif' font-size='84' font-weight='bold' fill='%23d4af37' text-anchor='middle'%3E20%3C/text%3E%3C/svg%3E",
+      "sizes": "512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
