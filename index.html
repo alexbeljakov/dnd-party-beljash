@@ -3530,69 +3530,75 @@
     };
 
     window.createNewHero = async () => {
-      const name = document.getElementById('newHeroName').value.trim();
-      if (!name) return uiAlert('Введите имя персонажа', 'Создание героя');
+      try {
+        const name = document.getElementById('newHeroName').value.trim();
+        if (!name) return uiAlert('Введите имя персонажа', 'Создание героя');
 
-      const rKey = document.getElementById('newHeroRaceSelect').value;
-      const cKey = document.getElementById('newHeroClassSelect').value;
-      const rPreset = RACES_5E[rKey] || RACES_5E.custom;
-      const cPreset = CLASSES_5E[cKey] || CLASSES_5E.custom;
+        const rKey = document.getElementById('newHeroRaceSelect').value;
+        const cKey = document.getElementById('newHeroClassSelect').value;
+        const rPreset = RACES_5E[rKey] || RACES_5E.custom;
+        const cPreset = CLASSES_5E[cKey] || CLASSES_5E.custom;
 
-      const race = rKey === 'custom'
-        ? (document.getElementById('newHeroCustomRace').value.trim() || 'Своя раса')
-        : rPreset.name;
-      const heroClass = cKey === 'custom'
-        ? (document.getElementById('newHeroCustomClass').value.trim() || 'Свой класс')
-        : cPreset.name;
+        const race = rKey === 'custom'
+          ? (document.getElementById('newHeroCustomRace').value.trim() || 'Своя раса')
+          : rPreset.name;
+        const heroClass = cKey === 'custom'
+          ? (document.getElementById('newHeroCustomClass').value.trim() || 'Свой класс')
+          : cPreset.name;
 
-      const level = Math.max(1, Math.min(20, parseInt(document.getElementById('newHeroLevel').value) || 1));
-      const hpMax = parseInt(document.getElementById('newHeroHp').value) || 20;
-      const pin = document.getElementById('newHeroPin').value.trim() || '1234';
-      const avatarFile = document.getElementById('newHeroAvatarFile').files[0];
+        const level = Math.max(1, Math.min(20, parseInt(document.getElementById('newHeroLevel').value) || 1));
+        const hpMax = parseInt(document.getElementById('newHeroHp').value) || 20;
+        const pin = document.getElementById('newHeroPin').value.trim() || '1234';
+        const avatarFile = document.getElementById('newHeroAvatarFile').files[0];
 
-      let avatar = '';
-      if (avatarFile) {
-        avatar = await compressImage(avatarFile, 256, 0.78);
-      }
+        let avatar = '';
+        if (avatarFile) {
+          avatar = await compressImage(avatarFile, 256, 0.78);
+        }
 
-      const id = 'hero_' + Date.now();
-      const xpTable = getActiveXpTable();
-      const startXp = xpTable[level - 1] || 0;
-      const slotsMax = [...(cPreset.slotsMax || [0,0,0,0,0,0,0,0,0])];
-      const combinedTraits = [rPreset.traits, cPreset.traits].filter(Boolean).join('\n\n');
+        const id = 'hero_' + Date.now();
+        const xpTable = getActiveXpTable();
+        const startXp = xpTable[level - 1] || 0;
+        const slotsMax = [...(cPreset.slotsMax || [0,0,0,0,0,0,0,0,0])];
+        const combinedTraits = [rPreset.traits, cPreset.traits].filter(Boolean).join('\n\n');
 
-      const heroObj = {
-        id, name, race, heroClass, level, xp: startXp, pin, avatar,
-        hpCur: hpMax, hpMax, tempHp: 0,
-        hitDie: cPreset.hitDie || 8,
-        hitDiceLeft: level,
-        ac: 13, speed: rPreset.speed || 30,
-        profBonus: profBonusForLevel(level),
-        stats: { ...(rPreset.stats || { STR: 10, DEX: 10, CON: 10, INT: 10, WIS: 10, CHA: 10 }) },
-        saves: { ...(cPreset.saves || {}) },
-        skills: {},
-        spellAbility: cPreset.spellAbility || 'INT',
-        slots: [...slotsMax],
-        slotsMax,
-        weapons: cPreset.weapon ? [{ id: 'wpn_' + Date.now(), ...cPreset.weapon }] : [],
-        spells: cPreset.spell ? [{ id: 'spl_' + Date.now(), ...cPreset.spell }] : [],
-        resources: cPreset.resource ? [{ id: 'res_' + Date.now(), ...cPreset.resource }] : [],
-        traits: combinedTraits,
-        deathSaves: { success: 0, failure: 0 },
-        gold: 15, silver: 0, copper: 0,
-        rations: 5,
-        inventory: 'Походный рюкзак, спальник, факелы.'
-      };
+        const heroObj = {
+          id, name, race, heroClass, level, xp: startXp, pin, avatar,
+          hpCur: hpMax, hpMax, tempHp: 0,
+          hitDie: cPreset.hitDie || 8,
+          hitDiceLeft: level,
+          ac: 13, speed: rPreset.speed || 30,
+          profBonus: profBonusForLevel(level),
+          stats: { ...(rPreset.stats || { STR: 10, DEX: 10, CON: 10, INT: 10, WIS: 10, CHA: 10 }) },
+          saves: { ...(cPreset.saves || {}) },
+          skills: {},
+          spellAbility: cPreset.spellAbility || 'INT',
+          slots: [...slotsMax],
+          slotsMax,
+          weapons: cPreset.weapon ? [{ id: 'wpn_' + Date.now(), ...cPreset.weapon }] : [],
+          spells: cPreset.spell ? [{ id: 'spl_' + Date.now(), ...cPreset.spell }] : [],
+          resources: cPreset.resource ? [{ id: 'res_' + Date.now(), ...cPreset.resource }] : [],
+          traits: combinedTraits,
+          deathSaves: { success: 0, failure: 0 },
+          gold: 15, silver: 0, copper: 0,
+          rations: 5,
+          inventory: 'Походный рюкзак, спальник, факелы.'
+        };
 
-      if (isOnline) {
-        await setDoc(doc(db, 'heroes', id), heroObj);
-      } else {
         state.heroes[id] = heroObj;
-        saveLocalState();
-      }
 
-      document.getElementById('createHeroModal').classList.remove('open');
-      loginAsHero(id, true);
+        if (isOnline) {
+          await setDoc(doc(db, 'heroes', id), heroObj);
+        } else {
+          saveLocalState();
+        }
+
+        document.getElementById('createHeroModal').classList.remove('open');
+        loginAsHero(id, true);
+      } catch (err) {
+        console.error('Ошибка создания героя:', err);
+        await uiAlert('Ошибка при сохранении героя: ' + (err?.message || err), 'Сбой создания');
+      }
     };
 
     window.loginAsHero = async (id, skipPin = false) => {
