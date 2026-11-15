@@ -5594,6 +5594,8 @@
       document.getElementById('copperInput').value = h.copper ?? 0;
       document.getElementById('heroInventoryInput').value = h.inventory || '';
     }
+    window.renderHeroSheet = renderHeroSheet;
+    window.renderChronicle = renderChronicle;
 
     // ================= PHONETIC & MORPHEME NAME ENGINE =================
     const RACE_PHONETICS = {
