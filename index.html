@@ -274,7 +274,7 @@
       color: #120f0a;
     }
 
-    /* Weapons, Spells, Prepared Toggle & Class Resources */
+    /* Weapons, Hand Slots, Spells, Prepared Toggle & Class Resources */
     .item-card {
       background: var(--bg-card-alt);
       border: 1px solid rgba(212, 175, 55, 0.2);
@@ -282,6 +282,10 @@
       padding: 10px;
       margin-bottom: 8px;
       transition: border-color 0.2s ease, opacity 0.2s ease;
+    }
+    .item-card.wpn-equipped {
+      border-color: rgba(212, 175, 55, 0.65);
+      background: linear-gradient(160deg, rgba(212, 175, 55, 0.08), var(--bg-card-alt));
     }
     .item-card.spell-prepared {
       border-color: rgba(212, 175, 55, 0.65);
@@ -291,6 +295,17 @@
       opacity: 0.78;
     }
 
+    .hand-select {
+      width: auto;
+      padding: 3px 6px;
+      font-size: 0.72rem;
+      border-radius: 7px;
+      background: rgba(0, 0, 0, 0.35);
+      border: 1px solid rgba(212, 175, 55, 0.35);
+      color: var(--gold);
+      font-weight: 600;
+    }
+
     .prep-bar {
       display: flex;
       align-items: center;
@@ -298,7 +313,7 @@
       flex-wrap: wrap;
       gap: 6px;
       padding: 8px 10px;
-      margin-bottom: 10px;
+      margin-bottom: 8px;
       border-radius: 10px;
       background: rgba(212, 175, 55, 0.09);
       border: 1px solid rgba(212, 175, 55, 0.3);
@@ -326,6 +341,41 @@
       border-color: #34d399;
       background: rgba(16, 185, 129, 0.22);
       color: #6ee7b7;
+    }
+
+    .hit-type-badge {
+      display: inline-block;
+      padding: 2px 6px;
+      border-radius: 6px;
+      font-size: 0.66rem;
+      font-weight: 700;
+      margin-left: 4px;
+    }
+    .hit-type-attack {
+      background: rgba(239, 68, 68, 0.18);
+      border: 1px solid rgba(239, 68, 68, 0.45);
+      color: #fca5a5;
+    }
+    .hit-type-save {
+      background: rgba(245, 158, 11, 0.18);
+      border: 1px solid rgba(245, 158, 11, 0.45);
+      color: #fcd34d;
+    }
+    .hit-type-auto {
+      background: rgba(16, 185, 129, 0.18);
+      border: 1px solid rgba(16, 185, 129, 0.45);
+      color: #6ee7b7;
+    }
+
+    .components-legend {
+      font-size: 0.7rem;
+      color: var(--text-muted);
+      background: rgba(0, 0, 0, 0.28);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 8px;
+      padding: 6px 8px;
+      margin-bottom: 8px;
+      line-height: 1.35;
     }
 
     .magic-stat-box {
@@ -1353,7 +1403,7 @@
         <button id="heroSubGearBtn" class="subtab-btn" onclick="switchHeroSubtab('gear')">🎒 Сумка</button>
       </div>
 
-      <!-- HERO SUBTAB 1: COMBAT, WEAPONS, CLASS RESOURCES & ACTION CHEAT SHEET -->
+      <!-- HERO SUBTAB 1: COMBAT, WEAPONS (WITH HAND SLOTS & REORDER), CLASS RESOURCES & CHEAT SHEET -->
       <div id="heroSubCombatPanel">
         <div class="card">
           <div class="card-header">
@@ -1469,17 +1519,42 @@
             </div>
           </div>
 
-          <!-- Daily Prepared Spells Counter & Filter (for Wizard, Cleric, Druid, Paladin) -->
+          <!-- Daily Prepared Spells Counter & Sync Button -->
           <div id="heroPreparedSummaryBar" class="prep-bar hidden">
-            <div>
+            <div style="flex:1; min-width:160px;">
               <span>✨ Подготовлено на день: </span>
               <strong id="heroPreparedCountVal" style="color:var(--gold);">0 / 4</strong>
               <div id="heroPreparedHint" class="muted" style="font-size:0.68rem;"></div>
             </div>
-            <label style="display:flex; align-items:center; gap:5px; font-size:0.74rem; color:var(--text-main); cursor:pointer;">
-              <input type="checkbox" id="filterPreparedOnlyCheck" style="width:auto;" onchange="renderHeroSheet()" />
-              Только готовые
-            </label>
+            <div class="row" style="flex-wrap:wrap;">
+              <button id="syncClassAllSpellsBtn" class="btn btn-xs hidden" onclick="syncAllClassSpellsToGrimoire()" title="Загрузить все заклинания этого класса из книги правил">🔄 Все закл. класса</button>
+              <label style="display:flex; align-items:center; gap:5px; font-size:0.74rem; color:var(--text-main); cursor:pointer;">
+                <input type="checkbox" id="filterPreparedOnlyCheck" style="width:auto;" onchange="renderHeroSheet()" />
+                Только готовые
+              </label>
+            </div>
+          </div>
+
+          <!-- Grimoire Category & Circle Filter -->
+          <div class="grid-2" style="margin-bottom:8px;">
+            <select id="grimoireRoleFilter" style="padding:6px 8px; font-size:0.78rem;" onchange="renderHeroSheet()">
+              <option value="all">Все типы в гримуаре</option>
+              <option value="damage">⚔️ Атака и урон</option>
+              <option value="defense">🛡️ Защита и лечение</option>
+              <option value="control">🕸️ Контроль и дебаффы</option>
+              <option value="utility">🔮 Польза и ритуалы</option>
+            </select>
+            <select id="grimoireCircleFilter" style="padding:6px 8px; font-size:0.78rem;" onchange="renderHeroSheet()">
+              <option value="all">Все круги (0–9)</option>
+              <option value="0">0 круг (Фокусы)</option>
+              <option value="1">1 круг</option>
+              <option value="2">2 круг</option>
+              <option value="3">3 круг</option>
+            </select>
+          </div>
+
+          <div class="components-legend">
+            <strong>Компоненты:</strong> <strong>В</strong> — Вербальный (слова), <strong>С</strong> — Соматический (жесты), <strong>М</strong> — Материальный (компоненты/фокусировка).
           </div>
 
           <div id="heroSpellsList"></div>
@@ -1615,11 +1690,11 @@
           <span class="card-title">📖 Памятка игрока 5e (Ур. 1–6)</span>
           <button id="toggleGuideBtn" class="btn btn-primary btn-xs" onclick="togglePlayerGuide()">Открыть шпаргалку</button>
         </div>
-        <p class="muted" style="font-size:0.76rem;">Краткий путеводитель для облегчения погружения в игру (уровни 1–6): досье по расе и классу, примеры ходов и правила магии.</p>
+        <p class="muted" style="font-size:0.76rem;">Краткий путеводитель для облегчения погружения в игру (уровни 1–6): досье по расе и классу, примеры сборки и правила магии.</p>
 
         <div id="playerGuideBody" class="hidden mt-12">
           <div class="primer-banner">
-            <strong>💡 Для лёгкого погружения в игру (уровни 1–6):</strong> здесь собраны только практические правила без перегруза. Опишите Мастеру, что делает ваш герой — а эта памятка подскажет, какой кубик бросить и какие приёмы доступны вашему классу.
+            <strong>💡 Для лёгкого погружения в игру (уровни 1–6):</strong> здесь собраны практические правила без перегруза. Развитие классов на 1–6 уровнях дано как <strong>рекомендуемый пример эффективной сборки</strong> — вы свободны развивать героя иначе под свой стиль игры.
           </div>
 
           <div class="subtab-bar-4">
@@ -2112,7 +2187,11 @@
         <input type="text" id="sbSearchInput" placeholder="🔍 Поиск по названию..." oninput="renderSpellbookList()" />
       </div>
 
-      <div id="sbQuotaBanner" class="primer-banner mt-8" style="margin-bottom:8px;"></div>
+      <div class="components-legend mt-8" style="margin-bottom:6px;">
+        <strong>В, С, М:</strong> <strong>В</strong> — слова, <strong>С</strong> — жесты, <strong>М</strong> — материальные компоненты.
+      </div>
+
+      <div id="sbQuotaBanner" class="primer-banner" style="margin-bottom:8px;"></div>
 
       <div class="row" style="justify-content:space-between; margin-bottom:8px;">
         <span id="sbShownCount" class="muted" style="font-size:0.74rem;">Найдено: 0</span>
@@ -2122,7 +2201,7 @@
         </label>
       </div>
 
-      <div id="spellbookCatalogList" style="max-height:330px; overflow-y:auto;"></div>
+      <div id="spellbookCatalogList" style="max-height:320px; overflow-y:auto;"></div>
     </div>
   </div>
 
@@ -2411,9 +2490,20 @@
           <input type="text" id="wpnDmgType" value="рубящий" placeholder="колющий" />
         </div>
       </div>
-      <div class="mt-8">
-        <label class="muted">Свойства / заметка</label>
-        <input type="text" id="wpnProps" placeholder="Универсальное (1d10), Дистанция 150/600 фт..." />
+      <div class="grid-2 mt-8">
+        <div>
+          <label class="muted">В какой руке</label>
+          <select id="wpnHand">
+            <option value="main">🖐️ В основной руке</option>
+            <option value="off">🗡️ Во второй руке</option>
+            <option value="two">👐 В двух руках (двуручное)</option>
+            <option value="stowed">🎒 В ножнах / за спиной</option>
+          </select>
+        </div>
+        <div>
+          <label class="muted">Свойства / заметка</label>
+          <input type="text" id="wpnProps" placeholder="Универсальное (1d10)..." />
+        </div>
       </div>
       <button class="btn btn-primary btn-block mt-12" onclick="saveNewWeapon()">Добавить в арсенал</button>
     </div>
@@ -2430,11 +2520,11 @@
         <label class="muted">Название</label>
         <input type="text" id="splName" placeholder="Например: Огненный снаряд / Огненный шар" />
       </div>
-      <div class="grid-2 mt-8">
+      <div class="grid-3 mt-8">
         <div>
-          <label class="muted">Круг заклинания</label>
+          <label class="muted">Круг</label>
           <select id="splLevel">
-            <option value="0">0 круг (Фокус — без ячейки)</option>
+            <option value="0">0 (Фокус)</option>
             <option value="1">1 круг</option>
             <option value="2">2 круг</option>
             <option value="3">3 круг</option>
@@ -2447,19 +2537,28 @@
           </select>
         </div>
         <div>
-          <label class="muted">Тип броска при сотворении</label>
+          <label class="muted">Тип броска</label>
           <select id="splRollType">
-            <option value="attack">Бросок атаки заклинанием</option>
-            <option value="save">Спасбросок цели (Сл героя)</option>
-            <option value="heal">Лечение (+мод. магии)</option>
-            <option value="utility">Без броска (бафф/утилита)</option>
+            <option value="attack">Бросок атаки</option>
+            <option value="save">Спасбросок цели</option>
+            <option value="heal">Лечение</option>
+            <option value="utility">Автопопадание / Эффект</option>
+          </select>
+        </div>
+        <div>
+          <label class="muted">Категория</label>
+          <select id="splRole">
+            <option value="damage">⚔️ Атака</option>
+            <option value="defense">🛡️ Защита/Леч.</option>
+            <option value="control">🕸️ Контроль</option>
+            <option value="utility">🔮 Польза</option>
           </select>
         </div>
       </div>
       <div class="grid-2 mt-8">
         <div>
           <label class="muted">Формула урона / лечения</label>
-          <input type="text" id="splDice" placeholder="Напр. 1d10 или 8d6 (пусто если нет)" />
+          <input type="text" id="splDice" placeholder="Напр. 1d10 или 8d6" />
         </div>
         <div>
           <label class="muted">Тип урона / Спасбросок</label>
@@ -2467,8 +2566,8 @@
         </div>
       </div>
       <div class="mt-8">
-        <label class="muted">Описание эффекта / дистанция / концентрация</label>
-        <textarea id="splDesc" style="min-height:66px;" placeholder="Дистанция 120 фт, мгновенное..."></textarea>
+        <label class="muted">Описание эффекта / компоненты (В, С, М)</label>
+        <textarea id="splDesc" style="min-height:66px;" placeholder="1 действие • 120 фт • В, С • Мгновенно..."></textarea>
       </div>
       <button class="btn btn-primary btn-block mt-12" onclick="saveNewSpell()">Добавить в гримуар</button>
     </div>
@@ -2634,6 +2733,8 @@
       messagingSenderId: "799802669624",
       appId: "1:799802669624:web:23eb1868428dc1ee0004cd"
     };
+
+    const SPELLBOOK_5E = window.SPELLBOOK_5E || [];
 
     // ==================== IN-APP STYLED DIALOGS ====================
     function showAppDialog({ mode = 'alert', title = 'Гримуар', message = '', defaultValue = '', placeholder = '', inputType = 'text', inputMode = 'text', danger = false }) {
@@ -2807,85 +2908,85 @@
       barbarian: {
         name: 'Варвар', hitDie: 12, saves: { STR: true, CON: true }, spellAbility: 'CHA',
         resource: { name: 'Ярость', cur: 2, max: 2 },
-        weapon: { name: 'Секира', stat: 'STR', prof: true, dice: '1d12', bonus: 0, dmgType: 'рубящий', props: 'Тяжёлое, двуручное' },
+        weapon: { name: 'Секира', stat: 'STR', prof: true, dice: '1d12', bonus: 0, dmgType: 'рубящий', hand: 'two', props: 'Тяжёлое, двуручное' },
         spell: null,
         traits: '• Ярость (бон. действие): преимущество на проверки/спасброски Силы, +2 к урону ближнего боя, сопротивление физ. урону.\n• Защита без доспехов: КД = 10 + Лов + Тел.'
       },
       bard: {
         name: 'Бард', hitDie: 8, saves: { DEX: true, CHA: true }, spellAbility: 'CHA',
         resource: { name: 'Вдохновение барда (d6)', cur: 3, max: 3 },
-        weapon: { name: 'Рапира', stat: 'DEX', prof: true, dice: '1d8', bonus: 0, dmgType: 'колющий', props: 'Фехтовальное' },
-        spell: { name: 'Злая насмешка', level: 0, rollType: 'save', dice: '1d4', tag: 'психич. / Спас Муд', desc: '60 фт: при провале урон и помеха на следующую атаку цели.' },
+        weapon: { name: 'Рапира', stat: 'DEX', prof: true, dice: '1d8', bonus: 0, dmgType: 'колющий', hand: 'main', props: 'Фехтовальное' },
+        spell: { name: 'Злая насмешка', level: 0, role: 'damage', rollType: 'save', dice: '1d6', tag: 'психич. / Спас Муд', desc: '1 действие • 60 фт • В • Мгновенно. При провале Спас Мудрости урон и помеха на следующую атаку цели.' },
         traits: '• Вдохновение барда (бон. действие): союзник в 60 фт получает кость d6 к броску.'
       },
       cleric: {
         name: 'Жрец', hitDie: 8, saves: { WIS: true, CHA: true }, spellAbility: 'WIS',
         resource: { name: 'Божественный канал', cur: 1, max: 1 },
-        weapon: { name: 'Булава', stat: 'STR', prof: true, dice: '1d6', bonus: 0, dmgType: 'дробящий', props: 'Одноручное' },
-        spell: { name: 'Священное пламя', level: 0, rollType: 'save', dice: '1d8', tag: 'излучение / Спас Лов', desc: '60 фт: игнорирует укрытия.' },
+        weapon: { name: 'Булава', stat: 'STR', prof: true, dice: '1d6', bonus: 0, dmgType: 'дробящий', hand: 'main', props: 'Одноручное' },
+        spell: { name: 'Священное пламя', level: 0, role: 'damage', rollType: 'save', dice: '1d8', tag: 'излучение / Спас Лов', desc: '1 действие • 60 фт • В, С • Мгновенно. Игнорирует укрытия.' },
         traits: '• Использование заклинаний (Мудрость)\n• Божественный домен'
       },
       druid: {
         name: 'Друид', hitDie: 8, saves: { INT: true, WIS: true }, spellAbility: 'WIS',
         resource: { name: 'Дикий облик', cur: 2, max: 2 },
-        weapon: { name: 'Скимитар', stat: 'DEX', prof: true, dice: '1d6', bonus: 0, dmgType: 'рубящий', props: 'Фехтовальное, лёгкое' },
-        spell: { name: 'Терновый кнут', level: 0, rollType: 'attack', dice: '1d6', tag: 'колющий', desc: '30 фт: при попадании притягивает цель на 10 фт.' },
+        weapon: { name: 'Скимитар', stat: 'DEX', prof: true, dice: '1d6', bonus: 0, dmgType: 'рубящий', hand: 'main', props: 'Фехтовальное, лёгкое' },
+        spell: { name: 'Терновый кнут', level: 0, role: 'damage', rollType: 'attack', dice: '1d6', tag: 'колющий', desc: '1 действие • 30 фт • В, С, М • Мгновенно. При попадании притягивает цель на 10 фт.' },
         traits: '• Друидический язык\n• Дикий облик (со 2 уровня)'
       },
       fighter: {
         name: 'Воин', hitDie: 10, saves: { STR: true, CON: true }, spellAbility: 'INT',
         resource: { name: 'Второе дыхание (1d10+ур)', cur: 1, max: 1 },
-        weapon: { name: 'Длинный меч', stat: 'STR', prof: true, dice: '1d8', bonus: 0, dmgType: 'рубящий', props: 'Универсальное (1d10)' },
+        weapon: { name: 'Длинный меч', stat: 'STR', prof: true, dice: '1d8', bonus: 0, dmgType: 'рубящий', hand: 'main', props: 'Универсальное (1d10)' },
         spell: null,
         traits: '• Боевой стиль\n• Второе дыхание (бон. действие, раз в кор. отдых): лечение 1d10 + уровень воина.'
       },
       monk: {
         name: 'Монах', hitDie: 8, saves: { STR: true, DEX: true }, spellAbility: 'WIS',
         resource: { name: 'Очки Ци', cur: 2, max: 2 },
-        weapon: { name: 'Безоружный удар / Посох', stat: 'DEX', prof: true, dice: '1d6', bonus: 0, dmgType: 'дробящий', props: 'Боевые искусства' },
+        weapon: { name: 'Боевой посох', stat: 'DEX', prof: true, dice: '1d8', bonus: 0, dmgType: 'дробящий', hand: 'two', props: 'Боевые искусства' },
         spell: null,
         traits: '• Защита без доспехов: КД = 10 + Лов + Муд.\n• Боевые искусства: бонусный безоружный удар.'
       },
       paladin: {
         name: 'Паладин', hitDie: 10, saves: { WIS: true, CHA: true }, spellAbility: 'CHA',
         resource: { name: 'Наложение рук (пул ОЗ)', cur: 5, max: 5 },
-        weapon: { name: 'Боевой молот', stat: 'STR', prof: true, dice: '1d8', bonus: 0, dmgType: 'дробящий', props: 'Универсальное (1d10)' },
-        spell: { name: 'Божественная кара', level: 1, rollType: 'utility', dice: '2d8', tag: 'излучение', desc: 'При попадании оружием тратится ячейка: +2d8 излучения (+1d8 против нежити/исчадий).' },
+        weapon: { name: 'Боевой молот', stat: 'STR', prof: true, dice: '1d8', bonus: 0, dmgType: 'дробящий', hand: 'main', props: 'Универсальное (1d10)' },
+        spell: null,
         traits: '• Божественное чувство\n• Наложение рук (пул = 5 × уровень паладина)'
       },
       ranger: {
         name: 'Следопыт', hitDie: 10, saves: { STR: true, DEX: true }, spellAbility: 'WIS',
         resource: { name: 'Природная осведомлённость', cur: 1, max: 1 },
-        weapon: { name: 'Длинный лук', stat: 'DEX', prof: true, dice: '1d8', bonus: 0, dmgType: 'колющий', props: 'Дистанция 150/600 фт' },
-        spell: { name: 'Метка охотника', level: 1, rollType: 'utility', dice: '1d6', tag: 'доп. урон', desc: 'Бон. действие, Конц. 1 час: +1d6 урона по цели при каждом попадании.' },
+        weapon: { name: 'Длинный лук', stat: 'DEX', prof: true, dice: '1d8', bonus: 0, dmgType: 'колющий', hand: 'two', props: 'Дистанция 150/600 фт' },
+        spell: null,
         traits: '• Избранный враг и Исследователь природы'
       },
       rogue: {
         name: 'Плут', hitDie: 8, saves: { DEX: true, INT: true }, spellAbility: 'INT',
         resource: { name: 'Скрытая атака (кости d6)', cur: 1, max: 1 },
-        weapon: { name: 'Кинжал / Короткий меч', stat: 'DEX', prof: true, dice: '1d6', bonus: 0, dmgType: 'колющий', props: 'Фехтовальное, лёгкое' },
+        weapon: { name: 'Короткий меч', stat: 'DEX', prof: true, dice: '1d6', bonus: 0, dmgType: 'колющий', hand: 'main', props: 'Фехтовальное, лёгкое' },
         spell: null,
         traits: '• Скрытая атака: 1 раз в ход +1d6 урона (растёт с уровнем) при преимуществе или союзнике рядом с целью.\n• Компетентность (×2 БМ в 2 навыках).'
       },
       sorcerer: {
         name: 'Чародей', hitDie: 6, saves: { CON: true, CHA: true }, spellAbility: 'CHA',
         resource: { name: 'Единицы чародейства', cur: 2, max: 2 },
-        weapon: { name: 'Лёгкий арбалет', stat: 'DEX', prof: true, dice: '1d8', bonus: 0, dmgType: 'колющий', props: 'Дистанция 80/320 фт' },
-        spell: { name: 'Огненный снаряд', level: 0, rollType: 'attack', dice: '1d10', tag: 'огонь', desc: '120 фт: поджигает незакреплённые горючие предметы.' },
+        weapon: { name: 'Лёгкий арбалет', stat: 'DEX', prof: true, dice: '1d8', bonus: 0, dmgType: 'колющий', hand: 'two', props: 'Дистанция 80/320 фт' },
+        spell: { name: 'Огненный снаряд', level: 0, role: 'damage', rollType: 'attack', dice: '1d10', tag: 'огонь', desc: '1 действие • 120 фт • В, С • Мгновенно. Поджигает незакреплённые горючие предметы.' },
         traits: '• Происхождение чар\n• Гибкая магия и Метамагия (со 2–3 уровня)'
       },
       warlock: {
         name: 'Колдун', hitDie: 8, saves: { WIS: true, CHA: true }, spellAbility: 'CHA',
         resource: { name: 'Ячейки договора (короткий отдых)', cur: 1, max: 1 },
-        weapon: { name: 'Кинжал', stat: 'DEX', prof: true, dice: '1d4', bonus: 0, dmgType: 'колющий', props: 'Фехтовальное, метательное' },
-        spell: { name: 'Мистический заряд', level: 0, rollType: 'attack', dice: '1d10', tag: 'силовое поле', desc: '120 фт: лучший боевой фокус колдуна.' },
+        weapon: { name: 'Кинжал', stat: 'DEX', prof: true, dice: '1d4', bonus: 0, dmgType: 'колющий', hand: 'main', props: 'Фехтовальное, метательное' },
+        spell: { name: 'Мистический заряд', level: 0, role: 'damage', rollType: 'attack', dice: '1d10', tag: 'силовое поле', desc: '1 действие • 120 фт • В, С • Мгновенно. Лучший боевой фокус колдуна.' },
         traits: '• Потусторонний покровитель\n• Магия договора: ячейки восстанавливаются на коротком отдыхе.'
       },
       wizard: {
         name: 'Волшебник', hitDie: 6, saves: { INT: true, WIS: true }, spellAbility: 'INT',
         resource: { name: 'Магическое восстановление', cur: 1, max: 1 },
-        weapon: { name: 'Боевой посох', stat: 'STR', prof: true, dice: '1d6', bonus: 0, dmgType: 'дробящий', props: 'Универсальное (1d8)' },
-        spell: { name: 'Волшебная стрела', level: 1, rollType: 'utility', dice: '3d4+3', tag: 'силовое поле', desc: '120 фт: 3 дротика попадают автоматически (по 1d4+1 каждый).' },
+        weapon: { name: 'Боевой посох', stat: 'STR', prof: true, dice: '1d6', bonus: 0, dmgType: 'дробящий', hand: 'two', props: 'Универсальное (1d8)' },
+        spell: { name: 'Волшебная стрела', level: 1, role: 'damage', rollType: 'utility', dice: '3d4+3', tag: 'силовое поле', desc: '1 действие • 120 фт • В, С • Мгновенно. 3 дротика попадают автоматически (по 1d4+1 каждый).' },
         traits: '• Книга заклинаний (Интеллект)\n• Магическое восстановление: раз в день на коротком отдыхе возвращает ячейки (суммарно до половины ур. волшебника).'
       },
       custom: {
@@ -2894,19 +2995,15 @@
       }
     };
 
-    // ==================== EXPANDED D&D 5E SPELLBOOK CATALOG (0-3 CIRCLES) ====================
-const SPELLBOOK_5E = window.SPELLBOOK_5E || [];
-
-
     const CLASS_SPELL_QUOTA = {
       wizard: { cantrips: [3, 3, 3, 4, 4, 4], prepType: 'wizard_book', note: 'В книге: 6 на 1 ур. + 2 за каждый уровень. На день готовит: Уровень + мод. Инт' },
-      cleric: { cantrips: [3, 3, 3, 4, 4, 4], prepType: 'prep', note: 'Подготавливает на день: Уровень + мод. Мудрости' },
-      druid:  { cantrips: [2, 2, 2, 3, 3, 3], prepType: 'prep', note: 'Подготавливает на день: Уровень + мод. Мудрости' },
+      cleric: { cantrips: [3, 3, 3, 4, 4, 4], prepType: 'prep', note: 'Знает весь список жреца. На день готовит: Уровень + мод. Мудрости' },
+      druid:  { cantrips: [2, 2, 2, 3, 3, 3], prepType: 'prep', note: 'Знает весь список друида. На день готовит: Уровень + мод. Мудрости' },
       bard:   { cantrips: [2, 2, 2, 3, 3, 3], prepType: 'known', known: [4, 5, 6, 7, 8, 9], note: 'Знает фиксированное число заклинаний по уровню' },
       sorcerer: { cantrips: [4, 4, 4, 5, 5, 5], prepType: 'known', known: [2, 3, 4, 5, 6, 7], note: 'Знает фиксированное число заклинаний по уровню' },
       warlock: { cantrips: [2, 2, 2, 3, 3, 3], prepType: 'known', known: [2, 3, 4, 5, 6, 7], note: 'Знает заклинания по уровню (ячейки восстанавливаются в короткий отдых)' },
-      ranger: { cantrips: [0, 0, 0, 0, 0, 0], prepType: 'known', known: [0, 2, 3, 3, 4, 4], note: 'Магия открывается со 2-го уровня, заговоров нет' },
-      paladin: { cantrips: [0, 0, 0, 0, 0, 0], prepType: 'prep_half', note: 'Со 2-го уровня готовит: половина уровня + мод. Харизмы' }
+      ranger: { cantrips: [0, 0, 0, 0, 0, 0], prepType: 'prep_half', note: 'Со 2-го уровня знает весь список следопыта; готовит: половина уровня + мод. Мудрости' },
+      paladin: { cantrips: [0, 0, 0, 0, 0, 0], prepType: 'prep_half', note: 'Со 2-го уровня знает весь список паладина; готовит: половина уровня + мод. Харизмы' }
     };
 
     // ==================== PLAYER GUIDE DATA (LEVELS 1-6) ====================
@@ -2963,11 +3060,11 @@ const SPELLBOOK_5E = window.SPELLBOOK_5E || [];
         pros: 'Тяжёлая броня и щит, высокий запас здоровья, взрывной урон через Всплеск действий.',
         cons: 'Лишён магии, в тяжёлой броне совершает проверки Скрытности с помехой.',
         levels: [
-          '1 ур.: Боевой стиль (напр. Оборона +1 КД или Дуэлянт +2 к урону) и Второе дыхание (бонусным действием лечит 1d10 + ур. раз в короткий отдых).',
+          '1 ур.: Боевой стиль (пример: Оборона +1 КД или Дуэлянт +2 к урону) и Второе дыхание (бонусным действием лечит 1d10 + ур. раз в короткий отдых).',
           '2 ур.: Всплеск действий — 1 раз за короткий отдых второе полноценное основное действие в ваш ход.',
-          '3–4 ур.: Рост хитов; на 4 ур. +2 к Силе (для точности и урона) или +2 к Телосложению.',
+          '3–4 ур.: Рост хитов; на 4 ур. (пример сборки) +2 к Силе для точности и урона или +2 к Телосложению.',
           '5 ур.: Дополнительная атака (2 удара за одно действие «Атака») и рост БМ до +3.',
-          '6 ур.: Дополнительное увеличение характеристик (+2 к Силе или Телосложению).'
+          '6 ур.: Дополнительное увеличение характеристик (например, довести Силу до 20 или взять боевую черту).'
         ],
         example: 'Воин с Силой 18 (+4) и БМ +3 подбегает к орку, делает два удара (d20+7, урон 1d8+4), тратит Всплеск действий и бьёт ещё дважды (итого 4 удара за 6 секунд!), а в конце хода бонусным действием лечит себе 1d10+5 через Второе дыхание.'
       },
@@ -2978,7 +3075,7 @@ const SPELLBOOK_5E = window.SPELLBOOK_5E || [];
         levels: [
           '1 ур.: Скрытая атака (+1d6 урона раз в ход, если есть преимущество ИЛИ рядом с целью стоит ваш союзник) и Компетентность (×2 БМ в 2 навыках).',
           '2 ур.: Хитрое действие — Рывок, Отход или Засада совершаются бонусным действием.',
-          '3–4 ур.: Урон Скрытой атаки растёт до +2d6; на 4 ур. +2 к Ловкости.',
+          '3–4 ур.: Урон Скрытой атаки растёт до +2d6; на 4 ур. (пример сборки) +2 к Ловкости.',
           '5 ур.: Скрытая атака +3d6; Невероятное уклонение (реакцией снижаете урон от попавшей атаки вдвое).',
           '6 ур.: Вторая волна Компетентности — удваиваете БМ ещё в двух навыках.'
         ],
@@ -2986,38 +3083,38 @@ const SPELLBOOK_5E = window.SPELLBOOK_5E || [];
       },
       cleric: {
         name: 'Жрец / Клирик', role: 'Целитель, защитник и боевой маг', hitDie: 'd8 (1 ур: 8+Тел | 2–6 ур: 1d8 или 5+Тел)', stats: 'Мудрость, Телосложение',
-        pros: 'Средняя броня и щит (КД 17–18), лучший спаситель павших союзников, меняет набор заклинаний каждое утро.',
+        pros: 'Средняя броня и щит (КД 17–18), лучший спаситель павших союзников, меняет набор подготовленных заклинаний каждое утро.',
         cons: 'Ячейки быстро кончаются — добивайте слабых врагов заговором Священное пламя.',
         levels: [
-          '1 ур.: 3 заговора (Священное пламя, Указание, Свет) и 2 ячейки 1 круга (Лечащее слово, Благословение, Направляющий снаряд).',
+          '1 ур.: 3 заговора (Священное пламя, Указание, Свет) и 2 ячейки 1 круга (пример подготовки: Лечащее слово, Благословение, Направляющий снаряд).',
           '2 ур.: Божественный канал: Изгнание нежити (раз в короткий отдых пугает нежить в 30 фт при провале Спас Мудрости).',
-          '3–4 ур.: Открывается 2-й круг магии (Божественное оружие, Удержание личности); на 4 ур. +2 к Мудрости.',
+          '3–4 ур.: Открывается 2-й круг магии (Божественное оружие, Удержание личности); на 4 ур. (пример сборки) +2 к Мудрости.',
           '5 ур.: 3-й круг магии (Духовные стражи — 3d8 урона по области вокруг вас) и Уничтожение слабой нежити.',
           '6 ур.: Второй заряд Божественного канала между короткими отдыхами.'
         ],
-        example: 'Союзник упал в 0 хитов в 10 метрах. Жрец бонусным действием кастует Лечащее слово (1d4 + Муд), мгновенно поднимая его на ноги, а основным действием ещё бьёт врага булавой или кидает Священное пламя.'
+        example: 'Союзник упал в 0 хитов в 10 метрах. Жрец бонусным действием кастует Лечащее слово (2d4 + Муд), мгновенно поднимая его на ноги, а основным действием ещё бьёт врага булавой или кидает Священное пламя.'
       },
       wizard: {
         name: 'Волшебник / Маг', role: 'Артиллерия и контроль поля боя', hitDie: 'd6 (1 ур: 6+Тел | 2–6 ур: 1d6 или 4+Тел)', stats: 'Интеллект, Ловкость',
         pros: 'Самый широкий арсенал контроля и урона по площади (Усыпление, Паутина, Огненный шар, Контрзаклинание).',
         cons: 'Хрупкий (d6), нет брони и щитов — всегда держитесь позади партии и за укрытиями.',
         levels: [
-          '1 ур.: 3 заговора, 6 заклинаний в книге (Щит, Магический доспех, Усыпление, Волшебная стрела) и Магическое восстановление ячеек на коротком отдыхе.',
+          '1 ур.: 3 заговора, 6 заклинаний в книге (пример: Щит, Магический доспех, Усыпление, Волшебная стрела) и Магическое восстановление ячеек на коротком отдыхе.',
           '2 ур.: 3-я ячейка 1-го круга и +2 заклинания в книгу.',
-          '3–4 ур.: 2-й круг магии (Туманный шаг для побега, Паутина, Невидимость) и +2 заклинания в книгу; на 4 ур. +2 к Интеллекту.',
+          '3–4 ур.: 2-й круг магии (Туманный шаг для побега, Паутина, Невидимость) и +2 заклинания в книгу; на 4 ур. (пример сборки) +2 к Интеллекту.',
           '5 ур.: 3-й круг магии — пик мощи: Огненный шар (8d6 в радиусе 20 фт) и Контрзаклинание.',
-          '6 ур.: 3-я ячейка 3-го круга и расширение книги заклинаний.'
+          '6 ур.: 3-я ячейка 3-го круга и +2 заклинания в книгу.'
         ],
         example: 'У мага под Магическим доспехом КД 15. Гоблин выбрасывает 18 на атаку — попадание! Маг тут же тратит реакцию и ячейку 1 круга на Щит: КД становится 20, стрела отскакивает, а защита держится до следующего хода мага.'
       },
       ranger: {
         name: 'Следопыт / Рейнджер', role: 'Стрелок, охотник и разведчик', hitDie: 'd10 (1 ур: 10+Тел | 2–6 ур: 1d10 или 6+Тел)', stats: 'Ловкость, Мудрость',
         pros: 'Здоровье как у воина (d10), +2 к стрельбе, стабильный бонусный урон через Метку охотника.',
-        cons: 'Магия появляется только со 2-го уровня, заговоров нет, список заклинаний фиксированный.',
+        cons: 'Магия появляется только со 2-го уровня, заговоров нет.',
         levels: [
           '1 ур.: Избранный враг (преимущество на выслеживание) и Исследователь природы (отряд не плутает и находит вдвое больше еды).',
-          '2 ур.: Боевой стиль Стрельба (+2 к броскам атаки из лука/арбалета) и 2 заклинания 1 круга (Метка охотника, Лечение ран).',
-          '3–4 ур.: Первозданная осведомлённость (чутьё на нежить/драконов/фей); на 4 ур. +2 к Ловкости.',
+          '2 ур.: Боевой стиль Стрельба (+2 к броскам атаки из лука/арбалета) и магия 1 круга (пример подготовки: Метка охотника, Лечение ран).',
+          '3–4 ур.: Первозданная осведомлённость (чутьё на нежить/драконов/фей); на 4 ур. (пример сборки) +2 к Ловкости.',
           '5 ур.: Дополнительная атака (2 выстрела за действие) и 2-й круг магии (Бесследное передвижение: +10 к Скрытности всей группе).',
           '6 ур.: Улучшение Избранного врага и Исследователя природы.'
         ],
@@ -3030,11 +3127,11 @@ const SPELLBOOK_5E = window.SPELLBOOK_5E || [];
         levels: [
           '1 ур.: Вдохновение барда (бонусным действием даёт другу d6 к броску на 10 мин) и магия 1 круга (Лечащее слово, Огонь фей) + Злая насмешка.',
           '2 ур.: Мастер на все руки (+половина БМ ко всем неизученным навыкам) и Песнь отдыха (+1d6 ОЗ всем при коротком отдыхе).',
-          '3–4 ур.: Компетентность (×2 БМ в 2 навыках) и 2-й круг магии (Удержание личности, Невидимость); на 4 ур. +2 к Харизме.',
+          '3–4 ур.: Компетентность (×2 БМ в 2 навыках) и 2-й круг магии (Удержание личности, Невидимость); на 4 ур. (пример сборки) +2 к Харизме.',
           '5 ур.: Кубик Вдохновения растёт до d8 и теперь восстанавливается на каждом коротком отдыхе! Открывается 3-й круг (Гипнотический узор).',
           '6 ур.: Контрочарование (преимущество союзникам против испуга и очарования).'
         ],
-        example: 'Бард основным действием кричит Злую насмешку на огра (1d4 урона + помеха на его следующий удар), а бонусным действием даёт союзному воину кубик Вдохновения на решающую атаку.'
+        example: 'Бард основным действием кричит Злую насмешку на огра (1d6 урона + помеха на его следующий удар), а бонусным действием даёт союзному воину кубик Вдохновения на решающую атаку.'
       },
       barbarian: {
         name: 'Варвар', role: 'Неудержимый берсерк передовой', hitDie: 'd12 (1 ур: 12+Тел | 2–6 ур: 1d12 или 7+Тел)', stats: 'Сила, Телосложение',
@@ -3043,7 +3140,7 @@ const SPELLBOOK_5E = window.SPELLBOOK_5E || [];
         levels: [
           '1 ур.: Ярость (бонусное действие: +2 к урону Силой, преимущество на проверки/спасброски Силы, сопротивление дробящему, колющему и рубящему урону) и Защита без доспехов (КД = 10 + Лов + Тел).',
           '2 ур.: Безрассудная атака (преимущество на ваши атаки Силой, но враги бьют по вам с преимуществом) и Чувство опасности.',
-          '3–4 ур.: 3 заряда Ярости в день; на 4 ур. +2 к Силе или Телосложению.',
+          '3–4 ур.: 3 заряда Ярости в день; на 4 ур. (пример сборки) +2 к Силе или Телосложению.',
           '5 ур.: Дополнительная атака (2 удара за действие) и Быстрое передвижение (+10 футов к скорости без тяжёлой брони).',
           '6 ур.: 4 заряда Ярости в день.'
         ],
@@ -3056,7 +3153,7 @@ const SPELLBOOK_5E = window.SPELLBOOK_5E || [];
         levels: [
           '1 ур.: Божественное чувство и Наложение рук (пул лечения = 5 × уровень паладина; за 5 ОЗ снимает яд или болезнь).',
           '2 ур.: Боевой стиль, магия 1 круга (Благословение) и Божественная кара (после попадания тратите ячейку и добавляете +2d8 излучения, а против нежити/исчадий +3d8!).',
-          '3–4 ур.: Божественное здоровье (иммунитет к болезням); на 4 ур. +2 к Силе или Харизме.',
+          '3–4 ур.: Божественное здоровье (иммунитет к болезням); на 4 ур. (пример сборки) +2 к Силе или Харизме.',
           '5 ур.: Дополнительная атака (2 удара за действие) и 2-й круг магии.',
           '6 ур.: Аура защиты — вы и союзники в 10 футах прибавляете ваш модификатор Харизмы ко ВСЕМ спасброскам!'
         ],
@@ -3069,7 +3166,7 @@ const SPELLBOOK_5E = window.SPELLBOOK_5E || [];
         levels: [
           '1 ур.: Защита без доспехов (КД = 10 + Лов + Муд) и Боевые искусства (после атаки посохом/мечом — бонусный удар кулаком на 1d4 + Лов).',
           '2 ур.: Очки Ци (равны уровню, восстанавливаются в короткий отдых): Шквал ударов (2 бонусных удара за 1 Ци), Поступь ветра, Терпеливая оборона.',
-          '3–4 ур.: Отбивание снарядов (реакцией снижаете урон от стрелы на 1d10 + Лов + ур.); на 4 ур. Замедление падения и +2 к Ловкости.',
+          '3–4 ур.: Отбивание снарядов (реакцией снижаете урон от стрелы на 1d10 + Лов + ур.); на 4 ур. Замедление падения и (пример сборки) +2 к Ловкости.',
           '5 ур.: Дополнительная атака (итого до 4 ударов со Шквалом!) и Оглушающий удар (за 1 Ци цель кидает Спас Телосложения или оглушена на весь раунд).',
           '6 ур.: Удары Ци (безоружные удары считаются магическими) и +15 футов к скорости.'
         ],
@@ -3080,9 +3177,9 @@ const SPELLBOOK_5E = window.SPELLBOOK_5E || [];
         pros: 'Дикий облик даёт второй запас хитов зверя, отличный контроль поля (Огонь фей, Терновый кнут) и лечение.',
         cons: 'Не носит металлические доспехи, сильные заклинания требуют концентрации.',
         levels: [
-          '1 ур.: Друидический язык, 2 заговора (Терновый кнут, Указание) и магия 1 круга (Лечащее слово, Огонь фей, Опутывание).',
+          '1 ур.: Друидический язык, 2 заговора (Терновый кнут, Указание) и магия 1 круга (пример подготовки: Лечащее слово, Огонь фей, Опутывание).',
           '2 ур.: Дикий облик — 2 раза за короткий отдых превращаетесь в зверя (волка, медведя, гигантского паука), получая его хиты как щит!',
-          '3–4 ур.: 2-й круг магии (Бесследное передвижение, Удержание личности); на 4 ур. +2 к Мудрости.',
+          '3–4 ур.: 2-й круг магии (Бесследное передвижение, Удержание личности); на 4 ур. (пример сборки) +2 к Мудрости.',
           '5 ур.: 3-й круг магии (Призыв молнии, Рассеивание магии).',
           '6 ур.: Улучшение Дикого облика.'
         ],
@@ -3095,7 +3192,7 @@ const SPELLBOOK_5E = window.SPELLBOOK_5E || [];
         levels: [
           '1 ур.: 4 заговора (Огненный снаряд, Свет, Малая иллюзия) и 2 заклинания 1 круга (Щит, Волшебная стрела, Усыпление).',
           '2 ур.: Единицы чародейства (равны уровню) — можно переплавлять ячейки в очки и обратно.',
-          '3–4 ур.: Метамагия (Удвоенное заклинание, Ускоренное заклинание) и 2-й круг магии (Туманный шаг, Паутина); на 4 ур. +2 к Харизме.',
+          '3–4 ур.: Метамагия (Удвоенное заклинание, Ускоренное заклинание) и 2-й круг магии (Туманный шаг, Паутина); на 4 ур. (пример сборки) +2 к Харизме.',
           '5 ур.: 3-й круг магии (Огненный шар, Контрзаклинание).',
           '6 ур.: 6 единиц чародейства и 3 ячейки 3-го круга.'
         ],
@@ -3108,7 +3205,7 @@ const SPELLBOOK_5E = window.SPELLBOOK_5E || [];
         levels: [
           '1 ур.: Магия договора (1 ячейка 1 круга, возвращается за 1 час короткого отдыха) и фокус Мистический заряд (1d10).',
           '2 ур.: 2 ячейки 1 круга и Таинственные воззвания (например, Мучительный взрыв добавляет +Хар к каждому лучу Мистического заряда!).',
-          '3–4 ур.: Обе ячейки становятся 2-го круга (Туманный шаг, Удержание личности); на 4 ур. +2 к Харизме.',
+          '3–4 ур.: Обе ячейки становятся 2-го круга (Туманный шаг, Удержание личности); на 4 ур. (пример сборки) +2 к Харизме.',
           '5 ур.: Обе ячейки становятся 3-го круга (Контрзаклинание, Гипнотический узор), а Мистический заряд бьёт 2 лучами.',
           '6 ур.: 2 ячейки 3-го круга, 3 воззвания и 7 известных заклинаний.'
         ],
@@ -3236,9 +3333,13 @@ const SPELLBOOK_5E = window.SPELLBOOK_5E || [];
       return 'human';
     }
 
-    // Check if class uses daily spell preparation (Wizard, Cleric, Druid, Paladin)
+    // Classes that know their ENTIRE class spell list and only prepare a subset daily
+    function classKnowsAllClassSpells(clsKey) {
+      return ['cleric', 'druid', 'paladin', 'ranger'].includes(clsKey);
+    }
+
     function classUsesPreparedSpells(clsKey) {
-      return ['wizard', 'cleric', 'druid', 'paladin'].includes(clsKey);
+      return ['wizard', 'cleric', 'druid', 'paladin', 'ranger'].includes(clsKey);
     }
 
     function getPreparedCapForHero(h) {
@@ -3246,13 +3347,44 @@ const SPELLBOOK_5E = window.SPELLBOOK_5E || [];
       const clsKey = detectHeroClassKey(h);
       const lvl = h.level || 1;
       const spellMod = Math.max(0, getHeroSpellMod(h));
-      if (clsKey === 'paladin') {
+      if (clsKey === 'paladin' || clsKey === 'ranger') {
         return lvl < 2 ? 0 : Math.max(1, Math.floor(lvl / 2) + spellMod);
       }
       if (['wizard', 'cleric', 'druid'].includes(clsKey)) {
         return Math.max(1, lvl + spellMod);
       }
       return 0;
+    }
+
+    function buildFullClassGrimoireSpells(clsKey, level, existingSpells = []) {
+      if (!classKnowsAllClassSpells(clsKey)) return existingSpells;
+      const maxCircle = maxSpellCircleForHero(clsKey, level);
+      const existingByName = new Map(existingSpells.map((s) => [s.name.toLowerCase(), s]));
+      const result = existingSpells.filter((s) => s.level === 0);
+
+      if (maxCircle >= 1) {
+        SPELLBOOK_5E.forEach((sp) => {
+          if (sp.level >= 1 && sp.level <= maxCircle && sp.classes.includes(clsKey)) {
+            const prev = existingByName.get(sp.name.toLowerCase());
+            if (prev) {
+              result.push(prev);
+            } else {
+              result.push({
+                id: 'spl_' + sp.id + '_' + Date.now().toString(36).slice(-3),
+                name: sp.name,
+                level: sp.level,
+                role: sp.role || 'utility',
+                rollType: sp.rollType,
+                dice: sp.dice,
+                tag: sp.tag,
+                prepared: false,
+                desc: `${sp.meta}. ${sp.desc}`
+              });
+            }
+          }
+        });
+      }
+      return result.sort((a, b) => a.level - b.level || a.name.localeCompare(b.name, 'ru'));
     }
 
     function getFullBestiary() {
@@ -3571,10 +3703,14 @@ const SPELLBOOK_5E = window.SPELLBOOK_5E || [];
         .filter(Boolean)
         .join(', ');
 
+      const fullBookNote = classKnowsAllClassSpells(cKey)
+        ? ' • Все заклинания класса добавятся в гримуар автоматически!'
+        : '';
+
       document.getElementById('newHeroHp').value = suggestedHp;
       document.getElementById('createPresetHint').textContent =
         `Автозаполнение: Скорость ${rPreset.speed} фт • Кость d${hitDie}` +
-        (slotsPreview ? ` • Ячейки (${slotsPreview})` : ' • Без ячеек заклинаний');
+        (slotsPreview ? ` • Ячейки (${slotsPreview})` : ' • Без ячеек') + fullBookNote;
     };
 
     window.createNewHero = async () => {
@@ -3610,6 +3746,11 @@ const SPELLBOOK_5E = window.SPELLBOOK_5E || [];
         const slotsMax = getSlotsMaxForClassAndLevel(cKey, level);
         const combinedTraits = [rPreset.traits, cPreset.traits].filter(Boolean).join('\n\n');
 
+        let startSpells = cPreset.spell ? [{ id: 'spl_' + Date.now(), prepared: true, ...cPreset.spell }] : [];
+        if (classKnowsAllClassSpells(cKey)) {
+          startSpells = buildFullClassGrimoireSpells(cKey, level, startSpells);
+        }
+
         const heroObj = {
           id, name, race, heroClass, level, xp: startXp, pin, avatar,
           hpCur: hpMax, hpMax, tempHp: 0,
@@ -3624,7 +3765,7 @@ const SPELLBOOK_5E = window.SPELLBOOK_5E || [];
           slots: [...slotsMax],
           slotsMax,
           weapons: cPreset.weapon ? [{ id: 'wpn_' + Date.now(), ...cPreset.weapon }] : [],
-          spells: cPreset.spell ? [{ id: 'spl_' + Date.now(), prepared: true, ...cPreset.spell }] : [],
+          spells: startSpells,
           resources: cPreset.resource ? [{ id: 'res_' + Date.now(), ...cPreset.resource }] : [],
           traits: combinedTraits,
           deathSaves: { success: 0, failure: 0 },
@@ -3807,7 +3948,7 @@ const SPELLBOOK_5E = window.SPELLBOOK_5E || [];
             <strong style="color:#fca5a5;">⚠️ Ограничения:</strong> ${escapeHtml(cInfo.cons)}
           </div>
 
-          <strong style="color:var(--gold); font-size:0.82rem;">📈 Развитие по уровням (1–6):</strong>
+          <strong style="color:var(--gold); font-size:0.82rem;">📈 Пример эффективной прокачки (1–6 ур.):</strong>
           <ul style="padding-left:16px; font-size:0.8rem; line-height:1.45; margin-top:4px;">
             ${cInfo.levels.map((l) => `<li>${escapeHtml(l)}</li>`).join('')}
           </ul>
@@ -3820,6 +3961,30 @@ const SPELLBOOK_5E = window.SPELLBOOK_5E || [];
     };
 
     // ================= D&D 5E SPELLBOOK PICKER & DAILY PREPARED TOGGLE =================
+    function renderHitTypeBadge(rollType) {
+      if (rollType === 'attack') {
+        return `<span class="hit-type-badge hit-type-attack">🎯 Бросок атаки</span>`;
+      }
+      if (rollType === 'save') {
+        return `<span class="hit-type-badge hit-type-save">🎲 Спасбросок цели</span>`;
+      }
+      if (rollType === 'heal') {
+        return `<span class="hit-type-badge hit-type-auto">💚 Лечение</span>`;
+      }
+      return `<span class="hit-type-badge hit-type-auto">⚡ Автопопадание</span>`;
+    }
+
+    window.syncAllClassSpellsToGrimoire = async () => {
+      const h = state.heroes[session.heroId];
+      if (!h) return;
+      const clsKey = detectHeroClassKey(h);
+      if (!classKnowsAllClassSpells(clsKey)) return;
+      const updated = buildFullClassGrimoireSpells(clsKey, h.level || 1, h.spells || []);
+      await saveHeroPatch({ spells: updated });
+      renderHeroSheet();
+      await uiAlert(`Все заклинания класса «${h.heroClass}» для ${h.level || 1} уровня загружены в гримуар! Отметьте галочками те, что подготовлены на сегодня.`, 'Гримуар обновлён');
+    };
+
     window.toggleSpellPrepared = async (splId) => {
       const h = state.heroes[session.heroId];
       if (!h) return;
@@ -3880,6 +4045,7 @@ const SPELLBOOK_5E = window.SPELLBOOK_5E || [];
       const curSpells = h?.spells || [];
       const curCantripsCount = curSpells.filter((s) => s.level === 0).length;
       const curLeveledCount = curSpells.filter((s) => s.level >= 1).length;
+      const isFullClassList = classKnowsAllClassSpells(clsKey);
 
       const quota = CLASS_SPELL_QUOTA[clsKey];
       const bannerEl = document.getElementById('sbQuotaBanner');
@@ -3896,11 +4062,13 @@ const SPELLBOOK_5E = window.SPELLBOOK_5E || [];
           const prepCap = Math.max(1, heroLevel + spellMod);
           labelLeveled = `В книге (готов. на день: ${prepCap})`;
         } else if (quota.prepType === 'prep') {
-          maxLeveled = Math.max(1, heroLevel + spellMod);
-          labelLeveled = 'Подготовлено на день';
+          maxLeveled = 99;
+          const prepCap = Math.max(1, heroLevel + spellMod);
+          labelLeveled = `Знает весь список (готовит на день: ${prepCap})`;
         } else if (quota.prepType === 'prep_half') {
-          maxLeveled = heroLevel < 2 ? 0 : Math.max(1, Math.floor(heroLevel / 2) + spellMod);
-          labelLeveled = 'Подготовлено на день';
+          maxLeveled = 99;
+          const prepCap = heroLevel < 2 ? 0 : Math.max(1, Math.floor(heroLevel / 2) + spellMod);
+          labelLeveled = `Знает весь список (готовит на день: ${prepCap})`;
         } else if (quota.prepType === 'known') {
           maxLeveled = quota.known[lvlIdx] ?? 0;
           labelLeveled = 'Известно заклинаний';
@@ -3908,7 +4076,7 @@ const SPELLBOOK_5E = window.SPELLBOOK_5E || [];
 
         bannerEl.innerHTML = `
           <div><strong>Норма для ${escapeHtml(h.heroClass)} (Ур. ${heroLevel}):</strong> Макс. круг: <strong>${maxCircle === 0 ? 'нет ячеек' : maxCircle + ' круг'}</strong></div>
-          <div>Фокусы (0 круг): <strong>${curCantripsCount} / ${maxCantrips}</strong> • ${labelLeveled}: <strong>${curLeveledCount} / ${maxLeveled}</strong></div>
+          <div>Фокусы (0 круг): <strong>${curCantripsCount} / ${maxCantrips}</strong> • ${isFullClassList ? labelLeveled : `${labelLeveled}: <strong>${curLeveledCount} / ${maxLeveled}</strong>`}</div>
           <div class="muted" style="font-size:0.7rem; margin-top:2px;">${escapeHtml(quota.note)}</div>
         `;
       } else {
@@ -3953,7 +4121,7 @@ const SPELLBOOK_5E = window.SPELLBOOK_5E || [];
         const isTaken = takenNames.has(sp.name.toLowerCase());
         const isRaceBonus = raceKey !== 'none' && sp.races.includes(raceKey);
         const overLimit = !ignoreLimit && !isRaceBonus && (
-          sp.level === 0 ? (curCantripsCount >= maxCantrips) : (curLeveledCount >= maxLeveled)
+          sp.level === 0 ? (curCantripsCount >= maxCantrips) : (!isFullClassList && curLeveledCount >= maxLeveled)
         );
 
         let actionHtml = '';
@@ -3968,10 +4136,11 @@ const SPELLBOOK_5E = window.SPELLBOOK_5E || [];
         return `
           <div class="item-card">
             <div class="row" style="justify-content:space-between; align-items:flex-start;">
-              <div>
+              <div style="flex:1; min-width:0;">
                 <span class="spell-lvl-badge">${sp.level === 0 ? 'Фокус' : sp.level + ' круг'}</span>
+                ${renderHitTypeBadge(sp.rollType)}
                 ${isRaceBonus ? `<span class="spell-lvl-badge" style="border-color:#38bdf8; color:#7dd3fc;">Расовое</span>` : ''}
-                <strong style="color:var(--gold); margin-left:4px;">${escapeHtml(sp.name)}</strong>
+                <div style="margin-top:4px;"><strong style="color:var(--gold);">${escapeHtml(sp.name)}</strong></div>
                 <div class="muted" style="font-size:0.7rem; margin-top:2px;">${escapeHtml(sp.meta)}</div>
               </div>
               <div>${actionHtml}</div>
@@ -3995,6 +4164,7 @@ const SPELLBOOK_5E = window.SPELLBOOK_5E || [];
         id: 'spl_' + Date.now() + '_' + Math.random().toString(36).slice(2, 5),
         name: sp.name,
         level: sp.level,
+        role: sp.role || 'utility',
         rollType: sp.rollType,
         dice: sp.dice,
         tag: sp.tag,
@@ -4098,7 +4268,7 @@ const SPELLBOOK_5E = window.SPELLBOOK_5E || [];
       document.getElementById('combatCheatSheetBody').classList.toggle('hidden');
     };
 
-    // ================= HERO SUB-TABS, WEAPONS, SPELLS & RESOURCES =================
+    // ================= HERO SUB-TABS, WEAPONS (HAND SLOTS & ORDER), SPELLS & RESOURCES =================
     window.switchHeroSubtab = (sub) => {
       const map = {
         combat: ['heroSubCombatBtn', 'heroSubCombatPanel'],
@@ -4133,11 +4303,35 @@ const SPELLBOOK_5E = window.SPELLBOOK_5E || [];
       return statMod + magic;
     }
 
+    window.moveHeroWeapon = async (idx, dir) => {
+      const h = state.heroes[session.heroId];
+      if (!h) return;
+      const weapons = [...(h.weapons || [])];
+      const targetIdx = idx + dir;
+      if (targetIdx < 0 || targetIdx >= weapons.length) return;
+      const temp = weapons[idx];
+      weapons[idx] = weapons[targetIdx];
+      weapons[targetIdx] = temp;
+      await saveHeroPatch({ weapons });
+      renderHeroSheet();
+    };
+
+    window.changeWeaponHand = async (wpnId, handVal) => {
+      const h = state.heroes[session.heroId];
+      if (!h) return;
+      const weapons = (h.weapons || []).map((w) =>
+        w.id === wpnId ? { ...w, hand: handVal } : w
+      );
+      await saveHeroPatch({ weapons });
+      renderHeroSheet();
+    };
+
     window.openAddWeaponModal = () => {
       document.getElementById('wpnName').value = '';
       document.getElementById('wpnDice').value = '1d8';
       document.getElementById('wpnMagicBonus').value = '0';
       document.getElementById('wpnDmgType').value = 'рубящий';
+      document.getElementById('wpnHand').value = 'main';
       document.getElementById('wpnProps').value = '';
       document.getElementById('addWeaponModal').classList.add('open');
     };
@@ -4156,6 +4350,7 @@ const SPELLBOOK_5E = window.SPELLBOOK_5E || [];
         dice: document.getElementById('wpnDice').value.trim() || '1d6',
         bonus: parseInt(document.getElementById('wpnMagicBonus').value) || 0,
         dmgType: document.getElementById('wpnDmgType').value.trim() || '',
+        hand: document.getElementById('wpnHand').value || 'main',
         props: document.getElementById('wpnProps').value.trim() || ''
       };
 
@@ -4268,6 +4463,7 @@ const SPELLBOOK_5E = window.SPELLBOOK_5E || [];
       document.getElementById('splName').value = '';
       document.getElementById('splLevel').value = '0';
       document.getElementById('splRollType').value = 'attack';
+      document.getElementById('splRole').value = 'damage';
       document.getElementById('splDice').value = '';
       document.getElementById('splTag').value = '';
       document.getElementById('splDesc').value = '';
@@ -4288,6 +4484,7 @@ const SPELLBOOK_5E = window.SPELLBOOK_5E || [];
         id: 'spl_' + Date.now(),
         name,
         level: lvl,
+        role: document.getElementById('splRole').value || 'utility',
         rollType: document.getElementById('splRollType').value,
         dice: document.getElementById('splDice').value.trim(),
         tag: document.getElementById('splTag').value.trim(),
@@ -4574,6 +4771,9 @@ const SPELLBOOK_5E = window.SPELLBOOK_5E || [];
         patch.slotsMax = nextSlotsMax;
         patch.slots = nextSlotsMax.map((m, i) => Math.min(m, curSlots[i]));
         patch.profBonus = profBonusForLevel(level);
+        if (classKnowsAllClassSpells(clsKey)) {
+          patch.spells = buildFullClassGrimoireSpells(clsKey, level, h.spells || []);
+        }
       }
 
       await saveHeroPatch(patch);
@@ -4658,15 +4858,21 @@ const SPELLBOOK_5E = window.SPELLBOOK_5E || [];
         return Math.min(m, curSlots[i] + diff);
       });
 
-      await saveHeroPatch({
+      const patch = {
         level: nextLvl,
         profBonus: suggestedProf,
         hitDiceLeft: Math.min(nextLvl, nextHdLeft),
         slotsMax: nextSlotsMax,
         slots: nextSlots
-      });
+      };
+
+      if (classKnowsAllClassSpells(clsKey)) {
+        patch.spells = buildFullClassGrimoireSpells(clsKey, nextLvl, h.spells || []);
+      }
+
+      await saveHeroPatch(patch);
       await uiAlert(
-        `Поздравляем! ${h.name} достиг ${nextLvl} уровня!\nБонус мастерства обновлён до +${suggestedProf}, ячейки заклинаний обновлены по таблице 5e. Не забудьте увеличить макс. ОЗ в профиле.`,
+        `Поздравляем! ${h.name} достиг ${nextLvl} уровня!\nБонус мастерства обновлён до +${suggestedProf}, ячейки и доступные заклинания обновлены. Не забудьте увеличить макс. ОЗ в профиле.`,
         '🎉 Новый уровень!'
       );
       renderHeroSheet();
@@ -5159,22 +5365,37 @@ const SPELLBOOK_5E = window.SPELLBOOK_5E || [];
         ph.classList.remove('hidden');
       }
 
-      // Subtab 1: Weapons & Resources
+      // Subtab 1: Weapons (Hand Slots + Reorder) & Resources
       const weapons = h.weapons || [];
       document.getElementById('heroWeaponsList').innerHTML = weapons.length
-        ? weapons.map((w) => {
+        ? weapons.map((w, wIdx) => {
             const atk = getWeaponAttackBonus(h, w);
             const dmg = getWeaponDamageBonus(h, w);
             const atkStr = atk >= 0 ? `+${atk}` : `${atk}`;
             const dmgModStr = dmg === 0 ? '' : (dmg > 0 ? `+${dmg}` : `${dmg}`);
+            const handVal = w.hand || 'main';
+            const isEquipped = handVal !== 'stowed';
+
             return `
-              <div class="item-card">
-                <div class="row" style="justify-content:space-between;">
-                  <div>
+              <div class="item-card ${isEquipped ? 'wpn-equipped' : ''}">
+                <div class="row" style="justify-content:space-between; align-items:flex-start;">
+                  <div style="min-width:0; flex:1;">
                     <strong style="color:var(--gold); font-size:0.95rem;">${escapeHtml(w.name)}</strong>
-                    ${w.props ? `<div class="muted" style="font-size:0.72rem;">${escapeHtml(w.props)}</div>` : ''}
+                    <div class="mt-8" style="margin-top:4px;">
+                      <select class="hand-select" onchange="changeWeaponHand('${w.id}', this.value)">
+                        <option value="main" ${handVal === 'main' ? 'selected' : ''}>🖐️ В основной руке</option>
+                        <option value="off" ${handVal === 'off' ? 'selected' : ''}>🗡️ Во второй руке</option>
+                        <option value="two" ${handVal === 'two' ? 'selected' : ''}>👐 В двух руках</option>
+                        <option value="stowed" ${handVal === 'stowed' ? 'selected' : ''}>🎒 В ножнах</option>
+                      </select>
+                    </div>
+                    ${w.props ? `<div class="muted" style="font-size:0.72rem; margin-top:4px;">${escapeHtml(w.props)}</div>` : ''}
                   </div>
-                  <button class="btn btn-danger btn-xs" onclick="deleteHeroWeapon('${w.id}')">✕</button>
+                  <div class="row">
+                    <button class="btn btn-xs" onclick="moveHeroWeapon(${wIdx}, -1)" ${wIdx === 0 ? 'disabled style="opacity:0.35;"' : ''} title="Поднять выше">⬆</button>
+                    <button class="btn btn-xs" onclick="moveHeroWeapon(${wIdx}, 1)" ${wIdx === weapons.length - 1 ? 'disabled style="opacity:0.35;"' : ''} title="Опустить ниже">⬇</button>
+                    <button class="btn btn-danger btn-xs" onclick="deleteHeroWeapon('${w.id}')">✕</button>
+                  </div>
                 </div>
                 <div class="row mt-8" style="justify-content:space-between; flex-wrap:wrap;">
                   <span class="muted" style="font-size:0.78rem;">Урон: <strong style="color:var(--text-main);">${escapeHtml(w.dice)}${dmgModStr}</strong> (${escapeHtml(w.dmgType || 'физ.')})</span>
@@ -5203,7 +5424,7 @@ const SPELLBOOK_5E = window.SPELLBOOK_5E || [];
           `).join('')
         : '<p class="muted">Нет отслеживаемых классовых ресурсов (Ярость, Ци, Вдохновение и др.).</p>';
 
-      // Subtab 2: Stats (respecting maxStatCap), Saving Throws & 18 Skills
+      // Subtab 2: Stats, Saving Throws & 18 Skills
       const labels = { STR: 'Сила', DEX: 'Ловк', CON: 'Тел', INT: 'Инт', WIS: 'Мудр', CHA: 'Хар' };
       const grid = document.getElementById('statsGrid');
       grid.innerHTML = Object.keys(labels).map((k) => {
@@ -5294,8 +5515,12 @@ const SPELLBOOK_5E = window.SPELLBOOK_5E || [];
 
       const clsKey = detectHeroClassKey(h);
       const usesPrep = classUsesPreparedSpells(clsKey);
+      const isFullClassList = classKnowsAllClassSpells(clsKey);
       const prepBar = document.getElementById('heroPreparedSummaryBar');
+      const syncBtn = document.getElementById('syncClassAllSpellsBtn');
       const onlyPrepared = document.getElementById('filterPreparedOnlyCheck')?.checked;
+      const gRoleFilter = document.getElementById('grimoireRoleFilter')?.value || 'all';
+      const gCircleFilter = document.getElementById('grimoireCircleFilter')?.value || 'all';
 
       const allSpells = [...(h.spells || [])].sort((a, b) => a.level - b.level);
       const preparedCount = allSpells.filter((s) => s.level >= 1 && s.prepared !== false).length;
@@ -5303,20 +5528,29 @@ const SPELLBOOK_5E = window.SPELLBOOK_5E || [];
 
       if (usesPrep) {
         prepBar.classList.remove('hidden');
+        syncBtn.classList.toggle('hidden', !isFullClassList);
         const isOver = prepCap > 0 && preparedCount > prepCap;
         prepBar.classList.toggle('over-cap', isOver);
         document.getElementById('heroPreparedCountVal').textContent = `${preparedCount} / ${prepCap}`;
         document.getElementById('heroPreparedCountVal').style.color = isOver ? '#f87171' : 'var(--gold)';
-        document.getElementById('heroPreparedHint').textContent = clsKey === 'paladin'
-          ? 'Половина уровня + мод. Харизмы (фокусы не тратят)'
-          : 'Уровень + мод. базовой характеристики (фокусы всегда готовы)';
+        document.getElementById('heroPreparedHint').textContent = (clsKey === 'paladin' || clsKey === 'ranger')
+          ? 'Знает весь список класса • Готовит: половина ур. + мод.'
+          : (isFullClassList
+              ? 'Знает весь список класса • Готовит: Уровень + мод. Мудрости'
+              : 'Готовит из книги: Уровень + мод. Интеллекта (фокусы всегда готовы)');
       } else {
         prepBar.classList.add('hidden');
       }
 
-      const displayedSpells = (usesPrep && onlyPrepared)
-        ? allSpells.filter((s) => s.level === 0 || s.prepared !== false)
-        : allSpells;
+      const displayedSpells = allSpells.filter((s) => {
+        if (usesPrep && onlyPrepared && s.level >= 1 && s.prepared === false) return false;
+        if (gCircleFilter !== 'all' && s.level !== parseInt(gCircleFilter, 10)) return false;
+        if (gRoleFilter !== 'all') {
+          const spRole = s.role || (s.rollType === 'heal' ? 'defense' : (s.rollType === 'attack' ? 'damage' : 'utility'));
+          if (spRole !== gRoleFilter) return false;
+        }
+        return true;
+      });
 
       document.getElementById('heroSpellsList').innerHTML = displayedSpells.length
         ? displayedSpells.map((s) => {
@@ -5327,7 +5561,7 @@ const SPELLBOOK_5E = window.SPELLBOOK_5E || [];
               : 'item-card';
 
             const prepToggleHtml = (usesPrep && s.level >= 1)
-              ? `<button class="prep-toggle-pill ${isPrep ? 'is-ready' : ''}" onclick="toggleSpellPrepared('${s.id}')" title="Переключить: подготовлено на сегодня или в резерве книги">${isPrep ? '☑ Готово' : '☐ В книге'}</button>`
+              ? `<button class="prep-toggle-pill ${isPrep ? 'is-ready' : ''}" onclick="toggleSpellPrepared('${s.id}')" title="Переключить: подготовлено на сегодня или в резерве">${isPrep ? '☑ Готово' : '☐ В резерве'}</button>`
               : '';
 
             return `
@@ -5335,8 +5569,9 @@ const SPELLBOOK_5E = window.SPELLBOOK_5E || [];
                 <div class="row" style="justify-content:space-between; align-items:flex-start;">
                   <div style="min-width:0; flex:1;">
                     <span class="spell-lvl-badge">${lvlText}</span>
-                    <strong style="color:var(--gold); margin-left:4px;">${escapeHtml(s.name)}</strong>
-                    ${(s.dice || s.tag) ? `<div class="muted" style="font-size:0.74rem; margin-top:3px;">${escapeHtml(s.dice)} ${s.tag ? '• ' + escapeHtml(s.tag) : ''}</div>` : ''}
+                    ${renderHitTypeBadge(s.rollType)}
+                    <div style="margin-top:4px;"><strong style="color:var(--gold);">${escapeHtml(s.name)}</strong></div>
+                    ${(s.dice || s.tag) ? `<div class="muted" style="font-size:0.74rem; margin-top:2px;">${escapeHtml(s.dice)} ${s.tag ? '• ' + escapeHtml(s.tag) : ''}</div>` : ''}
                   </div>
                   <div class="row" style="flex-wrap:wrap; justify-content:flex-end;">
                     ${prepToggleHtml}
@@ -5349,8 +5584,8 @@ const SPELLBOOK_5E = window.SPELLBOOK_5E || [];
             `;
           }).join('')
         : (allSpells.length
-            ? '<p class="muted">Нет отмеченных «Готово» заклинаний. Снимите галочку «Только готовые», чтобы выбрать их из книги.</p>'
-            : '<p class="muted">Гримуар пуст. Нажмите «📚 Книга 5e», чтобы выбрать фокусы и заклинания по классу и уровню.</p>');
+            ? '<p class="muted">По выбранному фильтру заклинаний не найдено (попробуйте сбросить фильтр категории или круга).</p>'
+            : '<p class="muted">Гримуар пуст. Нажмите «📚 Книга 5e» или «🔄 Все закл. класса».</p>');
 
       // Subtab 4: Traits, Wallet, Rations & Inventory
       document.getElementById('heroTraitsInput').value = h.traits || '';
