@@ -273,14 +273,60 @@
       color: #120f0a;
     }
 
-    /* Weapons, Spells & Class Resources */
+    /* Weapons, Spells, Prepared Toggle & Class Resources */
     .item-card {
       background: var(--bg-card-alt);
       border: 1px solid rgba(212, 175, 55, 0.2);
       border-radius: 10px;
       padding: 10px;
       margin-bottom: 8px;
+      transition: border-color 0.2s ease, opacity 0.2s ease;
     }
+    .item-card.spell-prepared {
+      border-color: rgba(212, 175, 55, 0.65);
+      background: linear-gradient(160deg, rgba(212, 175, 55, 0.09), var(--bg-card-alt));
+    }
+    .item-card.spell-unprepared {
+      opacity: 0.78;
+    }
+
+    .prep-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 6px;
+      padding: 8px 10px;
+      margin-bottom: 10px;
+      border-radius: 10px;
+      background: rgba(212, 175, 55, 0.09);
+      border: 1px solid rgba(212, 175, 55, 0.3);
+      font-size: 0.78rem;
+    }
+    .prep-bar.over-cap {
+      border-color: rgba(239, 68, 68, 0.65);
+      background: rgba(185, 28, 28, 0.18);
+    }
+
+    .prep-toggle-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 3px 8px;
+      border-radius: 999px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      cursor: pointer;
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      background: rgba(0, 0, 0, 0.32);
+      color: var(--text-muted);
+    }
+    .prep-toggle-pill.is-ready {
+      border-color: #34d399;
+      background: rgba(16, 185, 129, 0.22);
+      color: #6ee7b7;
+    }
+
     .magic-stat-box {
       background: var(--bg-card-alt);
       border: 1px solid rgba(212, 175, 55, 0.25);
@@ -1378,7 +1424,7 @@
         </div>
       </div>
 
-      <!-- HERO SUBTAB 3: MAGIC, SPELL SLOTS (1-9) & SPELLBOOK BY CLASS/RACE/LEVEL -->
+      <!-- HERO SUBTAB 3: MAGIC, SPELL SLOTS (1-9) & PREPARED SPELLS GRIMOIRE -->
       <div id="heroSubMagicPanel" class="hidden">
         <div class="card">
           <div class="card-header">
@@ -1421,6 +1467,20 @@
               <button class="btn btn-xs" onclick="openAddSpellModal()">+ Своё</button>
             </div>
           </div>
+
+          <!-- Daily Prepared Spells Counter & Filter (for Wizard, Cleric, Druid, Paladin) -->
+          <div id="heroPreparedSummaryBar" class="prep-bar hidden">
+            <div>
+              <span>✨ Подготовлено на день: </span>
+              <strong id="heroPreparedCountVal" style="color:var(--gold);">0 / 4</strong>
+              <div id="heroPreparedHint" class="muted" style="font-size:0.68rem;"></div>
+            </div>
+            <label style="display:flex; align-items:center; gap:5px; font-size:0.74rem; color:var(--text-main); cursor:pointer;">
+              <input type="checkbox" id="filterPreparedOnlyCheck" style="width:auto;" onchange="renderHeroSheet()" />
+              Только готовые
+            </label>
+          </div>
+
           <div id="heroSpellsList"></div>
         </div>
       </div>
@@ -1541,7 +1601,6 @@
 
     <!-- ================= TAB 3: SHARED HUB (COMBAT + GUIDE 1-6 + DOCS + CHRONICLE) ================= -->
     <section id="tabShared" class="hidden">
-      <!-- Public Combat Initiative Board -->
       <div id="publicCombatCard" class="card hidden">
         <div class="card-header">
           <span class="card-title">⚔️ Текущий бой • Раунд <span id="pubRoundCounter">1</span></span>
@@ -1550,7 +1609,6 @@
         <div id="publicInitiativeList"></div>
       </div>
 
-      <!-- Beginner-Friendly Guide & Race+Class Dossier (Levels 1-6) -->
       <div class="card">
         <div class="card-header">
           <span class="card-title">📖 Памятка игрока 5e (Ур. 1–6)</span>
@@ -1570,7 +1628,6 @@
             <button id="guideTabMagicBtn" class="subtab-btn" onclick="switchGuideTab('magic')">✨ Магия</button>
           </div>
 
-          <!-- Guide Subtab 1: Filtered by Race + Class -->
           <div id="guideTabDossierPanel">
             <div class="grid-2">
               <div>
@@ -1610,7 +1667,6 @@
             <div id="guideDossierOutput" class="mt-12"></div>
           </div>
 
-          <!-- Guide Subtab 2: Combat & Checks -->
           <div id="guideTabCombatPanel" class="hidden">
             <div class="item-card">
               <strong style="color:var(--gold);">⏱️ Четыре ресурса в ваш ход (раунд = 6 сек)</strong>
@@ -1635,7 +1691,6 @@
             </div>
           </div>
 
-          <!-- Guide Subtab 3: Leveling 1-6 -->
           <div id="guideTabLevelPanel" class="hidden">
             <div class="item-card">
               <strong style="color:var(--gold);">📈 Таблица роста партии (1–6 уровни)</strong>
@@ -1662,7 +1717,6 @@
             </div>
           </div>
 
-          <!-- Guide Subtab 4: Magic Rules -->
           <div id="guideTabMagicPanel" class="hidden">
             <div class="item-card">
               <strong style="color:var(--gold);">✨ Три золотых правила ячеек магии</strong>
@@ -1697,7 +1751,6 @@
         </div>
       </div>
 
-      <!-- Shared Docs & Maps -->
       <div class="card">
         <div class="card-header">
           <span class="card-title">Общие документы и Карты</span>
@@ -1714,7 +1767,6 @@
         <div id="sharedDocsGrid" class="doc-grid"></div>
       </div>
 
-      <!-- Chronicle -->
       <div class="card">
         <div class="card-header">
           <span class="card-title">Летопись и Квесты партии</span>
@@ -1736,7 +1788,7 @@
       </div>
     </section>
 
-    <!-- ================= TAB 4: DUNGEON MASTER SCREEN (4 SUB-TABS) ================= -->
+    <!-- ================= TAB 4: DUNGEON MASTER SCREEN ================= -->
     <section id="tabDm" class="hidden">
       <div class="subtab-bar-4">
         <button id="dmMainCombatBtn" class="subtab-btn active" onclick="switchDmMainTab('combat')">⚔️ Бой</button>
@@ -1745,7 +1797,6 @@
         <button id="dmMainGenBtn" class="subtab-btn" onclick="switchDmMainTab('gen')">🎲 Генератор</button>
       </div>
 
-      <!-- DM SUBTAB 1: COMBAT TRACKER -->
       <div id="dmMainCombatPanel">
         <div class="card">
           <div class="card-header">
@@ -1804,7 +1855,6 @@
         </div>
       </div>
 
-      <!-- DM SUBTAB 2: PARTY MANAGEMENT, XP & MAX STAT CAP -->
       <div id="dmMainPartyPanel" class="hidden">
         <div class="card">
           <div class="card-header">
@@ -1835,7 +1885,6 @@
         </div>
       </div>
 
-      <!-- DM SUBTAB 3: SECRET NOTES & NPC DATABASE -->
       <div id="dmMainNotesPanel" class="hidden">
         <div class="card">
           <div class="subtab-bar">
@@ -1890,7 +1939,6 @@
         </div>
       </div>
 
-      <!-- DM SUBTAB 4: LOOT, TAVERN & RUMORS GENERATOR -->
       <div id="dmMainGenPanel" class="hidden">
         <div class="card">
           <div class="card-header">
@@ -1917,7 +1965,7 @@
       </div>
     </section>
 
-    <!-- ================= TAB 5: ADMIN PANEL (NO DM SPOILERS) ================= -->
+    <!-- ================= TAB 5: ADMIN PANEL ================= -->
     <section id="tabAdmin" class="hidden">
       <div class="card">
         <div class="card-header">
@@ -2005,7 +2053,7 @@
     </div>
   </div>
 
-  <!-- ================= MODAL: D&D 5E SPELLBOOK PICKER (FULL 0-3 CIRCLES) ================= -->
+  <!-- ================= MODAL: D&D 5E SPELLBOOK PICKER ================= -->
   <div id="spellbookModal" class="modal-backdrop" onclick="if(event.target===this) this.classList.remove('open')">
     <div class="modal-box" style="max-width:510px;">
       <div class="card-header">
@@ -2013,7 +2061,6 @@
         <button class="btn btn-sm" onclick="document.getElementById('spellbookModal').classList.remove('open')">✕</button>
       </div>
 
-      <!-- Class, Race & Circle Filters -->
       <div class="grid-3">
         <div>
           <label class="muted">Класс</label>
@@ -2053,7 +2100,6 @@
         </div>
       </div>
 
-      <!-- Role Category Filter + Search -->
       <div class="grid-2 mt-8">
         <select id="sbRoleFilter" onchange="renderSpellbookList()">
           <option value="all">Все типы заклинаний</option>
@@ -2065,7 +2111,6 @@
         <input type="text" id="sbSearchInput" placeholder="🔍 Поиск по названию..." oninput="renderSpellbookList()" />
       </div>
 
-      <!-- Progression Quota Bar -->
       <div id="sbQuotaBanner" class="primer-banner mt-8" style="margin-bottom:8px;"></div>
 
       <div class="row" style="justify-content:space-between; margin-bottom:8px;">
@@ -2848,10 +2893,9 @@
       }
     };
 
-    // ==================== EXPANDED D&D 5E SPELLBOOK CATALOG (0-3 CIRCLES, 75+ SPELLS) ====================
-    // role: 'damage' | 'defense' | 'control' | 'utility'
+    // ==================== EXPANDED D&D 5E SPELLBOOK CATALOG (0-3 CIRCLES) ====================
     const SPELLBOOK_5E = [
-      // ==================== 0 CIRCLE: CANTRIPS (ЗАГОВОРЫ) ====================
+      // ==================== 0 CIRCLE: CANTRIPS ====================
       {
         id: 'sb_firebolt', name: 'Огненный снаряд', level: 0, role: 'damage', rollType: 'attack', dice: '1d10', tag: 'огонь',
         classes: ['wizard', 'sorcerer'], races: ['elf'],
@@ -3852,6 +3896,25 @@
       return 'human';
     }
 
+    // Check if class uses daily spell preparation (Wizard, Cleric, Druid, Paladin)
+    function classUsesPreparedSpells(clsKey) {
+      return ['wizard', 'cleric', 'druid', 'paladin'].includes(clsKey);
+    }
+
+    function getPreparedCapForHero(h) {
+      if (!h) return 0;
+      const clsKey = detectHeroClassKey(h);
+      const lvl = h.level || 1;
+      const spellMod = Math.max(0, getHeroSpellMod(h));
+      if (clsKey === 'paladin') {
+        return lvl < 2 ? 0 : Math.max(1, Math.floor(lvl / 2) + spellMod);
+      }
+      if (['wizard', 'cleric', 'druid'].includes(clsKey)) {
+        return Math.max(1, lvl + spellMod);
+      }
+      return 0;
+    }
+
     function getFullBestiary() {
       return [...(state.dm.customMonsters || []), ...BUILTIN_BESTIARY_5E];
     }
@@ -4221,7 +4284,7 @@
           slots: [...slotsMax],
           slotsMax,
           weapons: cPreset.weapon ? [{ id: 'wpn_' + Date.now(), ...cPreset.weapon }] : [],
-          spells: cPreset.spell ? [{ id: 'spl_' + Date.now(), ...cPreset.spell }] : [],
+          spells: cPreset.spell ? [{ id: 'spl_' + Date.now(), prepared: true, ...cPreset.spell }] : [],
           resources: cPreset.resource ? [{ id: 'res_' + Date.now(), ...cPreset.resource }] : [],
           traits: combinedTraits,
           deathSaves: { success: 0, failure: 0 },
@@ -4416,7 +4479,19 @@
       `;
     };
 
-    // ================= D&D 5E SPELLBOOK PICKER (FULL 0-3 CIRCLES) =================
+    // ================= D&D 5E SPELLBOOK PICKER & DAILY PREPARED TOGGLE =================
+    window.toggleSpellPrepared = async (splId) => {
+      const h = state.heroes[session.heroId];
+      if (!h) return;
+      const spells = (h.spells || []).map((s) => {
+        if (s.id !== splId || s.level === 0) return s;
+        const currentlyPrepared = s.prepared !== false;
+        return { ...s, prepared: !currentlyPrepared };
+      });
+      await saveHeroPatch({ spells });
+      renderHeroSheet();
+    };
+
     window.openSpellbookPickerModal = () => {
       const h = state.heroes[session.heroId];
       if (h) {
@@ -4572,6 +4647,10 @@
       const sp = SPELLBOOK_5E.find((x) => x.id === spellId);
       if (!h || !sp) return;
 
+      const prepCap = getPreparedCapForHero(h);
+      const curPrepared = (h.spells || []).filter((s) => s.level >= 1 && s.prepared !== false).length;
+      const autoPrepare = sp.level === 0 || prepCap === 0 || curPrepared < prepCap;
+
       const newEntry = {
         id: 'spl_' + Date.now() + '_' + Math.random().toString(36).slice(2, 5),
         name: sp.name,
@@ -4579,6 +4658,7 @@
         rollType: sp.rollType,
         dice: sp.dice,
         tag: sp.tag,
+        prepared: autoPrepare,
         desc: `${sp.meta}. ${sp.desc}`
       };
 
@@ -4860,13 +4940,18 @@
       const name = document.getElementById('splName').value.trim();
       if (!name) return uiAlert('Введите название заклинания или фокуса', 'Гримуар');
 
+      const lvl = parseInt(document.getElementById('splLevel').value, 10) || 0;
+      const prepCap = getPreparedCapForHero(h);
+      const curPrepared = (h.spells || []).filter((s) => s.level >= 1 && s.prepared !== false).length;
+
       const spl = {
         id: 'spl_' + Date.now(),
         name,
-        level: parseInt(document.getElementById('splLevel').value, 10) || 0,
+        level: lvl,
         rollType: document.getElementById('splRollType').value,
         dice: document.getElementById('splDice').value.trim(),
         tag: document.getElementById('splTag').value.trim(),
+        prepared: lvl === 0 || prepCap === 0 || curPrepared < prepCap,
         desc: document.getElementById('splDesc').value.trim()
       };
 
@@ -5778,7 +5863,7 @@
           `).join('')
         : '<p class="muted">Нет отслеживаемых классовых ресурсов (Ярость, Ци, Вдохновение и др.).</p>';
 
-      // Subtab 2: Stats, Saving Throws & 18 Skills
+      // Subtab 2: Stats (respecting maxStatCap), Saving Throws & 18 Skills
       const labels = { STR: 'Сила', DEX: 'Ловк', CON: 'Тел', INT: 'Инт', WIS: 'Мудр', CHA: 'Хар' };
       const grid = document.getElementById('statsGrid');
       grid.innerHTML = Object.keys(labels).map((k) => {
@@ -5829,7 +5914,7 @@
         `;
       }).join('');
 
-      // Subtab 3: Magic, Slots (1-9) & Spells
+      // Subtab 3: Magic, Slots (1-9) & Prepared Spells Grimoire
       const ab = h.spellAbility || 'INT';
       document.getElementById('spellAbilitySelect').value = ab;
       const spellMod = getHeroSpellMod(h);
@@ -5867,19 +5952,54 @@
         `;
       }).join('');
 
-      const spells = [...(h.spells || [])].sort((a, b) => a.level - b.level);
-      document.getElementById('heroSpellsList').innerHTML = spells.length
-        ? spells.map((s) => {
+      const clsKey = detectHeroClassKey(h);
+      const usesPrep = classUsesPreparedSpells(clsKey);
+      const prepBar = document.getElementById('heroPreparedSummaryBar');
+      const onlyPrepared = document.getElementById('filterPreparedOnlyCheck')?.checked;
+
+      const allSpells = [...(h.spells || [])].sort((a, b) => a.level - b.level);
+      const preparedCount = allSpells.filter((s) => s.level >= 1 && s.prepared !== false).length;
+      const prepCap = getPreparedCapForHero(h);
+
+      if (usesPrep) {
+        prepBar.classList.remove('hidden');
+        const isOver = prepCap > 0 && preparedCount > prepCap;
+        prepBar.classList.toggle('over-cap', isOver);
+        document.getElementById('heroPreparedCountVal').textContent = `${preparedCount} / ${prepCap}`;
+        document.getElementById('heroPreparedCountVal').style.color = isOver ? '#f87171' : 'var(--gold)';
+        document.getElementById('heroPreparedHint').textContent = clsKey === 'paladin'
+          ? 'Половина уровня + мод. Харизмы (фокусы не тратят)'
+          : 'Уровень + мод. базовой характеристики (фокусы всегда готовы)';
+      } else {
+        prepBar.classList.add('hidden');
+      }
+
+      const displayedSpells = (usesPrep && onlyPrepared)
+        ? allSpells.filter((s) => s.level === 0 || s.prepared !== false)
+        : allSpells;
+
+      document.getElementById('heroSpellsList').innerHTML = displayedSpells.length
+        ? displayedSpells.map((s) => {
             const lvlText = s.level === 0 ? 'Фокус' : `${s.level} круг`;
+            const isPrep = s.level === 0 || s.prepared !== false;
+            const cardCls = usesPrep && s.level >= 1
+              ? (isPrep ? 'item-card spell-prepared' : 'item-card spell-unprepared')
+              : 'item-card';
+
+            const prepToggleHtml = (usesPrep && s.level >= 1)
+              ? `<button class="prep-toggle-pill ${isPrep ? 'is-ready' : ''}" onclick="toggleSpellPrepared('${s.id}')" title="Переключить: подготовлено на сегодня или в резерве книги">${isPrep ? '☑ Готово' : '☐ В книге'}</button>`
+              : '';
+
             return `
-              <div class="item-card">
+              <div class="${cardCls}">
                 <div class="row" style="justify-content:space-between; align-items:flex-start;">
-                  <div>
+                  <div style="min-width:0; flex:1;">
                     <span class="spell-lvl-badge">${lvlText}</span>
                     <strong style="color:var(--gold); margin-left:4px;">${escapeHtml(s.name)}</strong>
                     ${(s.dice || s.tag) ? `<div class="muted" style="font-size:0.74rem; margin-top:3px;">${escapeHtml(s.dice)} ${s.tag ? '• ' + escapeHtml(s.tag) : ''}</div>` : ''}
                   </div>
-                  <div class="row">
+                  <div class="row" style="flex-wrap:wrap; justify-content:flex-end;">
+                    ${prepToggleHtml}
                     <button class="btn btn-primary btn-xs" onclick="castHeroSpell('${s.id}')">✨ Сотворить</button>
                     <button class="btn btn-danger btn-xs" onclick="deleteHeroSpell('${s.id}')">✕</button>
                   </div>
@@ -5888,7 +6008,9 @@
               </div>
             `;
           }).join('')
-        : '<p class="muted">Гримуар пуст. Нажмите «📚 Книга 5e», чтобы выбрать фокусы и заклинания по классу и уровню.</p>';
+        : (allSpells.length
+            ? '<p class="muted">Нет отмеченных «Готово» заклинаний. Снимите галочку «Только готовые», чтобы выбрать их из книги.</p>'
+            : '<p class="muted">Гримуар пуст. Нажмите «📚 Книга 5e», чтобы выбрать фокусы и заклинания по классу и уровню.</p>');
 
       // Subtab 4: Traits, Wallet, Rations & Inventory
       document.getElementById('heroTraitsInput').value = h.traits || '';
