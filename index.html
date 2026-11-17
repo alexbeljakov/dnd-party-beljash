@@ -287,6 +287,10 @@
       border-color: rgba(212, 175, 55, 0.65);
       background: linear-gradient(160deg, rgba(212, 175, 55, 0.08), var(--bg-card-alt));
     }
+    .item-card.wpn-stowed {
+      opacity: 0.62;
+      border-color: rgba(255, 255, 255, 0.12);
+    }
     .item-card.spell-prepared {
       border-color: rgba(212, 175, 55, 0.65);
       background: linear-gradient(160deg, rgba(212, 175, 55, 0.09), var(--bg-card-alt));
@@ -4057,11 +4061,27 @@
     window.toggleSpellPrepared = async (splId) => {
       const h = state.heroes[session.heroId];
       if (!h) return;
-      const spells = (h.spells || []).map((s) => {
-        if (s.id !== splId || s.level === 0) return s;
-        const currentlyPrepared = s.prepared !== false;
-        return { ...s, prepared: !currentlyPrepared };
-      });
+
+      const allSpells = h.spells || [];
+      const target = allSpells.find((s) => s.id === splId);
+      if (!target || target.level === 0) return;
+
+      const currentlyPrepared = target.prepared !== false;
+      if (!currentlyPrepared) {
+        const prepCap = getPreparedCapForHero(h);
+        const preparedCount = allSpells.filter((s) => s.level >= 1 && s.prepared !== false).length;
+        if (prepCap > 0 && preparedCount >= prepCap) {
+          const allowExtra = await uiConfirm(
+            `Вы уже подготовили максимум заклинаний на день (${preparedCount} из ${prepCap}).\n\nОтметить «${target.name}» сверх лимита (например, как бонусное заклинание домена/круга)?`,
+            '⚠️ Лимит подготовки на день'
+          );
+          if (!allowExtra) return;
+        }
+      }
+
+      const spells = allSpells.map((s) =>
+        s.id === splId ? { ...s, prepared: !currentlyPrepared } : s
+      );
       await saveHeroPatch({ spells });
       renderHeroSheet();
     };
@@ -4386,14 +4406,58 @@
       await saveHeroPatch({ weapons });
       renderHeroSheet();
     };
+    
+    function applyWeaponHandRules(weapons, targetId, handVal) {
+      return weapons.map((w) => {
+        if (w.id === targetId) {
+          return { ...w, hand: handVal };
+        }
+        const curHand = w.hand || 'main';
+        if (handVal === 'two') {
+          // Двуручное занимает обе руки — всё остальное убираем в ножны
+          return { ...w, hand: 'stowed' };
+        }
+        if (handVal === 'main' || handVal === 'off') {
+          // Если в руках было двуручное или эта же рука уже занята — убираем в ножны
+          if (curHand === 'two' || curHand === handVal) {
+            return { ...w, hand: 'stowed' };
+          }
+        }
+        return w;
+      });
+    }
 
     window.changeWeaponHand = async (wpnId, handVal) => {
       const h = state.heroes[session.heroId];
       if (!h) return;
-      const weapons = (h.weapons || []).map((w) =>
-        w.id === wpnId ? { ...w, hand: handVal } : w
-      );
+      const weapons = applyWeaponHandRules(h.weapons || [], wpnId, handVal);
       await saveHeroPatch({ weapons });
+      renderHeroSheet();
+    };
+
+    window.saveNewWeapon = async () => {
+      const h = state.heroes[session.heroId];
+      if (!h) return;
+      const name = document.getElementById('wpnName').value.trim();
+      if (!name) return uiAlert('Введите название оружия', 'Арсенал');
+
+      const handVal = document.getElementById('wpnHand').value || 'main';
+      const newId = 'wpn_' + Date.now();
+      const wpn = {
+        id: newId,
+        name,
+        stat: document.getElementById('wpnStat').value,
+        prof: document.getElementById('wpnProf').value === 'yes',
+        dice: document.getElementById('wpnDice').value.trim() || '1d6',
+        bonus: parseInt(document.getElementById('wpnMagicBonus').value) || 0,
+        dmgType: document.getElementById('wpnDmgType').value.trim() || '',
+        hand: handVal,
+        props: document.getElementById('wpnProps').value.trim() || ''
+      };
+
+      const weapons = applyWeaponHandRules([...(h.weapons || []), wpn], newId, handVal);
+      await saveHeroPatch({ weapons });
+      document.getElementById('addWeaponModal').classList.remove('open');
       renderHeroSheet();
     };
 
@@ -4406,12 +4470,6 @@
       document.getElementById('wpnProps').value = '';
       document.getElementById('addWeaponModal').classList.add('open');
     };
-
-    window.saveNewWeapon = async () => {
-      const h = state.heroes[session.heroId];
-      if (!h) return;
-      const name = document.getElementById('wpnName').value.trim();
-      if (!name) return uiAlert('Введите название оружия', 'Арсенал');
 
       const wpn = {
         id: 'wpn_' + Date.now(),
@@ -5448,7 +5506,7 @@
             const isEquipped = handVal !== 'stowed';
 
             return `
-              <div class="item-card ${isEquipped ? 'wpn-equipped' : ''}">
+              <div window.toggleSpellPrepared 'wpn-stowed'}">
                 <div class="row" style="justify-content:space-between; align-items:flex-start;">
                   <div style="min-width:0; flex:1;">
                     <strong style="color:var(--gold); font-size:0.96rem;">${escapeHtml(w.name)}</strong>
