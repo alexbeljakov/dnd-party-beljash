@@ -288,8 +288,9 @@
       background: linear-gradient(160deg, rgba(212, 175, 55, 0.08), var(--bg-card-alt));
     }
     .item-card.wpn-stowed {
-      opacity: 0.62;
-      border-color: rgba(255, 255, 255, 0.12);
+      opacity: 0.55;
+      border-color: rgba(255, 255, 255, 0.1);
+      background: rgba(20, 17, 24, 0.6);
     }
     .item-card.spell-prepared {
       border-color: rgba(212, 175, 55, 0.65);
@@ -298,6 +299,23 @@
     .item-card.spell-unprepared {
       opacity: 0.8;
     }
+    .weapon-card-top {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 8px;
+    }
+    .weapon-card-actions {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 8px;
+      padding-top: 8px;
+      border-top: 1px solid rgba(255, 255, 255, 0.07);
+    }
+
 
     .card-action-footer {
       display: flex;
@@ -5486,8 +5504,8 @@
             const isEquipped = handVal !== 'stowed';
 
             return `
-              <div window.toggleSpellPrepared 'wpn-stowed'}">
-                <div class="row" style="justify-content:space-between; align-items:flex-start;">
+              <div class="item-card ${isEquipped ? 'wpn-equipped' : 'wpn-stowed'}">
+                <div class="weapon-card-top">
                   <div style="min-width:0; flex:1;">
                     <strong style="color:var(--gold); font-size:0.96rem;">${escapeHtml(w.name)}</strong>
                     <div class="muted" style="font-size:0.76rem; margin-top:2px;">
@@ -5502,14 +5520,14 @@
                   </div>
                 </div>
 
-                <div class="card-action-footer">
+                <div class="weapon-card-actions">
                   <select class="hand-select" onchange="changeWeaponHand('${w.id}', this.value)">
                     <option value="main" ${handVal === 'main' ? 'selected' : ''}>🖐️ Осн. рука</option>
                     <option value="off" ${handVal === 'off' ? 'selected' : ''}>🗡️ 2-я рука</option>
                     <option value="two" ${handVal === 'two' ? 'selected' : ''}>👐 Двуручное</option>
                     <option value="stowed" ${handVal === 'stowed' ? 'selected' : ''}>🎒 В ножнах</option>
                   </select>
-                  <div class="row">
+                  <div class="row" style="gap:4px;">
                     <button class="btn btn-primary btn-xs" onclick="rollWeaponAttack('${w.id}')">🎯 Атака ${atkStr}</button>
                     <button class="btn btn-danger btn-xs" onclick="rollWeaponDamage('${w.id}')">💥 Урон</button>
                   </div>
