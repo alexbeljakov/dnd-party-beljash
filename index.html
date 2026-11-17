@@ -4414,11 +4414,9 @@
         }
         const curHand = w.hand || 'main';
         if (handVal === 'two') {
-          // Двуручное занимает обе руки — всё остальное убираем в ножны
           return { ...w, hand: 'stowed' };
         }
         if (handVal === 'main' || handVal === 'off') {
-          // Если в руках было двуручное или эта же рука уже занята — убираем в ножны
           if (curHand === 'two' || curHand === handVal) {
             return { ...w, hand: 'stowed' };
           }
@@ -4433,6 +4431,16 @@
       const weapons = applyWeaponHandRules(h.weapons || [], wpnId, handVal);
       await saveHeroPatch({ weapons });
       renderHeroSheet();
+    };
+
+    window.openAddWeaponModal = () => {
+      document.getElementById('wpnName').value = '';
+      document.getElementById('wpnDice').value = '1d8';
+      document.getElementById('wpnMagicBonus').value = '0';
+      document.getElementById('wpnDmgType').value = 'рубящий';
+      document.getElementById('wpnHand').value = 'main';
+      document.getElementById('wpnProps').value = '';
+      document.getElementById('addWeaponModal').classList.add('open');
     };
 
     window.saveNewWeapon = async () => {
@@ -4456,34 +4464,6 @@
       };
 
       const weapons = applyWeaponHandRules([...(h.weapons || []), wpn], newId, handVal);
-      await saveHeroPatch({ weapons });
-      document.getElementById('addWeaponModal').classList.remove('open');
-      renderHeroSheet();
-    };
-
-    window.openAddWeaponModal = () => {
-      document.getElementById('wpnName').value = '';
-      document.getElementById('wpnDice').value = '1d8';
-      document.getElementById('wpnMagicBonus').value = '0';
-      document.getElementById('wpnDmgType').value = 'рубящий';
-      document.getElementById('wpnHand').value = 'main';
-      document.getElementById('wpnProps').value = '';
-      document.getElementById('addWeaponModal').classList.add('open');
-    };
-
-      const wpn = {
-        id: 'wpn_' + Date.now(),
-        name,
-        stat: document.getElementById('wpnStat').value,
-        prof: document.getElementById('wpnProf').value === 'yes',
-        dice: document.getElementById('wpnDice').value.trim() || '1d6',
-        bonus: parseInt(document.getElementById('wpnMagicBonus').value) || 0,
-        dmgType: document.getElementById('wpnDmgType').value.trim() || '',
-        hand: document.getElementById('wpnHand').value || 'main',
-        props: document.getElementById('wpnProps').value.trim() || ''
-      };
-
-      const weapons = [...(h.weapons || []), wpn];
       await saveHeroPatch({ weapons });
       document.getElementById('addWeaponModal').classList.remove('open');
       renderHeroSheet();
