@@ -274,7 +274,7 @@
       color: #120f0a;
     }
 
-    /* Weapons, Hand Slots, Spells, Prepared Toggle & Class Resources */
+    /* Mobile-First Weapons, Hand Slots, Spells & Potions */
     .item-card {
       background: var(--bg-card-alt);
       border: 1px solid rgba(212, 175, 55, 0.2);
@@ -292,15 +292,27 @@
       background: linear-gradient(160deg, rgba(212, 175, 55, 0.09), var(--bg-card-alt));
     }
     .item-card.spell-unprepared {
-      opacity: 0.78;
+      opacity: 0.8;
+    }
+
+    .card-action-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 8px;
+      padding-top: 8px;
+      border-top: 1px solid rgba(255, 255, 255, 0.07);
     }
 
     .hand-select {
       width: auto;
-      padding: 3px 6px;
-      font-size: 0.72rem;
+      max-width: 100%;
+      padding: 4px 7px;
+      font-size: 0.74rem;
       border-radius: 7px;
-      background: rgba(0, 0, 0, 0.35);
+      background: rgba(0, 0, 0, 0.38);
       border: 1px solid rgba(212, 175, 55, 0.35);
       color: var(--gold);
       font-weight: 600;
@@ -308,11 +320,9 @@
 
     .prep-bar {
       display: flex;
-      align-items: center;
-      justify-content: space-between;
-      flex-wrap: wrap;
+      flex-direction: column;
       gap: 6px;
-      padding: 8px 10px;
+      padding: 9px 10px;
       margin-bottom: 8px;
       border-radius: 10px;
       background: rgba(212, 175, 55, 0.09);
@@ -327,15 +337,17 @@
     .prep-toggle-pill {
       display: inline-flex;
       align-items: center;
+      justify-content: center;
       gap: 4px;
-      padding: 3px 8px;
-      border-radius: 999px;
-      font-size: 0.72rem;
+      padding: 5px 10px;
+      border-radius: 8px;
+      font-size: 0.74rem;
       font-weight: 700;
       cursor: pointer;
       border: 1px solid rgba(255, 255, 255, 0.22);
-      background: rgba(0, 0, 0, 0.32);
+      background: rgba(0, 0, 0, 0.35);
       color: var(--text-muted);
+      white-space: nowrap;
     }
     .prep-toggle-pill.is-ready {
       border-color: #34d399;
@@ -349,7 +361,7 @@
       border-radius: 6px;
       font-size: 0.66rem;
       font-weight: 700;
-      margin-left: 4px;
+      white-space: nowrap;
     }
     .hit-type-attack {
       background: rgba(239, 68, 68, 0.18);
@@ -400,6 +412,7 @@
       background: rgba(212, 175, 55, 0.18);
       color: var(--gold);
       border: 1px solid rgba(212, 175, 55, 0.35);
+      white-space: nowrap;
     }
 
     /* Guide & Primer Styles */
@@ -487,7 +500,7 @@
       text-decoration: line-through;
     }
 
-    /* Rations Counter Box */
+    /* Rations & Potions Counter Box */
     .rations-bar {
       display: flex;
       align-items: center;
@@ -496,7 +509,7 @@
       background: var(--bg-card-alt);
       border: 1px solid rgba(212, 175, 55, 0.22);
       border-radius: 10px;
-      margin-bottom: 10px;
+      margin-bottom: 8px;
     }
 
     /* Login / Role Gate */
@@ -1439,7 +1452,7 @@
         </div>
       </div>
 
-      <!-- HERO SUBTAB 2: STATS, SAVING THROWS & 18 SKILLS -->
+      <!-- HERO SUBTAB 2: STATS, SAVING THROWS, TRAITS & 18 SKILLS -->
       <div id="heroSubStatsPanel" class="hidden">
         <div class="card">
           <div class="card-header">
@@ -1467,6 +1480,13 @@
 
         <div class="card">
           <div class="card-header">
+            <span class="card-title">🧬 Умения Расы и Класса</span>
+          </div>
+          <textarea id="heroTraitsInput" style="min-height:95px;" placeholder="Расовые особенности (Тёмное зрение, сопротивления) и умения класса..." onchange="saveHeroTraits()"></textarea>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
             <span class="card-title">Навыки (18)</span>
             <span class="muted" style="font-size:0.72rem;">Пасс. Внимат.: <strong id="passivePerceptionVal" style="color:var(--gold);">10</strong></span>
           </div>
@@ -1475,7 +1495,7 @@
         </div>
       </div>
 
-      <!-- HERO SUBTAB 3: MAGIC, SPELL SLOTS (1-9) & PREPARED SPELLS GRIMOIRE -->
+      <!-- HERO SUBTAB 3: MAGIC, SPELL SLOTS (1-9) & PREPARED SPELLS GRIMOIRE (2014 RULES) -->
       <div id="heroSubMagicPanel" class="hidden">
         <div class="card">
           <div class="card-header">
@@ -1512,25 +1532,24 @@
 
         <div class="card">
           <div class="card-header">
-            <span class="card-title">📖 Гримуар героя</span>
+            <span class="card-title">📖 Гримуар героя (2014)</span>
             <div class="row">
               <button class="btn btn-primary btn-xs" onclick="openSpellbookPickerModal()">📚 Книга 5e</button>
               <button class="btn btn-xs" onclick="openAddSpellModal()">+ Своё</button>
             </div>
           </div>
 
-          <!-- Daily Prepared Spells Counter & Sync Button -->
-          <div id="heroPreparedSummaryBar" class="prep-bar hidden">
-            <div style="flex:1; min-width:160px;">
-              <span>✨ Подготовлено на день: </span>
-              <strong id="heroPreparedCountVal" style="color:var(--gold);">0 / 4</strong>
-              <div id="heroPreparedHint" class="muted" style="font-size:0.68rem;"></div>
-            </div>
-            <div class="row" style="flex-wrap:wrap;">
-              <button id="syncClassAllSpellsBtn" class="btn btn-xs hidden" onclick="syncAllClassSpellsToGrimoire()" title="Загрузить все заклинания этого класса из книги правил">🔄 Все закл. класса</button>
-              <label style="display:flex; align-items:center; gap:5px; font-size:0.74rem; color:var(--text-main); cursor:pointer;">
+          <!-- Dual Quota Planks: Cantrips (0 circle) & Leveled Spells (1+ circle) -->
+          <div id="heroPreparedSummaryBar" class="prep-bar">
+            <div id="heroCantripQuotaLine" style="font-size:0.78rem;"></div>
+            <div id="heroLeveledQuotaLine" style="font-size:0.78rem;"></div>
+            <div id="heroPreparedHint" class="muted" style="font-size:0.68rem;"></div>
+
+            <div class="row" style="justify-content:space-between; flex-wrap:wrap; margin-top:2px;">
+              <button id="syncClassAllSpellsBtn" class="btn btn-xs hidden" onclick="syncAllClassSpellsToGrimoire()" title="Загрузить весь список заклинаний 1+ круга вашего класса">🔄 Все закл. класса</button>
+              <label id="filterPreparedWrap" style="display:flex; align-items:center; gap:5px; font-size:0.74rem; color:var(--text-main); cursor:pointer;">
                 <input type="checkbox" id="filterPreparedOnlyCheck" style="width:auto;" onchange="renderHeroSheet()" />
-                Только готовые
+                Только готовые на день
               </label>
             </div>
           </div>
@@ -1546,7 +1565,7 @@
             </select>
             <select id="grimoireCircleFilter" style="padding:6px 8px; font-size:0.78rem;" onchange="renderHeroSheet()">
               <option value="all">Все круги (0–9)</option>
-              <option value="0">0 круг (Фокусы)</option>
+              <option value="0">0 круг (Заговоры)</option>
               <option value="1">1 круг</option>
               <option value="2">2 круг</option>
               <option value="3">3 круг</option>
@@ -1561,18 +1580,11 @@
         </div>
       </div>
 
-      <!-- HERO SUBTAB 4: TRAITS, RATIONS, WALLET & INVENTORY -->
+      <!-- HERO SUBTAB 4: WALLET, POTIONS, RATIONS & INVENTORY -->
       <div id="heroSubGearPanel" class="hidden">
         <div class="card">
           <div class="card-header">
-            <span class="card-title">🧬 Умения Расы и Класса</span>
-          </div>
-          <textarea id="heroTraitsInput" style="min-height:110px;" placeholder="Расовые особенности (Тёмное зрение, сопротивления) и умения класса..." onchange="saveHeroTraits()"></textarea>
-        </div>
-
-        <div class="card">
-          <div class="card-header">
-            <span class="card-title">💰 Казна, Рационы и Снаряжение</span>
+            <span class="card-title">💰 Казна и Провиант</span>
           </div>
 
           <div class="grid-3" style="margin-bottom:10px;">
@@ -1601,8 +1613,22 @@
               <button class="btn btn-sm" onclick="changeRations(1)">+1</button>
             </div>
           </div>
+        </div>
 
-          <textarea id="heroInventoryInput" style="min-height:110px;" placeholder="Оружие, зелья, артефакты и заметки персонажа..." onchange="saveHeroNotes()"></textarea>
+        <!-- Dedicated Potions & Consumables Tracker -->
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">🧪 Зелья и расходники</span>
+            <button class="btn btn-primary btn-xs" onclick="addHeroPotion()">+ Зелье</button>
+          </div>
+          <div id="heroPotionsList"></div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">🎒 Рюкзак и Снаряжение</span>
+          </div>
+          <textarea id="heroInventoryInput" style="min-height:110px;" placeholder="Оружие, факелы, верёвка, артефакты и заметки персонажа..." onchange="saveHeroNotes()"></textarea>
         </div>
       </div>
     </section>
@@ -2087,8 +2113,12 @@
   <!-- Floating Dice Button -->
   <button class="dice-fab" onclick="openDiceModal()" title="Бросить кубы">d20</button>
 
-  <!-- Bottom Navigation -->
+  <!-- Bottom Navigation (DM tab placed FIRST on the left!) -->
   <nav id="bottomNav" class="bottom-nav hidden">
+    <button id="navDm" class="nav-btn hidden" onclick="switchTab('tabDm', 'navDm')">
+      <span class="nav-icon">👑</span>
+      <span>Мастер</span>
+    </button>
     <button id="navHero" class="nav-btn active" onclick="switchTab('tabHero', 'navHero')">
       <span class="nav-icon">🛡️</span>
       <span>Герой</span>
@@ -2100,10 +2130,6 @@
     <button id="navShared" class="nav-btn" onclick="switchTab('tabShared', 'navShared')">
       <span class="nav-icon">🗺️</span>
       <span>Летопись</span>
-    </button>
-    <button id="navDm" class="nav-btn hidden" onclick="switchTab('tabDm', 'navDm')">
-      <span class="nav-icon">👑</span>
-      <span>Мастер</span>
     </button>
     <button id="navAdmin" class="nav-btn hidden" onclick="switchTab('tabAdmin', 'navAdmin')">
       <span class="nav-icon">🛡️</span>
@@ -2129,11 +2155,11 @@
     </div>
   </div>
 
-  <!-- ================= MODAL: D&D 5E SPELLBOOK PICKER ================= -->
+  <!-- ================= MODAL: D&D 5E (2014) SPELLBOOK PICKER ================= -->
   <div id="spellbookModal" class="modal-backdrop" onclick="if(event.target===this) this.classList.remove('open')">
     <div class="modal-box" style="max-width:510px;">
       <div class="card-header">
-        <span class="card-title">📚 Книга заклинаний D&D 5e</span>
+        <span class="card-title">📚 Книга заклинаний D&D 5e (2014)</span>
         <button class="btn btn-sm" onclick="document.getElementById('spellbookModal').classList.remove('open')">✕</button>
       </div>
 
@@ -2167,7 +2193,7 @@
           <label class="muted">Круг</label>
           <select id="sbLevelFilter" onchange="renderSpellbookList()">
             <option value="available">Доступные (по ур.)</option>
-            <option value="0">0 (Фокусы)</option>
+            <option value="0">0 (Заговоры)</option>
             <option value="1">1 круг</option>
             <option value="2">2 круг</option>
             <option value="3">3 круг</option>
@@ -2524,7 +2550,7 @@
         <div>
           <label class="muted">Круг</label>
           <select id="splLevel">
-            <option value="0">0 (Фокус)</option>
+            <option value="0">0 (Заговор)</option>
             <option value="1">1 круг</option>
             <option value="2">2 круг</option>
             <option value="3">3 круг</option>
@@ -2888,7 +2914,7 @@
       return [0,0,0,0,0,0,0,0,0];
     }
 
-    // ==================== 5E RACES & CLASSES PRESETS ====================
+    // ==================== 5E (2014) RACES & CLASSES PRESETS ====================
     const RACES_5E = {
       human: { name: 'Человек', speed: 30, stats: { STR: 11, DEX: 11, CON: 11, INT: 11, WIS: 11, CHA: 11 }, traits: '• Адаптивность: +1 ко всем характеристикам.' },
       elf: { name: 'Эльф', speed: 30, stats: { STR: 10, DEX: 12, CON: 10, INT: 11, WIS: 11, CHA: 10 }, traits: '• Тёмное зрение (60 фт)\n• Наследие фей: преимущество от очарования, иммунитет к маг. сну\n• Транс (4 часа отдыха)' },
@@ -2916,7 +2942,7 @@
         name: 'Бард', hitDie: 8, saves: { DEX: true, CHA: true }, spellAbility: 'CHA',
         resource: { name: 'Вдохновение барда (d6)', cur: 3, max: 3 },
         weapon: { name: 'Рапира', stat: 'DEX', prof: true, dice: '1d8', bonus: 0, dmgType: 'колющий', hand: 'main', props: 'Фехтовальное' },
-        spell: { name: 'Злая насмешка', level: 0, role: 'damage', rollType: 'save', dice: '1d6', tag: 'психич. / Спас Муд', desc: '1 действие • 60 фт • В • Мгновенно. При провале Спас Мудрости урон и помеха на следующую атаку цели.' },
+        spell: { name: 'Злая насмешка', level: 0, role: 'damage', rollType: 'save', dice: '1d4', tag: 'психич. / Спас Муд', desc: '1 действие • 60 фт • В • Мгновенно. При провале Спас Мудрости 1d4 урона и помеха на следующую атаку цели.' },
         traits: '• Вдохновение барда (бон. действие): союзник в 60 фт получает кость d6 к броску.'
       },
       cleric: {
@@ -2959,7 +2985,7 @@
         resource: { name: 'Природная осведомлённость', cur: 1, max: 1 },
         weapon: { name: 'Длинный лук', stat: 'DEX', prof: true, dice: '1d8', bonus: 0, dmgType: 'колющий', hand: 'two', props: 'Дистанция 150/600 фт' },
         spell: null,
-        traits: '• Избранный враг и Исследователь природы'
+        traits: '• Избранный враг и Исследователь природы\n• Магия следопыта открывается со 2 уровня (заговоров нет)'
       },
       rogue: {
         name: 'Плут', hitDie: 8, saves: { DEX: true, INT: true }, spellAbility: 'INT',
@@ -2995,18 +3021,19 @@
       }
     };
 
+    // ==================== CANONICAL D&D 5E (2014) QUOTAS ====================
     const CLASS_SPELL_QUOTA = {
-      wizard: { cantrips: [3, 3, 3, 4, 4, 4], prepType: 'wizard_book', note: 'В книге: 6 на 1 ур. + 2 за каждый уровень. На день готовит: Уровень + мод. Инт' },
-      cleric: { cantrips: [3, 3, 3, 4, 4, 4], prepType: 'prep', note: 'Знает весь список жреца. На день готовит: Уровень + мод. Мудрости' },
-      druid:  { cantrips: [2, 2, 2, 3, 3, 3], prepType: 'prep', note: 'Знает весь список друида. На день готовит: Уровень + мод. Мудрости' },
-      bard:   { cantrips: [2, 2, 2, 3, 3, 3], prepType: 'known', known: [4, 5, 6, 7, 8, 9], note: 'Знает фиксированное число заклинаний по уровню' },
-      sorcerer: { cantrips: [4, 4, 4, 5, 5, 5], prepType: 'known', known: [2, 3, 4, 5, 6, 7], note: 'Знает фиксированное число заклинаний по уровню' },
-      warlock: { cantrips: [2, 2, 2, 3, 3, 3], prepType: 'known', known: [2, 3, 4, 5, 6, 7], note: 'Знает заклинания по уровню (ячейки восстанавливаются в короткий отдых)' },
-      ranger: { cantrips: [0, 0, 0, 0, 0, 0], prepType: 'prep_half', note: 'Со 2-го уровня знает весь список следопыта; готовит: половина уровня + мод. Мудрости' },
-      paladin: { cantrips: [0, 0, 0, 0, 0, 0], prepType: 'prep_half', note: 'Со 2-го уровня знает весь список паладина; готовит: половина уровня + мод. Харизмы' }
+      wizard:   { cantrips: [3, 3, 3, 4, 4, 4], prepType: 'wizard_book', note: 'В книге: 6 на 1 ур. + 2 за каждый уровень. На день готовит: Уровень + мод. Инт' },
+      cleric:   { cantrips: [3, 3, 3, 4, 4, 4], prepType: 'prep', note: 'Знает весь список жреца. На день готовит: Уровень + мод. Мудрости' },
+      druid:    { cantrips: [2, 2, 2, 3, 3, 3], prepType: 'prep', note: 'Знает весь список друида. На день готовит: Уровень + мод. Мудрости' },
+      bard:     { cantrips: [2, 2, 2, 3, 3, 3], prepType: 'known', known: [4, 5, 6, 7, 8, 9], note: 'Знает фиксированное число заклинаний по уровню (всегда готовы)' },
+      sorcerer: { cantrips: [4, 4, 4, 5, 5, 5], prepType: 'known', known: [2, 3, 4, 5, 6, 7], note: 'Знает фиксированное число заклинаний по уровню (всегда готовы)' },
+      warlock:  { cantrips: [2, 2, 2, 3, 3, 3], prepType: 'known', known: [2, 3, 4, 5, 6, 7], note: 'Знает заклинания по уровню (ячейки восстанавливаются в короткий отдых)' },
+      ranger:   { cantrips: [0, 0, 0, 0, 0, 0], prepType: 'known', known: [0, 2, 3, 3, 4, 4], note: 'Магия со 2-го уровня: учит фиксированный список (0 → 2 → 3 → 3 → 4), заговоров нет' },
+      paladin:  { cantrips: [0, 0, 0, 0, 0, 0], prepType: 'prep_half', note: 'Со 2-го уровня знает весь список паладина; готовит: половина уровня + мод. Харизмы' }
     };
 
-    // ==================== PLAYER GUIDE DATA (LEVELS 1-6) ====================
+    // ==================== PLAYER GUIDE DATA (LEVELS 1-6, 2014 RULES) ====================
     const GUIDE_RACES = {
       dwarf: {
         name: 'Дварф', speed: '25 фт',
@@ -3086,17 +3113,17 @@
         pros: 'Средняя броня и щит (КД 17–18), лучший спаситель павших союзников, меняет набор подготовленных заклинаний каждое утро.',
         cons: 'Ячейки быстро кончаются — добивайте слабых врагов заговором Священное пламя.',
         levels: [
-          '1 ур.: 3 заговора (Священное пламя, Указание, Свет) и 2 ячейки 1 круга (пример подготовки: Лечащее слово, Благословение, Направляющий снаряд).',
+          '1 ур.: 3 заговора (Священное пламя, Указание, Свет) и 2 ячейки 1 круга (пример подготовки: Лечащее слово 1d4+Муд, Благословение, Направляющий снаряд).',
           '2 ур.: Божественный канал: Изгнание нежити (раз в короткий отдых пугает нежить в 30 фт при провале Спас Мудрости).',
           '3–4 ур.: Открывается 2-й круг магии (Божественное оружие, Удержание личности); на 4 ур. (пример сборки) +2 к Мудрости.',
           '5 ур.: 3-й круг магии (Духовные стражи — 3d8 урона по области вокруг вас) и Уничтожение слабой нежити.',
           '6 ур.: Второй заряд Божественного канала между короткими отдыхами.'
         ],
-        example: 'Союзник упал в 0 хитов в 10 метрах. Жрец бонусным действием кастует Лечащее слово (2d4 + Муд), мгновенно поднимая его на ноги, а основным действием ещё бьёт врага булавой или кидает Священное пламя.'
+        example: 'Союзник упал в 0 хитов в 10 метрах. Жрец бонусным действием кастует Лечащее слово (1d4 + Муд), мгновенно поднимая его на ноги, а основным действием ещё бьёт врага булавой или кидает Священное пламя.'
       },
       wizard: {
         name: 'Волшебник / Маг', role: 'Артиллерия и контроль поля боя', hitDie: 'd6 (1 ур: 6+Тел | 2–6 ур: 1d6 или 4+Тел)', stats: 'Интеллект, Ловкость',
-        pros: 'Самый широкий арсенал контроля и урона по площади (Усыпление, Паутина, Огненный шар, Контрзаклинание).',
+        pros: 'Самый широкий арсенал контроля и урона по площади (Усыпление 5d8 ОЗ, Паутина, Огненный шар, Контрзаклинание).',
         cons: 'Хрупкий (d6), нет брони и щитов — всегда держитесь позади партии и за укрытиями.',
         levels: [
           '1 ур.: 3 заговора, 6 заклинаний в книге (пример: Щит, Магический доспех, Усыпление, Волшебная стрела) и Магическое восстановление ячеек на коротком отдыхе.',
@@ -3110,10 +3137,10 @@
       ranger: {
         name: 'Следопыт / Рейнджер', role: 'Стрелок, охотник и разведчик', hitDie: 'd10 (1 ур: 10+Тел | 2–6 ур: 1d10 или 6+Тел)', stats: 'Ловкость, Мудрость',
         pros: 'Здоровье как у воина (d10), +2 к стрельбе, стабильный бонусный урон через Метку охотника.',
-        cons: 'Магия появляется только со 2-го уровня, заговоров нет.',
+        cons: 'Магия появляется только со 2-го уровня, заговоров нет, список заклинаний фиксированный (учится по уровню).',
         levels: [
           '1 ур.: Избранный враг (преимущество на выслеживание) и Исследователь природы (отряд не плутает и находит вдвое больше еды).',
-          '2 ур.: Боевой стиль Стрельба (+2 к броскам атаки из лука/арбалета) и магия 1 круга (пример подготовки: Метка охотника, Лечение ран).',
+          '2 ур.: Боевой стиль Стрельба (+2 к броскам атаки из лука/арбалета) и 2 изученных заклинания 1 круга (пример: Метка охотника, Лечение ран).',
           '3–4 ур.: Первозданная осведомлённость (чутьё на нежить/драконов/фей); на 4 ур. (пример сборки) +2 к Ловкости.',
           '5 ур.: Дополнительная атака (2 выстрела за действие) и 2-й круг магии (Бесследное передвижение: +10 к Скрытности всей группе).',
           '6 ур.: Улучшение Избранного врага и Исследователя природы.'
@@ -3125,13 +3152,13 @@
         pros: 'Усиливает союзников кубиками Вдохновения, ослабляет врагов Злой насмешкой, решает любые социальные сцены.',
         cons: 'Собственный прямой урон в ближнем бою невысок — не лезьте в дуэль с тяжёлыми бойцами.',
         levels: [
-          '1 ур.: Вдохновение барда (бонусным действием даёт другу d6 к броску на 10 мин) и магия 1 круга (Лечащее слово, Огонь фей) + Злая насмешка.',
+          '1 ур.: Вдохновение барда (бонусным действием даёт другу d6 к броску на 10 мин) и магия 1 круга (Лечащее слово, Огонь фей) + Злая насмешка (1d4 + помеха).',
           '2 ур.: Мастер на все руки (+половина БМ ко всем неизученным навыкам) и Песнь отдыха (+1d6 ОЗ всем при коротком отдыхе).',
           '3–4 ур.: Компетентность (×2 БМ в 2 навыках) и 2-й круг магии (Удержание личности, Невидимость); на 4 ур. (пример сборки) +2 к Харизме.',
           '5 ур.: Кубик Вдохновения растёт до d8 и теперь восстанавливается на каждом коротком отдыхе! Открывается 3-й круг (Гипнотический узор).',
           '6 ур.: Контрочарование (преимущество союзникам против испуга и очарования).'
         ],
-        example: 'Бард основным действием кричит Злую насмешку на огра (1d6 урона + помеха на его следующий удар), а бонусным действием даёт союзному воину кубик Вдохновения на решающую атаку.'
+        example: 'Бард основным действием кричит Злую насмешку на огра (1d4 урона + помеха на его следующий удар), а бонусным действием даёт союзному воину кубик Вдохновения на решающую атаку.'
       },
       barbarian: {
         name: 'Варвар', role: 'Неудержимый берсерк передовой', hitDie: 'd12 (1 ур: 12+Тел | 2–6 ур: 1d12 или 7+Тел)', stats: 'Сила, Телосложение',
@@ -3333,13 +3360,15 @@
       return 'human';
     }
 
-    // Classes that know their ENTIRE class spell list and only prepare a subset daily
+    // D&D 5e (2014) canonical rules:
+    // Cleric, Druid, Paladin know their entire class spell list (1+ circle) and prepare a daily subset.
+    // Ranger learns a fixed number of spells from the Ranger list (no cantrips).
     function classKnowsAllClassSpells(clsKey) {
-      return ['cleric', 'druid', 'paladin', 'ranger'].includes(clsKey);
+      return ['cleric', 'druid', 'paladin'].includes(clsKey);
     }
 
     function classUsesPreparedSpells(clsKey) {
-      return ['wizard', 'cleric', 'druid', 'paladin', 'ranger'].includes(clsKey);
+      return ['wizard', 'cleric', 'druid', 'paladin'].includes(clsKey);
     }
 
     function getPreparedCapForHero(h) {
@@ -3347,7 +3376,7 @@
       const clsKey = detectHeroClassKey(h);
       const lvl = h.level || 1;
       const spellMod = Math.max(0, getHeroSpellMod(h));
-      if (clsKey === 'paladin' || clsKey === 'ranger') {
+      if (clsKey === 'paladin') {
         return lvl < 2 ? 0 : Math.max(1, Math.floor(lvl / 2) + spellMod);
       }
       if (['wizard', 'cleric', 'druid'].includes(clsKey)) {
@@ -3704,7 +3733,7 @@
         .join(', ');
 
       const fullBookNote = classKnowsAllClassSpells(cKey)
-        ? ' • Все заклинания класса добавятся в гримуар автоматически!'
+        ? ' • Весь список заклинаний класса 1+ круга добавится в гримуар!'
         : '';
 
       document.getElementById('newHeroHp').value = suggestedHp;
@@ -3766,6 +3795,7 @@
           slotsMax,
           weapons: cPreset.weapon ? [{ id: 'wpn_' + Date.now(), ...cPreset.weapon }] : [],
           spells: startSpells,
+          potions: [{ id: 'pot_' + Date.now(), name: 'Зелье лечения (2d4+2)', count: 1 }],
           resources: cPreset.resource ? [{ id: 'res_' + Date.now(), ...cPreset.resource }] : [],
           traits: combinedTraits,
           deathSaves: { success: 0, failure: 0 },
@@ -3960,7 +3990,46 @@
       `;
     };
 
-    // ================= D&D 5E SPELLBOOK PICKER & DAILY PREPARED TOGGLE =================
+    // ================= POTIONS & CONSUMABLES TRACKER =================
+    window.addHeroPotion = async () => {
+      const h = state.heroes[session.heroId];
+      if (!h) return;
+      const name = await uiPrompt('Название зелья или расходуемого предмета (напр. Зелье лечения 2d4+2, Противоядие):', 'Зелье лечения (2d4+2)', {
+        title: '🧪 Добавить зелье',
+        placeholder: 'Зелье лечения (2d4+2)'
+      });
+      if (!name || !name.trim()) return;
+      const countRaw = await uiPrompt('Количество флаконов:', '1', {
+        title: '🧪 Количество',
+        inputType: 'number',
+        inputMode: 'numeric'
+      });
+      const count = Math.max(1, parseInt(countRaw, 10) || 1);
+      const potions = [...(h.potions || []), { id: 'pot_' + Date.now(), name: name.trim(), count }];
+      await saveHeroPatch({ potions });
+      renderHeroSheet();
+    };
+
+    window.changeHeroPotionCount = async (potId, delta) => {
+      const h = state.heroes[session.heroId];
+      if (!h) return;
+      const potions = (h.potions || []).map((p) => {
+        if (p.id !== potId) return p;
+        return { ...p, count: Math.max(0, (p.count || 0) + delta) };
+      });
+      await saveHeroPatch({ potions });
+      renderHeroSheet();
+    };
+
+    window.deleteHeroPotion = async (potId) => {
+      const h = state.heroes[session.heroId];
+      if (!h) return;
+      const potions = (h.potions || []).filter((p) => p.id !== potId);
+      await saveHeroPatch({ potions });
+      renderHeroSheet();
+    };
+
+    // ================= D&D 5E (2014) SPELLBOOK PICKER & DAILY PREPARED TOGGLE =================
     function renderHitTypeBadge(rollType) {
       if (rollType === 'attack') {
         return `<span class="hit-type-badge hit-type-attack">🎯 Бросок атаки</span>`;
@@ -4076,7 +4145,7 @@
 
         bannerEl.innerHTML = `
           <div><strong>Норма для ${escapeHtml(h.heroClass)} (Ур. ${heroLevel}):</strong> Макс. круг: <strong>${maxCircle === 0 ? 'нет ячеек' : maxCircle + ' круг'}</strong></div>
-          <div>Фокусы (0 круг): <strong>${curCantripsCount} / ${maxCantrips}</strong> • ${isFullClassList ? labelLeveled : `${labelLeveled}: <strong>${curLeveledCount} / ${maxLeveled}</strong>`}</div>
+          <div>Заговоры (0 круг, без ячеек): <strong>${curCantripsCount} / ${maxCantrips}</strong> • ${isFullClassList ? labelLeveled : `${labelLeveled}: <strong>${curLeveledCount} / ${maxLeveled}</strong>`}</div>
           <div class="muted" style="font-size:0.7rem; margin-top:2px;">${escapeHtml(quota.note)}</div>
         `;
       } else {
@@ -4137,10 +4206,12 @@
           <div class="item-card">
             <div class="row" style="justify-content:space-between; align-items:flex-start;">
               <div style="flex:1; min-width:0;">
-                <span class="spell-lvl-badge">${sp.level === 0 ? 'Фокус' : sp.level + ' круг'}</span>
-                ${renderHitTypeBadge(sp.rollType)}
-                ${isRaceBonus ? `<span class="spell-lvl-badge" style="border-color:#38bdf8; color:#7dd3fc;">Расовое</span>` : ''}
-                <div style="margin-top:4px;"><strong style="color:var(--gold);">${escapeHtml(sp.name)}</strong></div>
+                <div class="row" style="flex-wrap:wrap; gap:4px;">
+                  <span class="spell-lvl-badge">${sp.level === 0 ? '0 круг (Заговор)' : sp.level + ' круг'}</span>
+                  ${renderHitTypeBadge(sp.rollType)}
+                  ${isRaceBonus ? `<span class="spell-lvl-badge" style="border-color:#38bdf8; color:#7dd3fc;">Расовое</span>` : ''}
+                </div>
+                <div style="margin-top:5px;"><strong style="color:var(--gold);">${escapeHtml(sp.name)}</strong></div>
                 <div class="muted" style="font-size:0.7rem; margin-top:2px;">${escapeHtml(sp.meta)}</div>
               </div>
               <div>${actionHtml}</div>
@@ -4474,7 +4545,7 @@
       const h = state.heroes[session.heroId];
       if (!h) return;
       const name = document.getElementById('splName').value.trim();
-      if (!name) return uiAlert('Введите название заклинания или фокуса', 'Гримуар');
+      if (!name) return uiAlert('Введите название заклинания или заговора', 'Гримуар');
 
       const lvl = parseInt(document.getElementById('splLevel').value, 10) || 0;
       const prepCap = getPreparedCapForHero(h);
@@ -4532,7 +4603,7 @@
       const prof = h.profBonus ?? 2;
       const spellAtk = spellMod + prof;
       const spellDc = 8 + spellMod + prof;
-      const lvlLabel = s.level === 0 ? 'Фокус' : `${s.level} круг`;
+      const lvlLabel = s.level === 0 ? 'Заговор' : `${s.level} круг`;
 
       if (s.rollType === 'attack') {
         const d20 = Math.floor(Math.random() * 20) + 1;
@@ -5365,7 +5436,7 @@
         ph.classList.remove('hidden');
       }
 
-      // Subtab 1: Weapons (Hand Slots + Reorder) & Resources
+      // Subtab 1: Weapons (Mobile-Friendly Layout + Hand Slots + Reorder) & Resources
       const weapons = h.weapons || [];
       document.getElementById('heroWeaponsList').innerHTML = weapons.length
         ? weapons.map((w, wIdx) => {
@@ -5380,25 +5451,26 @@
               <div class="item-card ${isEquipped ? 'wpn-equipped' : ''}">
                 <div class="row" style="justify-content:space-between; align-items:flex-start;">
                   <div style="min-width:0; flex:1;">
-                    <strong style="color:var(--gold); font-size:0.95rem;">${escapeHtml(w.name)}</strong>
-                    <div class="mt-8" style="margin-top:4px;">
-                      <select class="hand-select" onchange="changeWeaponHand('${w.id}', this.value)">
-                        <option value="main" ${handVal === 'main' ? 'selected' : ''}>🖐️ В основной руке</option>
-                        <option value="off" ${handVal === 'off' ? 'selected' : ''}>🗡️ Во второй руке</option>
-                        <option value="two" ${handVal === 'two' ? 'selected' : ''}>👐 В двух руках</option>
-                        <option value="stowed" ${handVal === 'stowed' ? 'selected' : ''}>🎒 В ножнах</option>
-                      </select>
+                    <strong style="color:var(--gold); font-size:0.96rem;">${escapeHtml(w.name)}</strong>
+                    <div class="muted" style="font-size:0.76rem; margin-top:2px;">
+                      Урон: <strong style="color:var(--text-main);">${escapeHtml(w.dice)}${dmgModStr}</strong> (${escapeHtml(w.dmgType || 'физ.')})
                     </div>
-                    ${w.props ? `<div class="muted" style="font-size:0.72rem; margin-top:4px;">${escapeHtml(w.props)}</div>` : ''}
+                    ${w.props ? `<div class="muted" style="font-size:0.72rem; margin-top:2px;">${escapeHtml(w.props)}</div>` : ''}
                   </div>
-                  <div class="row">
-                    <button class="btn btn-xs" onclick="moveHeroWeapon(${wIdx}, -1)" ${wIdx === 0 ? 'disabled style="opacity:0.35;"' : ''} title="Поднять выше">⬆</button>
-                    <button class="btn btn-xs" onclick="moveHeroWeapon(${wIdx}, 1)" ${wIdx === weapons.length - 1 ? 'disabled style="opacity:0.35;"' : ''} title="Опустить ниже">⬇</button>
+                  <div class="row" style="flex-shrink:0;">
+                    <button class="btn btn-xs" onclick="moveHeroWeapon(${wIdx}, -1)" ${wIdx === 0 ? 'disabled style="opacity:0.35;"' : ''} title="Выше">⬆</button>
+                    <button class="btn btn-xs" onclick="moveHeroWeapon(${wIdx}, 1)" ${wIdx === weapons.length - 1 ? 'disabled style="opacity:0.35;"' : ''} title="Ниже">⬇</button>
                     <button class="btn btn-danger btn-xs" onclick="deleteHeroWeapon('${w.id}')">✕</button>
                   </div>
                 </div>
-                <div class="row mt-8" style="justify-content:space-between; flex-wrap:wrap;">
-                  <span class="muted" style="font-size:0.78rem;">Урон: <strong style="color:var(--text-main);">${escapeHtml(w.dice)}${dmgModStr}</strong> (${escapeHtml(w.dmgType || 'физ.')})</span>
+
+                <div class="card-action-footer">
+                  <select class="hand-select" onchange="changeWeaponHand('${w.id}', this.value)">
+                    <option value="main" ${handVal === 'main' ? 'selected' : ''}>🖐️ Осн. рука</option>
+                    <option value="off" ${handVal === 'off' ? 'selected' : ''}>🗡️ 2-я рука</option>
+                    <option value="two" ${handVal === 'two' ? 'selected' : ''}>👐 Двуручное</option>
+                    <option value="stowed" ${handVal === 'stowed' ? 'selected' : ''}>🎒 В ножнах</option>
+                  </select>
                   <div class="row">
                     <button class="btn btn-primary btn-xs" onclick="rollWeaponAttack('${w.id}')">🎯 Атака ${atkStr}</button>
                     <button class="btn btn-danger btn-xs" onclick="rollWeaponDamage('${w.id}')">💥 Урон</button>
@@ -5424,7 +5496,7 @@
           `).join('')
         : '<p class="muted">Нет отслеживаемых классовых ресурсов (Ярость, Ци, Вдохновение и др.).</p>';
 
-      // Subtab 2: Stats, Saving Throws & 18 Skills
+      // Subtab 2: Stats, Saving Throws, Traits & 18 Skills
       const labels = { STR: 'Сила', DEX: 'Ловк', CON: 'Тел', INT: 'Инт', WIS: 'Мудр', CHA: 'Хар' };
       const grid = document.getElementById('statsGrid');
       grid.innerHTML = Object.keys(labels).map((k) => {
@@ -5453,6 +5525,8 @@
         `;
       }).join('');
 
+      document.getElementById('heroTraitsInput').value = h.traits || '';
+
       const profBonus = h.profBonus ?? 2;
       document.getElementById('profBonusDisplay').textContent = `+${profBonus}`;
       const perceptionSkill = SKILLS_5E.find((s) => s.key === 'perception');
@@ -5475,7 +5549,7 @@
         `;
       }).join('');
 
-      // Subtab 3: Magic, Slots (1-9) & Prepared Spells Grimoire
+      // Subtab 3: Magic, Slots (1-9) & Dual Quota Grimoire (2014 Rules)
       const ab = h.spellAbility || 'INT';
       document.getElementById('spellAbilitySelect').value = ab;
       const spellMod = getHeroSpellMod(h);
@@ -5518,26 +5592,46 @@
       const isFullClassList = classKnowsAllClassSpells(clsKey);
       const prepBar = document.getElementById('heroPreparedSummaryBar');
       const syncBtn = document.getElementById('syncClassAllSpellsBtn');
+      const filterPrepWrap = document.getElementById('filterPreparedWrap');
       const onlyPrepared = document.getElementById('filterPreparedOnlyCheck')?.checked;
       const gRoleFilter = document.getElementById('grimoireRoleFilter')?.value || 'all';
       const gCircleFilter = document.getElementById('grimoireCircleFilter')?.value || 'all';
 
       const allSpells = [...(h.spells || [])].sort((a, b) => a.level - b.level);
+      const cantripsKnownCount = allSpells.filter((s) => s.level === 0).length;
+      const leveledTotalCount = allSpells.filter((s) => s.level >= 1).length;
       const preparedCount = allSpells.filter((s) => s.level >= 1 && s.prepared !== false).length;
+
+      const lvlIdx = Math.min(5, Math.max(0, lvl - 1));
+      const quota = CLASS_SPELL_QUOTA[clsKey];
+      const maxCantrips = quota ? (quota.cantrips[lvlIdx] ?? 0) : 0;
       const prepCap = getPreparedCapForHero(h);
 
-      if (usesPrep) {
+      const cantripLineEl = document.getElementById('heroCantripQuotaLine');
+      const leveledLineEl = document.getElementById('heroLeveledQuotaLine');
+      const hintLineEl = document.getElementById('heroPreparedHint');
+
+      if (quota) {
         prepBar.classList.remove('hidden');
-        syncBtn.classList.toggle('hidden', !isFullClassList);
-        const isOver = prepCap > 0 && preparedCount > prepCap;
-        prepBar.classList.toggle('over-cap', isOver);
-        document.getElementById('heroPreparedCountVal').textContent = `${preparedCount} / ${prepCap}`;
-        document.getElementById('heroPreparedCountVal').style.color = isOver ? '#f87171' : 'var(--gold)';
-        document.getElementById('heroPreparedHint').textContent = (clsKey === 'paladin' || clsKey === 'ranger')
-          ? 'Знает весь список класса • Готовит: половина ур. + мод.'
-          : (isFullClassList
-              ? 'Знает весь список класса • Готовит: Уровень + мод. Мудрости'
-              : 'Готовит из книги: Уровень + мод. Интеллекта (фокусы всегда готовы)');
+        cantripLineEl.innerHTML = maxCantrips > 0
+          ? `✨ Заговоры (0 круг, без ячеек): <strong style="color:var(--gold);">${cantripsKnownCount} / ${maxCantrips}</strong> <span class="muted">(выбираются в Книге 5e)</span>`
+          : `✨ Заговоры (0 круг): <span class="muted">недоступны классу</span>`;
+
+        if (usesPrep) {
+          syncBtn.classList.toggle('hidden', !isFullClassList);
+          filterPrepWrap.classList.remove('hidden');
+          const isOver = prepCap > 0 && preparedCount > prepCap;
+          prepBar.classList.toggle('over-cap', isOver);
+          leveledLineEl.innerHTML = `📖 Подготовлено на день (1+ круг): <strong style="color:${isOver ? '#f87171' : 'var(--gold)'};">${preparedCount} / ${prepCap}</strong>`;
+          hintLineEl.textContent = quota.note;
+        } else {
+          syncBtn.classList.add('hidden');
+          filterPrepWrap.classList.add('hidden');
+          prepBar.classList.remove('over-cap');
+          const knownCap = quota.known ? (quota.known[lvlIdx] ?? 0) : 0;
+          leveledLineEl.innerHTML = `📖 Изучено заклинаний (1+ круг): <strong style="color:var(--gold);">${leveledTotalCount} / ${knownCap}</strong> <span class="muted">(всегда готовы)</span>`;
+          hintLineEl.textContent = quota.note;
+        }
       } else {
         prepBar.classList.add('hidden');
       }
@@ -5552,48 +5646,97 @@
         return true;
       });
 
-      document.getElementById('heroSpellsList').innerHTML = displayedSpells.length
-        ? displayedSpells.map((s) => {
-            const lvlText = s.level === 0 ? 'Фокус' : `${s.level} круг`;
-            const isPrep = s.level === 0 || s.prepared !== false;
-            const cardCls = usesPrep && s.level >= 1
-              ? (isPrep ? 'item-card spell-prepared' : 'item-card spell-unprepared')
-              : 'item-card';
+      const roleSections = [
+        { key: 'damage', title: '⚔️ Атака и урон' },
+        { key: 'defense', title: '🛡️ Защита и лечение' },
+        { key: 'control', title: '🕸️ Контроль и дебаффы' },
+        { key: 'utility', title: '🔮 Польза, разведка и ритуалы' }
+      ];
 
-            const prepToggleHtml = (usesPrep && s.level >= 1)
-              ? `<button class="prep-toggle-pill ${isPrep ? 'is-ready' : ''}" onclick="toggleSpellPrepared('${s.id}')" title="Переключить: подготовлено на сегодня или в резерве">${isPrep ? '☑ Готово' : '☐ В резерве'}</button>`
-              : '';
+      const renderSingleSpellCard = (s) => {
+        const lvlText = s.level === 0 ? '0 круг • Заговор' : `${s.level} круг`;
+        const isPrep = s.level === 0 || s.prepared !== false;
+        const cardCls = usesPrep && s.level >= 1
+          ? (isPrep ? 'item-card spell-prepared' : 'item-card spell-unprepared')
+          : 'item-card';
 
-            return `
-              <div class="${cardCls}">
-                <div class="row" style="justify-content:space-between; align-items:flex-start;">
-                  <div style="min-width:0; flex:1;">
-                    <span class="spell-lvl-badge">${lvlText}</span>
-                    ${renderHitTypeBadge(s.rollType)}
-                    <div style="margin-top:4px;"><strong style="color:var(--gold);">${escapeHtml(s.name)}</strong></div>
-                    ${(s.dice || s.tag) ? `<div class="muted" style="font-size:0.74rem; margin-top:2px;">${escapeHtml(s.dice)} ${s.tag ? '• ' + escapeHtml(s.tag) : ''}</div>` : ''}
-                  </div>
-                  <div class="row" style="flex-wrap:wrap; justify-content:flex-end;">
-                    ${prepToggleHtml}
-                    <button class="btn btn-primary btn-xs" onclick="castHeroSpell('${s.id}')">✨ Сотворить</button>
-                    <button class="btn btn-danger btn-xs" onclick="deleteHeroSpell('${s.id}')">✕</button>
-                  </div>
-                </div>
-                ${s.desc ? `<div class="muted" style="font-size:0.76rem; margin-top:5px;">${escapeHtml(s.desc)}</div>` : ''}
+        const prepToggleHtml = (usesPrep && s.level >= 1)
+          ? `<button class="prep-toggle-pill ${isPrep ? 'is-ready' : ''}" onclick="toggleSpellPrepared('${s.id}')" title="Переключить: подготовлено на сегодня или в резерве">${isPrep ? '☑ Готово' : '☐ В резерве'}</button>`
+          : `<span class="muted" style="font-size:0.72rem; color:#6ee7b7;">✓ Всегда готово</span>`;
+
+        return `
+          <div class="${cardCls}">
+            <div class="row" style="justify-content:space-between; align-items:flex-start;">
+              <div class="row" style="flex-wrap:wrap; gap:4px;">
+                <span class="spell-lvl-badge">${lvlText}</span>
+                ${renderHitTypeBadge(s.rollType)}
               </div>
-            `;
-          }).join('')
-        : (allSpells.length
-            ? '<p class="muted">По выбранному фильтру заклинаний не найдено (попробуйте сбросить фильтр категории или круга).</p>'
-            : '<p class="muted">Гримуар пуст. Нажмите «📚 Книга 5e» или «🔄 Все закл. класса».</p>');
+              <button class="btn btn-danger btn-xs" onclick="deleteHeroSpell('${s.id}')" style="flex-shrink:0;">✕</button>
+            </div>
 
-      // Subtab 4: Traits, Wallet, Rations & Inventory
-      document.getElementById('heroTraitsInput').value = h.traits || '';
+            <div style="margin-top:6px;">
+              <strong style="color:var(--gold); font-size:0.98rem;">${escapeHtml(s.name)}</strong>
+              ${(s.dice || s.tag) ? `<div class="muted" style="font-size:0.74rem; margin-top:2px;">${escapeHtml(s.dice)} ${s.tag ? '• ' + escapeHtml(s.tag) : ''}</div>` : ''}
+            </div>
+
+            ${s.desc ? `<div class="muted" style="font-size:0.76rem; margin-top:5px; line-height:1.38;">${escapeHtml(s.desc)}</div>` : ''}
+
+            <div class="card-action-footer">
+              ${prepToggleHtml}
+              <button class="btn btn-primary btn-xs" onclick="castHeroSpell('${s.id}')">✨ Сотворить</button>
+            </div>
+          </div>
+        `;
+      };
+
+      const spellsContainer = document.getElementById('heroSpellsList');
+      if (!displayedSpells.length) {
+        spellsContainer.innerHTML = allSpells.length
+          ? '<p class="muted">По выбранному фильтру заклинаний не найдено (попробуйте сбросить фильтр категории или круга).</p>'
+          : '<p class="muted">Гримуар пуст. Нажмите «📚 Книга 5e»' + (isFullClassList ? ' или «🔄 Все закл. класса».' : '.');
+      } else {
+        spellsContainer.innerHTML = roleSections.map((sec) => {
+          const groupItems = displayedSpells.filter((s) => {
+            const spRole = s.role || (s.rollType === 'heal' ? 'defense' : (s.rollType === 'attack' ? 'damage' : 'utility'));
+            return spRole === sec.key;
+          });
+          if (!groupItems.length) return '';
+          return `
+            <details open style="margin-bottom:10px;">
+              <summary style="cursor:pointer; padding:6px 8px; background:rgba(212,175,55,0.12); border:1px solid rgba(212,175,55,0.3); border-radius:8px; color:var(--gold); font-weight:700; font-size:0.82rem; margin-bottom:6px;">
+                ${sec.title} (${groupItems.length})
+              </summary>
+              ${groupItems.map(renderSingleSpellCard).join('')}
+            </details>
+          `;
+        }).join('');
+      }
+
+      // Subtab 4: Wallet, Rations, Potions & Backpack
       document.getElementById('goldInput').value = h.gold ?? 0;
       document.getElementById('silverInput').value = h.silver ?? 0;
       document.getElementById('copperInput').value = h.copper ?? 0;
+
+      const potions = h.potions || [];
+      document.getElementById('heroPotionsList').innerHTML = potions.length
+        ? potions.map((p) => `
+            <div class="rations-bar">
+              <div style="min-width:0; flex:1; padding-right:8px;">
+                <strong style="font-size:0.86rem; color:var(--gold);">${escapeHtml(p.name)}</strong>
+              </div>
+              <div class="row" style="flex-shrink:0;">
+                <button class="btn btn-danger btn-xs" onclick="changeHeroPotionCount('${p.id}', -1)">-1</button>
+                <strong style="font-size:1.05rem; color:var(--text-main); min-width:24px; text-align:center;">${p.count ?? 0}</strong>
+                <button class="btn btn-xs" onclick="changeHeroPotionCount('${p.id}', 1)">+1</button>
+                <button class="btn btn-danger btn-xs" onclick="deleteHeroPotion('${p.id}')">✕</button>
+              </div>
+            </div>
+          `).join('')
+        : '<p class="muted">Зелий и расходников пока нет. Нажмите «+ Зелье», чтобы добавить.</p>';
+
       document.getElementById('heroInventoryInput').value = h.inventory || '';
     }
+
     window.renderHeroSheet = renderHeroSheet;
     window.renderChronicle = renderChronicle;
 
