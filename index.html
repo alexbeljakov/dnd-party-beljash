@@ -1462,7 +1462,7 @@
             <span class="card-title">📖 Памятка: Что сделать в ход</span>
             <button class="btn btn-xs" onclick="toggleCombatCheatSheet()">Свернуть / Показать</button>
           </div>
-          <div id="combatCheatSheetBody" class="cheatsheet-grid">
+          <div id="combatCheatSheetBody" class="cheatsheet-grid hidden">
             <div class="cheat-pill"><strong>⚔️ Атака (Действие)</strong>Удар оружием или захват/толчок вместо одной из атак.</div>
             <div class="cheat-pill"><strong>✨ Заклинание (Действие)</strong>Сотворение заклинания со временем накладывания «1 действие».</div>
             <div class="cheat-pill"><strong>🛡️ Уклонение (Действие)</strong>До вашего след. хода атаки по вам с помехой, спас Лов с преим.</div>
@@ -5760,8 +5760,8 @@
           if (!groupItems.length) return '';
           return `
             <details open style="margin-bottom:10px;">
-              <summary style="cursor:pointer; padding:6px 8px; background:rgba(212,175,55,0.12); border:1px solid rgba(212,175,55,0.3); border-radius:8px; color:var(--gold); font-weight:700; font-size:0.82rem; margin-bottom:6px;">
-                ${sec.title} (${groupItems.length})
+              <summary style="cursor:pointer; padding:6px 10px; background:rgba(212,175,55,0.08); border-radius:8px; color:var(--gold); font-weight:700; font-size:0.8rem; margin-bottom:6px; list-style:none;">
+                ${sec.title} <span class="muted" style="font-weight:500;">(${groupItems.length})</span>
               </summary>
               ${groupItems.map(renderSingleSpellCard).join('')}
             </details>
