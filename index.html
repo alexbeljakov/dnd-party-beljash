@@ -5852,22 +5852,38 @@
 
       const potions = h.potions || [];
       document.getElementById('heroPotionsList').innerHTML = potions.length
-        ? potions.map((p) => `
-            <div class="rations-bar">
-              <div style="min-width:0; flex:1; padding-right:8px;">
-                <strong style="font-size:0.86rem; color:var(--gold);">${escapeHtml(p.name)}</strong>
-              </div>
-              <div class="row" style="flex-shrink:0;">
-                <button class="btn btn-danger btn-xs" onclick="changeHeroPotionCount('${p.id}', -1)">-1</button>
-                <strong style="font-size:1.05rem; color:var(--text-main); min-width:24px; text-align:center;">${p.count ?? 0}</strong>
-                <button class="btn btn-xs" onclick="changeHeroPotionCount('${p.id}', 1)">+1</button>
-                <button class="btn btn-danger btn-xs" onclick="deleteHeroPotion('${p.id}')">✕</button>
-              </div>
-            </div>
-          `).join('')
-        : '<p class="muted">Зелий и расходников пока нет. Нажмите «+ Зелье», чтобы добавить.</p>';
+        ? potions.map((p) => {
+            let title = p.name || '';
+            let desc = p.desc || p.effect || '';
+            // Если всё записано в одну строку через двоеточие — аккуратно разделяем на заголовок и эффект
+            if (!desc && title.includes(':')) {
+              const splitIdx = title.indexOf(':');
+              desc = title.slice(splitIdx + 1).trim();
+              title = title.slice(0, splitIdx).trim();
+            }
+            const qty = Number(p.qty ?? p.count ?? 1);
 
-      document.getElementById('heroInventoryInput').value = h.inventory || '';
+            return `
+              <div class="item-card">
+                <div class="weapon-card-top">
+                  <div style="min-width:0; flex:1;">
+                    <strong style="color:var(--text-main); font-size:0.95rem;">${escapeHtml(title)}</strong>
+                    ${desc ? `<div class="muted" style="font-size:0.78rem; margin-top:4px; line-height:1.38;">${escapeHtml(desc)}</div>` : ''}
+                  </div>
+                  <button class="btn btn-danger btn-xs" onclick="deleteHeroPotion('${p.id}')" title="Удалить">✕</button>
+                </div>
+
+                <div class="card-action-footer">
+                  <span class="muted" style="font-size:0.76rem;">В наличии: <strong style="color:var(--gold);">${qty} шт.</strong></span>
+                  <div class="row" style="gap:5px;">
+                    <button class="btn btn-xs" onclick="changeHeroPotionCount('${p.id}', -1)">−1</button>
+                    <button class="btn btn-xs" onclick="changeHeroPotionCount('${p.id}', 1)">+1</button>
+                  </div>
+                </div>
+              </div>
+            `;
+          }).join('')
+        : '<p class="muted">Сумка с зельями пуста. Нажмите «+ Зелье», чтобы добавить эликсир или свиток.</p>';
     }
 
     window.renderHeroSheet = renderHeroSheet;
