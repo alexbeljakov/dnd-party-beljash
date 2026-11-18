@@ -4120,6 +4120,24 @@
       await saveHeroPatch({ potions });
       renderHeroSheet();
     };
+    window.changeHeroPotionCount = async (idx, delta) => {
+      const h = state.heroes[session.heroId];
+      if (!h) return;
+      const potions = (h.potions || []).map((p, i) => {
+        if (i !== idx) return p;
+        return { ...p, count: Math.max(0, Number(p.count ?? 1) + delta) };
+      });
+      await saveHeroPatch({ potions });
+      renderHeroSheet();
+    };
+
+    window.deleteHeroPotion = async (idx) => {
+      const h = state.heroes[session.heroId];
+      if (!h) return;
+      const potions = (h.potions || []).filter((_, i) => i !== idx);
+      await saveHeroPatch({ potions });
+      renderHeroSheet();
+    };
 
 
     // ================= D&D 5E (2014) SPELLBOOK PICKER & DAILY PREPARED TOGGLE =================
@@ -5848,7 +5866,7 @@
 
       const potions = h.potions || [];
       document.getElementById('heroPotionsList').innerHTML = potions.length
-        ? potions.map((p) => {
+        ? potions.map((p, pIdx) => {
             let title = p.name || '';
             let desc = p.desc || '';
             if (!desc && title.includes(':')) {
@@ -5865,14 +5883,14 @@
                     <strong style="color:var(--text-main); font-size:0.95rem;">${escapeHtml(title)}</strong>
                     ${desc ? `<div class="muted" style="font-size:0.78rem; margin-top:4px; line-height:1.38;">${escapeHtml(desc)}</div>` : ''}
                   </div>
-                  <button class="btn btn-danger btn-xs" onclick="deleteHeroPotion('${p.id}')" title="Удалить">✕</button>
+                  <button class="btn btn-danger btn-xs" onclick="deleteHeroPotion(${pIdx})" title="Удалить">✕</button>
                 </div>
 
                 <div class="card-action-footer">
                   <span class="muted" style="font-size:0.76rem;">В наличии: <strong style="color:var(--gold);">${qty} шт.</strong></span>
                   <div class="row" style="gap:5px;">
-                    <button class="btn btn-xs" onclick="changeHeroPotionCount('${p.id}', -1)">−1</button>
-                    <button class="btn btn-xs" onclick="changeHeroPotionCount('${p.id}', 1)">+1</button>
+                    <button class="btn btn-xs" onclick="changeHeroPotionCount(${pIdx}, -1)">−1</button>
+                    <button class="btn btn-xs" onclick="changeHeroPotionCount(${pIdx}, 1)">+1</button>
                   </div>
                 </div>
               </div>
