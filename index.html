@@ -358,6 +358,35 @@
       background: rgba(185, 28, 28, 0.18);
     }
 
+    #filterPreparedWrap {
+      display: inline-flex !important;
+      align-items: center;
+      gap: 7px;
+      margin-top: 4px;
+      padding: 6px 11px;
+      border-radius: 8px;
+      background: rgba(0, 0, 0, 0.34);
+      border: 1px solid rgba(212, 175, 55, 0.28);
+      color: var(--text-main);
+      font-size: 0.78rem !important;
+      font-weight: 600;
+      cursor: pointer;
+      user-select: none;
+      transition: background 0.15s ease, border-color 0.15s ease;
+    }
+    #filterPreparedWrap input[type="checkbox"] {
+      width: 16px !important;
+      height: 16px;
+      margin: 0;
+      accent-color: #d4af37;
+      cursor: pointer;
+    }
+    #filterPreparedWrap:has(input:checked) {
+      background: rgba(212, 175, 55, 0.16);
+      border-color: var(--gold);
+      color: var(--gold);
+    }
+    
     .prep-toggle-pill {
       display: inline-flex;
       align-items: center;
@@ -435,6 +464,44 @@
       background: rgba(212, 175, 55, 0.13);
       color: #e5c158;
       white-space: nowrap;
+    }
+    
+    /* Spell Accordion Groups */
+    details.spell-group {
+      margin-bottom: 12px;
+    }
+    details.spell-group summary {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      padding: 9px 12px;
+      background: linear-gradient(90deg, rgba(212, 175, 55, 0.16), rgba(31, 27, 36, 0.95));
+      border: 1px solid rgba(212, 175, 55, 0.28);
+      border-left: 3px solid var(--gold);
+      border-radius: 9px;
+      color: var(--gold);
+      font-weight: 700;
+      font-size: 0.84rem;
+      margin-bottom: 8px;
+      list-style: none;
+      user-select: none;
+    }
+    details.spell-group summary::-webkit-details-marker {
+      display: none;
+    }
+    details.spell-group summary::after {
+      content: '▾';
+      font-size: 0.95rem;
+      color: var(--gold);
+      transition: transform 0.18s ease;
+    }
+    details.spell-group:not([open]) summary::after {
+      transform: rotate(-90deg);
+    }
+    details.spell-group:not([open]) summary {
+      margin-bottom: 0;
+      opacity: 0.85;
     }
 
     /* Guide & Primer Styles */
@@ -1568,11 +1635,11 @@
             <div id="heroLeveledQuotaLine" style="font-size:0.78rem;"></div>
             <div id="heroPreparedHint" class="muted" style="font-size:0.68rem;"></div>
 
-            <div class="row" style="justify-content:space-between; flex-wrap:wrap; margin-top:2px;">
+            <div class="row" style="justify-content:space-between; flex-wrap:wrap; margin-top:4px; padding-top:6px; border-top:1px solid rgba(255,255,255,0.06);">
               <button id="syncClassAllSpellsBtn" class="btn btn-xs hidden" onclick="syncAllClassSpellsToGrimoire()" title="Загрузить весь список заклинаний 1+ круга вашего класса">🔄 Все закл. класса</button>
-              <label id="filterPreparedWrap" style="display:flex; align-items:center; gap:5px; font-size:0.74rem; color:var(--text-main); cursor:pointer;">
-                <input type="checkbox" id="filterPreparedOnlyCheck" style="width:auto;" onchange="renderHeroSheet()" />
-                Только готовые на день
+              <label id="filterPreparedWrap">
+                <input type="checkbox" id="filterPreparedOnlyCheck" onchange="renderHeroSheet()" />
+                <span>Только готовые на день</span>
               </label>
             </div>
           </div>
@@ -5759,9 +5826,9 @@
           });
           if (!groupItems.length) return '';
           return `
-            <details open style="margin-bottom:10px;">
-              <summary style="cursor:pointer; padding:6px 10px; background:rgba(212,175,55,0.08); border-radius:8px; color:var(--gold); font-weight:700; font-size:0.8rem; margin-bottom:6px; list-style:none;">
-                ${sec.title} <span class="muted" style="font-weight:500;">(${groupItems.length})</span>
+            <details class="spell-group" open>
+              <summary>
+                <span>${sec.title} <span class="muted" style="font-weight:500;">(${groupItems.length})</span></span>
               </summary>
               ${groupItems.map(renderSingleSpellCard).join('')}
             </details>
