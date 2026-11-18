@@ -5825,14 +5825,16 @@
             return spRole === sec.key;
           });
           if (!groupItems.length) return '';
+          const shouldOpen = onlyPrepared || gRoleFilter !== 'all' || gCircleFilter !== 'all';
           return `
-            <details class="spell-group" open>
+            <details class="spell-group" ${shouldOpen ? 'open' : ''}>
               <summary>
                 <span>${sec.title} <span class="muted" style="font-weight:500;">(${groupItems.length})</span></span>
               </summary>
               ${groupItems.map(renderSingleSpellCard).join('')}
             </details>
           `;
+
         }).join('');
       }
 
