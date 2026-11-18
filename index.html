@@ -4091,40 +4091,36 @@
     window.addHeroPotion = async () => {
       const h = state.heroes[session.heroId];
       if (!h) return;
-      const name = await uiPrompt('Название зелья или расходуемого предмета (напр. Зелье лечения 2d4+2, Противоядие):', 'Зелье лечения (2d4+2)', {
+      const name = await uiPrompt('Название зелья или расходника (например: Зелье лечения, Противоядие)', 'Зелье лечения', {
         title: '🧪 Добавить зелье',
-        placeholder: 'Зелье лечения (2d4+2)'
+        placeholder: 'Зелье лечения'
       });
       if (!name || !name.trim()) return;
+
+      const desc = await uiPrompt('Эффект или описание (необязательно — можно оставить пустым)', '', {
+        title: '📜 Эффект зелья',
+        placeholder: 'Восстанавливает 2d4 + 2 ОЗ'
+      });
+      if (desc === null) return;
+
       const countRaw = await uiPrompt('Количество флаконов:', '1', {
         title: '🧪 Количество',
         inputType: 'number',
         inputMode: 'numeric'
       });
+      if (countRaw === null) return;
+
       const count = Math.max(1, parseInt(countRaw, 10) || 1);
-      const potions = [...(h.potions || []), { id: 'pot_' + Date.now(), name: name.trim(), count }];
+      const potions = [...(h.potions || []), {
+        id: 'pot_' + Date.now(),
+        name: name.trim(),
+        desc: desc.trim(),
+        count
+      }];
       await saveHeroPatch({ potions });
       renderHeroSheet();
     };
 
-    window.changeHeroPotionCount = async (potId, delta) => {
-      const h = state.heroes[session.heroId];
-      if (!h) return;
-      const potions = (h.potions || []).map((p) => {
-        if (p.id !== potId) return p;
-        return { ...p, count: Math.max(0, (p.count || 0) + delta) };
-      });
-      await saveHeroPatch({ potions });
-      renderHeroSheet();
-    };
-
-    window.deleteHeroPotion = async (potId) => {
-      const h = state.heroes[session.heroId];
-      if (!h) return;
-      const potions = (h.potions || []).filter((p) => p.id !== potId);
-      await saveHeroPatch({ potions });
-      renderHeroSheet();
-    };
 
     // ================= D&D 5E (2014) SPELLBOOK PICKER & DAILY PREPARED TOGGLE =================
     function renderHitTypeBadge(rollType) {
@@ -5854,14 +5850,13 @@
       document.getElementById('heroPotionsList').innerHTML = potions.length
         ? potions.map((p) => {
             let title = p.name || '';
-            let desc = p.desc || p.effect || '';
-            // Если всё записано в одну строку через двоеточие — аккуратно разделяем на заголовок и эффект
+            let desc = p.desc || '';
             if (!desc && title.includes(':')) {
               const splitIdx = title.indexOf(':');
               desc = title.slice(splitIdx + 1).trim();
               title = title.slice(0, splitIdx).trim();
             }
-            const qty = Number(p.qty ?? p.count ?? 1);
+            const qty = Number(p.count ?? 1);
 
             return `
               <div class="item-card">
