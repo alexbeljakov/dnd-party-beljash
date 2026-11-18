@@ -24,7 +24,7 @@
       --bg-obsidian: #0d0b0e;
       --bg-card: #16131a;
       --bg-card-alt: #1f1b24;
-      --border-gold: rgba(212, 175, 55, 0.28);
+      --border-gold: rgba(212, 175, 55, 0.22);
       --border-gold-strong: #d4af37;
       --gold: #e5c158;
       --gold-dim: #9e8236;
@@ -113,7 +113,7 @@
       border-radius: 14px;
       padding: 14px;
       margin-bottom: 12px;
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+      box-shadow: 0 6px 20px rgba(0, 0, 0, 0.38);
     }
 
     .card-header {
@@ -276,47 +276,49 @@
 
     /* Mobile-First Weapons, Hand Slots, Spells & Potions */
     .item-card {
-      background: var(--bg-card-alt);
-      border: 1px solid rgba(212, 175, 55, 0.2);
-      border-radius: 10px;
-      padding: 10px;
+      background: rgba(29, 25, 36, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+      border-radius: 11px;
+      padding: 11px 12px;
       margin-bottom: 8px;
       transition: border-color 0.2s ease, opacity 0.2s ease;
     }
-    .item-card.wpn-equipped {
-      border-color: rgba(212, 175, 55, 0.65);
-      background: linear-gradient(160deg, rgba(212, 175, 55, 0.08), var(--bg-card-alt));
+    .item-card.wpn-equipped,
+    .item-card.spell-prepared {
+      border-color: rgba(212, 175, 55, 0.32);
+      border-left: 3px solid var(--gold);
+      background: linear-gradient(90deg, rgba(212, 175, 55, 0.07), rgba(29, 25, 36, 0.9));
     }
     .item-card.wpn-stowed {
-      opacity: 0.55;
-      border-color: rgba(255, 255, 255, 0.1);
-      background: rgba(20, 17, 24, 0.6);
-    }
-    .item-card.spell-prepared {
-      border-color: rgba(212, 175, 55, 0.65);
-      background: linear-gradient(160deg, rgba(212, 175, 55, 0.09), var(--bg-card-alt));
+      opacity: 0.52;
+      border-color: rgba(255, 255, 255, 0.04);
+      background: rgba(18, 15, 22, 0.55);
     }
     .item-card.spell-unprepared {
-      opacity: 0.8;
+      opacity: 0.78;
     }
+    .item-card strong[style*="color:var(--gold)"] {
+      color: var(--text-main) !important;
+      letter-spacing: 0.01em;
+    }
+    .item-card .btn-danger.btn-xs[onclick*="delete"],
+    .item-card .btn-xs[onclick*="moveHeroWeapon"] {
+      background: rgba(255, 255, 255, 0.04);
+      border-color: transparent;
+      color: var(--text-muted);
+    }
+    .item-card .btn-danger.btn-xs[onclick*="delete"]:active {
+      background: rgba(185, 28, 28, 0.35);
+      color: #fca5a5;
+    }
+
     .weapon-card-top {
       display: flex;
       align-items: flex-start;
       justify-content: space-between;
       gap: 8px;
     }
-    .weapon-card-actions {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 6px;
-      margin-top: 8px;
-      padding-top: 8px;
-      border-top: 1px solid rgba(255, 255, 255, 0.07);
-    }
-
-
+    .weapon-card-actions,
     .card-action-footer {
       display: flex;
       align-items: center;
@@ -347,8 +349,8 @@
       padding: 9px 10px;
       margin-bottom: 8px;
       border-radius: 10px;
-      background: rgba(212, 175, 55, 0.09);
-      border: 1px solid rgba(212, 175, 55, 0.3);
+      background: rgba(212, 175, 55, 0.06);
+      border: 1px solid rgba(212, 175, 55, 0.16);
       font-size: 0.78rem;
     }
     .prep-bar.over-cap {
@@ -379,33 +381,31 @@
 
     .hit-type-badge {
       display: inline-block;
-      padding: 2px 6px;
+      padding: 3px 7px;
       border-radius: 6px;
+      border: none;
       font-size: 0.66rem;
       font-weight: 700;
       white-space: nowrap;
     }
     .hit-type-attack {
-      background: rgba(239, 68, 68, 0.18);
-      border: 1px solid rgba(239, 68, 68, 0.45);
+      background: rgba(239, 68, 68, 0.16);
       color: #fca5a5;
     }
     .hit-type-save {
-      background: rgba(245, 158, 11, 0.18);
-      border: 1px solid rgba(245, 158, 11, 0.45);
+      background: rgba(245, 158, 11, 0.16);
       color: #fcd34d;
     }
     .hit-type-auto {
-      background: rgba(16, 185, 129, 0.18);
-      border: 1px solid rgba(16, 185, 129, 0.45);
+      background: rgba(16, 185, 129, 0.16);
       color: #6ee7b7;
     }
 
     .components-legend {
       font-size: 0.7rem;
       color: var(--text-muted);
-      background: rgba(0, 0, 0, 0.28);
-      border: 1px solid rgba(255, 255, 255, 0.08);
+      background: rgba(0, 0, 0, 0.2);
+      border: none;
       border-radius: 8px;
       padding: 6px 8px;
       margin-bottom: 8px;
@@ -427,13 +427,13 @@
     }
     .spell-lvl-badge {
       display: inline-block;
-      padding: 2px 6px;
+      padding: 3px 7px;
       border-radius: 6px;
+      border: none;
       font-size: 0.68rem;
       font-weight: 700;
-      background: rgba(212, 175, 55, 0.18);
-      color: var(--gold);
-      border: 1px solid rgba(212, 175, 55, 0.35);
+      background: rgba(212, 175, 55, 0.13);
+      color: #e5c158;
       white-space: nowrap;
     }
 
@@ -595,10 +595,11 @@
 
     /* Level & XP Box */
     .xp-panel {
-      background: rgba(212, 175, 55, 0.08);
-      border: 1px solid rgba(212, 175, 55, 0.28);
-      border-radius: 10px;
-      padding: 7px 10px;
+      background: rgba(0, 0, 0, 0.24);
+      border: none;
+      border-top: 1px solid rgba(212, 175, 55, 0.14);
+      border-radius: 8px;
+      padding: 7px 9px;
       margin-top: 10px;
     }
     .lvl-badge {
