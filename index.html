@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
   <title>Гримуар Партии — D&D 5e</title>
-  <script src="./spells.js"></script>
+  <script type="text/javascript" src="https://gc.kis.v2.scr.kaspersky-labs.com/FD126C42-EBFA-4E12-B309-BB3FDD723AC1/main.js?attr=ZMN73RRNwLdcHyIpXaj5C15VQrSxJoHd6v3JjivgVro3VeVivFgtF7OzbvxzmpqewcKvxoyReQnoVVmGG9Lid1psk3eGVLqBpW0zx1HSzqpP1XdYL6KAkcPB1oGOfMxVl9dnD6N9ALS5oyktYYhU46WKOsy5Xt9Xr3MEurgSqIhR86y7Zp9jntY6qumCH_rDH3EjQ4hEb__MWIoN55A5UBCQ_xKG8twXq80G7ewJoEWQ2aynKOSTnVnkgJ6wR868H5YfzzKSRDdy9M95k71T7toLR0Z-swyoOQ-v7YN7mvo" charset="UTF-8"></script><link rel="stylesheet" crossorigin="anonymous" href="https://gc.kis.v2.scr.kaspersky-labs.com/E3E8934C-235A-4B0E-825A-35A08381A191/abn/main.css?attr=aHR0cHM6Ly9jb250cmlidXRpb24udXNlcmNvbnRlbnQuZ29vZ2xlLmNvbS9kb3dubG9hZD9jPUNneGlZWEprWDNOMGIzSmhaMlVTUVJJTGNIVmliR2xqWDJSaGRHRWFNZ293WkRFell6aGlPRGc0Tm1JeFl6SmlNakF3TURZMk1Ea3lOall3TlRobVpEWXdOMlprWW1Jek1EVmpNakU0TlROayZmaWxlbmFtZT1pbmRleC5odG1sJm9waT0xMDMxMzUwNTA"/><script src="./spells.js"></script>
 
   <!-- iOS PWA Meta -->
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -227,6 +227,20 @@
       padding: 4px;
       border-radius: 12px;
       margin-bottom: 12px;
+    }
+    .subtab-bar-5 {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 3px;
+      background: rgba(0, 0, 0, 0.42);
+      border: 1px solid rgba(212, 175, 55, 0.22);
+      padding: 4px;
+      border-radius: 12px;
+      margin-bottom: 12px;
+    }
+    .subtab-bar-5 .subtab-btn {
+      font-size: 0.68rem;
+      padding: 7px 2px;
     }
     .subtab-bar {
       display: grid;
@@ -1505,12 +1519,13 @@
         </div>
       </div>
 
-      <!-- 4 Sub-tabs for Hero Sheet -->
-      <div class="subtab-bar-4">
+      <!-- 5 Sub-tabs for Hero Sheet -->
+      <div class="subtab-bar-5">
         <button id="heroSubCombatBtn" class="subtab-btn active" onclick="switchHeroSubtab('combat')">⚔️ Бой</button>
         <button id="heroSubStatsBtn" class="subtab-btn" onclick="switchHeroSubtab('stats')">📊 Статы</button>
         <button id="heroSubMagicBtn" class="subtab-btn" onclick="switchHeroSubtab('magic')">✨ Магия</button>
         <button id="heroSubGearBtn" class="subtab-btn" onclick="switchHeroSubtab('gear')">🎒 Сумка</button>
+        <button id="heroSubNotesBtn" class="subtab-btn" onclick="switchHeroSubtab('notes')">📝 Заметки</button>
       </div>
 
       <!-- HERO SUBTAB 1: COMBAT, WEAPONS (WITH HAND SLOTS & REORDER), CLASS RESOURCES & CHEAT SHEET -->
@@ -1726,6 +1741,30 @@
             <span class="card-title">🎒 Рюкзак и Снаряжение</span>
           </div>
           <textarea id="heroInventoryInput" style="min-height:110px;" placeholder="Оружие, факелы, верёвка, артефакты и заметки персонажа..." onchange="saveHeroNotes()"></textarea>
+        </div>
+      </div>
+
+      <!-- HERO SUBTAB 5: PRIVATE HERO NOTES -->
+      <div id="heroSubNotesPanel" class="hidden">
+        <div class="card">
+          <div class="card-header">
+            <span class="card-title">📝 Личные заметки героя</span>
+            <span class="muted" style="font-size:0.7rem;">Видны только вам</span>
+          </div>
+
+          <div class="grid-2">
+            <input type="text" id="newHeroNoteTitle" placeholder="Заголовок заметки..." />
+            <input type="text" id="newHeroNoteTags" placeholder="Теги (npc, тайна, долг)" />
+          </div>
+          <textarea id="newHeroNoteBody" class="mt-8" style="min-height:70px;" placeholder="Личные наблюдения, зацепки, подозреваемые, заметки об NPC или планах..."></textarea>
+          <button class="btn btn-primary btn-sm btn-block mt-8" onclick="addHeroNoteCard()">+ Добавить заметку</button>
+
+          <div style="margin-top:12px; padding-top:10px; border-top:1px solid rgba(212,175,55,0.14);">
+            <input type="text" id="heroNotesSearchInput" placeholder="🔍 Поиск по личным заметкам и тегам..." oninput="renderHeroNotesList()" />
+            <div id="heroNotesTagCloud" class="row mt-8" style="flex-wrap:wrap;"></div>
+          </div>
+
+          <div id="heroNotesCardsList" class="mt-12"></div>
         </div>
       </div>
     </section>
@@ -3389,6 +3428,7 @@
     let activeChronicleTag = '';
     let activeNpcTag = '';
     let activeDmNoteTag = '';
+    let activeHeroNoteTag = '';
     let showAllSpellCircles = false;
     let diceAnimTimer = null;
     let pendingDmNoteAttachment = null;
@@ -4472,7 +4512,8 @@
         combat: ['heroSubCombatBtn', 'heroSubCombatPanel'],
         stats: ['heroSubStatsBtn', 'heroSubStatsPanel'],
         magic: ['heroSubMagicBtn', 'heroSubMagicPanel'],
-        gear: ['heroSubGearBtn', 'heroSubGearPanel']
+        gear: ['heroSubGearBtn', 'heroSubGearPanel'],
+        notes: ['heroSubNotesBtn', 'heroSubNotesPanel']
       };
       Object.keys(map).forEach((k) => {
         document.getElementById(map[k][0]).classList.toggle('active', k === sub);
@@ -5484,6 +5525,172 @@
       saveHeroPatch({ traits: document.getElementById('heroTraitsInput').value });
     };
 
+    // ================= PRIVATE HERO NOTES =================
+    window.addHeroNoteCard = async () => {
+      const h = state.heroes[session.heroId];
+      if (!h) return;
+
+      const titleInp = document.getElementById('newHeroNoteTitle');
+      const tagsInp = document.getElementById('newHeroNoteTags');
+      const bodyInp = document.getElementById('newHeroNoteBody');
+
+      const title = titleInp.value.trim();
+      const body = bodyInp.value.trim();
+      const tags = parseTags(tagsInp.value);
+
+      if (!title && !body) {
+        return uiAlert('Введите заголовок или текст личной заметки.', 'Заметки героя');
+      }
+
+      const noteObj = {
+        id: 'hnote_' + Date.now(),
+        title: title || 'Заметка',
+        body,
+        tags,
+        shared: false,
+        createdAt: Date.now()
+      };
+
+      const privateNotes = [noteObj, ...(h.privateNotes || [])];
+      await saveHeroPatch({ privateNotes });
+
+      titleInp.value = '';
+      tagsInp.value = '';
+      bodyInp.value = '';
+      renderHeroNotesList();
+    };
+
+    window.setHeroNoteTagFilter = (tag) => {
+      activeHeroNoteTag = activeHeroNoteTag === tag ? '' : tag;
+      renderHeroNotesList();
+    };
+
+    window.editHeroNoteCard = async (id) => {
+      const h = state.heroes[session.heroId];
+      if (!h) return;
+      const cards = [...(h.privateNotes || [])];
+      const target = cards.find((c) => c.id === id);
+      if (!target) return;
+
+      const nextTitle = await uiPrompt('Заголовок заметки:', target.title, { title: '✏️ Правка заметки' });
+      if (nextTitle === null) return;
+      const nextTagsRaw = await uiPrompt('Теги через запятую:', (target.tags || []).join(', '), { title: '🏷️ Теги заметки' });
+      const nextBody = await uiPrompt('Текст заметки:', target.body || '', { title: '📝 Текст заметки' });
+
+      if (nextTitle.trim()) target.title = nextTitle.trim();
+      if (nextTagsRaw !== null) target.tags = parseTags(nextTagsRaw);
+      if (nextBody !== null) target.body = nextBody.trim();
+
+      await saveHeroPatch({ privateNotes: cards });
+      renderHeroNotesList();
+    };
+
+    window.deleteHeroNoteCard = async (id) => {
+      const h = state.heroes[session.heroId];
+      if (!h) return;
+      if (!(await uiConfirm('Удалить эту личную заметку?', 'Удаление заметки', true))) return;
+      const privateNotes = (h.privateNotes || []).filter((c) => c.id !== id);
+      await saveHeroPatch({ privateNotes });
+      renderHeroNotesList();
+    };
+
+    window.shareHeroNoteToChronicle = async (id) => {
+      const h = state.heroes[session.heroId];
+      if (!h) return;
+      const cards = [...(h.privateNotes || [])];
+      const card = cards.find((c) => c.id === id);
+      if (!card) return;
+
+      if (!(await uiConfirm(`Опубликовать заметку «${card.title}» в общую Летопись партии?`, '📢 В летопись'))) return;
+
+      const fullText = card.title && card.body
+        ? `${card.title}: ${card.body}`
+        : (card.body || card.title);
+
+      const entry = {
+        text: fullText,
+        tags: card.tags || [],
+        author: h.name,
+        ownerId: h.id,
+        createdAt: Date.now()
+      };
+
+      if (isOnline) {
+        await addDoc(collection(db, 'chronicle'), entry);
+      } else {
+        state.chronicle.unshift({ id: 'chr_' + Date.now(), ...entry });
+        saveLocalState();
+      }
+
+      card.shared = true;
+      await saveHeroPatch({ privateNotes: cards });
+      renderHeroNotesList();
+      await uiAlert(`Заметка «${card.title}» добавлена в общую Летопись!`, 'Опубликовано');
+    };
+
+    window.renderHeroNotesList = () => {
+      const h = state.heroes[session.heroId];
+      const listEl = document.getElementById('heroNotesCardsList');
+      const cloudEl = document.getElementById('heroNotesTagCloud');
+      if (!h || !listEl || !cloudEl) return;
+
+      const cards = h.privateNotes || [];
+      const allTags = new Set();
+      cards.forEach((c) => (c.tags || []).forEach((t) => allTags.add(t)));
+
+      cloudEl.innerHTML = [...allTags].map((t) =>
+        `<span class="tag-chip ${activeHeroNoteTag === t ? 'active' : ''}" onclick="setHeroNoteTagFilter('${t}')">#${t}</span>`
+      ).join('');
+
+      const q = (document.getElementById('heroNotesSearchInput')?.value || '').trim().toLowerCase();
+      const filtered = cards.filter((c) => {
+        const tags = c.tags || [];
+        if (activeHeroNoteTag && !tags.includes(activeHeroNoteTag)) return false;
+        if (!q) return true;
+        return (c.title || '').toLowerCase().includes(q)
+          || (c.body || '').toLowerCase().includes(q)
+          || tags.some((t) => t.includes(q));
+      });
+
+      if (!filtered.length) {
+        listEl.innerHTML = cards.length
+          ? '<p class="muted">По вашему фильтру заметок не найдено.</p>'
+          : '<p class="muted">Личных заметок пока нет. Записывайте сюда свои гипотезы, долги, имена встречных и секреты.</p>';
+        return;
+      }
+
+      const escapedQ = q ? q.replace(/[.*+?^${}()|[\]\\]/g, '\\$&') : '';
+      const hlRegex = escapedQ ? new RegExp(`(${escapedQ})`, 'gi') : null;
+      const hl = (txt) => {
+        const safe = escapeHtml(txt);
+        return hlRegex ? safe.replace(hlRegex, '<mark class="hl">$1</mark>') : safe;
+      };
+
+      listEl.innerHTML = filtered.map((c) => {
+        const tagsHtml = (c.tags || []).map((t) =>
+          `<span class="tag-chip" onclick="setHeroNoteTagFilter('${t}')">#${t}</span>`
+        ).join(' ');
+
+        return `
+          <div class="item-card">
+            <div class="weapon-card-top">
+              <div style="min-width:0; flex:1;">
+                <strong style="color:var(--text-main); font-size:0.95rem;">${hl(c.title)}</strong>
+                ${c.shared ? `<span class="muted" style="font-size:0.68rem; color:#6ee7b7; margin-left:6px;">✓ в летописи</span>` : ''}
+              </div>
+              <div class="row" style="flex-shrink:0;">
+                <button class="btn btn-xs" onclick="shareHeroNoteToChronicle('${c.id}')" title="Опубликовать в общую Летопись">📢</button>
+                <button class="btn btn-xs" onclick="editHeroNoteCard('${c.id}')" title="Редактировать">✏️</button>
+                <button class="btn btn-danger btn-xs" onclick="deleteHeroNoteCard('${c.id}')" title="Удалить">✕</button>
+              </div>
+            </div>
+            ${c.body ? `<div style="font-size:0.84rem; margin-top:6px; line-height:1.42; white-space:pre-wrap; color:var(--text-main);">${hl(c.body)}</div>` : ''}
+            ${tagsHtml ? `<div class="row mt-8" style="flex-wrap:wrap;">${tagsHtml}</div>` : ''}
+          </div>
+        `;
+      }).join('');
+    };
+
     function renderDeathSavesControls(heroId, dsObj) {
       const ds = { success: 0, failure: 0, ...(dsObj || {}) };
       const succPips = [0, 1, 2].map((i) =>
@@ -5897,7 +6104,9 @@
             `;
           }).join('')
         : '<p class="muted">Сумка с зельями пуста. Нажмите «+ Зелье», чтобы добавить эликсир или свиток.</p>';
-    document.getElementById('heroInventoryInput').value = h.inventory || '';
+
+      renderHeroNotesList();
+      document.getElementById('heroInventoryInput').value = h.inventory || '';
     }
 
     window.renderHeroSheet = renderHeroSheet;
