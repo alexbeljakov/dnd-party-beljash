@@ -1659,8 +1659,8 @@
     }
     .dm-combat-tools {
       display: grid;
-      grid-template-columns: auto 1fr 1fr;
-      gap: 6px;
+      grid-template-columns: auto auto 1fr 1fr;
+      gap: 5px;
       margin-bottom: 10px;
     }
     .dm-drawer-panel {
@@ -2349,6 +2349,7 @@
 
           <div class="dm-combat-tools">
             <button class="btn btn-danger btn-xs dm-nowrap ctrl-sm" onclick="openAoeDamageModal()" title="Массовый урон по выбранным целям (AoE)">💥 AoE</button>
+            <button id="dmWoundsToggleBtn" class="btn btn-xs dm-nowrap ctrl-sm" style="padding:0 8px;" onclick="toggleShowEnemyWounds()" title="Показывать/скрывать степень ранения врагов у игроков в Летописи">🩸</button>
             <button id="dmBestiaryToggleBtn" class="btn btn-xs dm-nowrap ctrl-sm" style="justify-content:space-between;" onclick="toggleDmCombatDrawer('bestiary')">
               <span>🐉 Бестиарий</span>
               <span id="dmBestiaryArrow">▴</span>
@@ -7070,8 +7071,10 @@
         const hpMax = heroData ? (heroData.hpMax ?? 10) : (c.hpMax ?? 10);
         const isFallen = hpCur === 0;
         let woundTag = '';
-        if (!isHero && !isFallen && hpCur < hpMax) {
-          woundTag = hpCur <= hpMax * 0.4 ? ' <span style="color:#fca5a5; font-size:0.7rem;">(тяжело ранен)</span>' : ' <span style="color:#fcd34d; font-size:0.7rem;">(ранен)</span>';
+        if (state.dm.showEnemyWounds !== false && !isHero && !isFallen && hpCur < hpMax) {
+          woundTag = hpCur <= hpMax * 0.4
+            ? ' <span style="color:#fca5a5; font-size:0.7rem;">(тяжело ранен)</span>'
+            : ' <span style="color:#fcd34d; font-size:0.7rem;">(ранен)</span>';
         }
         const conds = (c.conditions || []).map((cond) =>
           `<span class="cond-pill" style="cursor:default;">${escapeHtml(cond)}</span>`
@@ -7382,6 +7385,12 @@
         const isOpen = !qDrawer.classList.toggle('hidden');
         if (qArrow) qArrow.textContent = isOpen ? '▴' : '▾';
       }
+    };
+    window.toggleShowEnemyWounds = async () => {
+      const next = state.dm.showEnemyWounds === false;
+      await saveDmPatch({ showEnemyWounds: next });
+      renderDmScreen();
+      renderPublicCombatBoard();
     };
 
     window.switchDmMainTab = (tab) => {
@@ -8706,6 +8715,17 @@
       }
 
       const heroes = Object.values(state.heroes);
+
+      const woundsBtn = document.getElementById('dmWoundsToggleBtn');
+      if (woundsBtn) {
+        const showWounds = state.dm.showEnemyWounds !== false;
+        woundsBtn.style.opacity = showWounds ? '1' : '0.45';
+        woundsBtn.style.borderColor = showWounds ? 'rgba(239, 68, 68, 0.45)' : 'rgba(255, 255, 255, 0.12)';
+        woundsBtn.style.background = showWounds ? 'rgba(185, 28, 28, 0.18)' : 'rgba(255, 255, 255, 0.04)';
+        woundsBtn.title = showWounds
+          ? 'Степень ранения врагов ВИДНА игрокам (нажмите, чтобы скрыть)'
+          : 'Степень ранения врагов СКРЫТА от игроков (нажмите, чтобы показать)';
+      }
 
       document.getElementById('dmCompactPartyStrip').innerHTML = heroes.length
         ? heroes.map((h) => `
