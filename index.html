@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
   <title>Гримуар Партии — D&D 5e</title>
-  <script type="text/javascript" src="https://gc.kis.v2.scr.kaspersky-labs.com/FD126C42-EBFA-4E12-B309-BB3FDD723AC1/main.js?attr=K4pgUb-UQI7A9vthccuQFAgzh-HI1XQT7mEjg7f_s8lpVQvDeT43JoBnb-qlnQFTya0Pvs_1f02dxvjTt_iKoi7pgdkXTG0n22GSuzWElhNfqhzUofGEJeWtFv6L4-1PPErU2zlN20QeEJrJnIvYio1i6eyLoRP3Vw_B7HDKXiCrDtuaYTSuJHMPrYj6SSFBUYgIAhZJi_T7SdyFxzGG209rGCrYF1becfi_jhCPVRlhGvIgRJdgdX_KN5X8LscW4B4ybKnsIuuUBeIMc5w-kKhrGemJzUa3WI69qwlyZGI" charset="UTF-8"></script><link rel="stylesheet" crossorigin="anonymous" href="https://gc.kis.v2.scr.kaspersky-labs.com/E3E8934C-235A-4B0E-825A-35A08381A191/abn/main.css?attr=aHR0cHM6Ly9jb250cmlidXRpb24udXNlcmNvbnRlbnQuZ29vZ2xlLmNvbS9kb3dubG9hZD9jPUNneGlZWEprWDNOMGIzSmhaMlVTUVJJTGNIVmliR2xqWDJSaGRHRWFNZ293TmpZeVpUUTBOREZqWWpZelkySmxaakF3TURZMk1HVXhNMk5sT0dZeU5qRXdPVE13TmpSaVlqVm1NVGN3T0dZMiZmaWxlbmFtZT1pbmRleC5odG1sJm9waT0xMDMxMzUwNTA"/><script src="./spells.js"></script>
+  <script src="./spells.js"></script>
 
   <!-- iOS PWA Meta -->
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -2222,12 +2222,12 @@
         </div>
 
         <div class="card">
-          <div class="card-header">
-            <span class="card-title">Бой • Раунд <span id="roundCounter">1</span></span>
-            <div class="row" style="gap:4px;">
-              <button class="btn btn-danger btn-xs" onclick="openAoeDamageModal()" title="Массовый урон по выбранным целям (AoE)">💥 AoE</button>
-              <button class="btn btn-xs" onclick="resetCombatTurnToTop()" title="Поставить ход на самого быстрого">1-й</button>
-              <button class="btn btn-primary btn-sm" onclick="nextTurn()">Ход ➔</button>
+          <div class="card-header" style="flex-wrap:wrap; gap:6px;">
+            <span class="card-title" style="white-space:nowrap;">Бой • Раунд <span id="roundCounter">1</span></span>
+            <div class="row" style="gap:4px; flex-wrap:wrap;">
+              <button class="btn btn-danger btn-xs" style="white-space:nowrap;" onclick="openAoeDamageModal()" title="Массовый урон по выбранным целям (AoE)">💥 AoE</button>
+              <button class="btn btn-xs" style="white-space:nowrap;" onclick="resetCombatTurnToTop()" title="Поставить ход на самого быстрого">1-й раунд</button>
+              <button class="btn btn-primary btn-xs" style="white-space:nowrap; padding:4px 9px;" onclick="nextTurn()">Ход ➔</button>
             </div>
           </div>
 
@@ -2299,11 +2299,11 @@
         </div>
 
         <div class="card">
-          <div class="card-header">
-            <span class="card-title">Герои и Вдохновение</span>
+          <div class="card-header" style="flex-wrap:wrap; gap:6px;">
+            <span class="card-title" style="white-space:nowrap;">Герои и XP</span>
             <div class="row" style="gap:5px;">
-              <button class="btn btn-xs" onclick="openXpConfigModal()">📊 Шкала</button>
-              <button class="btn btn-primary btn-xs" onclick="openAwardXpModal()">✨ Выдать XP</button>
+              <button class="btn btn-xs" style="white-space:nowrap;" onclick="openXpConfigModal()">📊 Шкала XP</button>
+              <button class="btn btn-primary btn-xs" style="white-space:nowrap;" onclick="openAwardXpModal()">✨ Выдать XP</button>
             </div>
           </div>
           <div id="dmPartyOverview"></div>
@@ -2336,14 +2336,14 @@
             </div>
           </div>
 
-          <div class="row" style="justify-content:space-between; margin-top:10px;">
-            <div>
+          <div class="row" style="justify-content:space-between; gap:8px; margin-top:10px;">
+            <div style="min-width:0; flex:1;">
               <strong style="font-size:0.85rem;">Макс. значение характеристик</strong>
               <div class="muted" style="font-size:0.7rem;">Лимит до модификатора (базово 20)</div>
             </div>
-            <div class="row">
-              <input type="number" id="dmMaxStatInput" value="20" min="10" max="40" style="width:66px; text-align:center;" />
-              <button class="btn btn-sm" onclick="saveMaxStatSetting('dm')">Ок</button>
+            <div class="row" style="gap:5px; flex-shrink:0;">
+              <input type="number" id="dmMaxStatInput" value="20" min="10" max="40" style="width:54px; height:28px; padding:2px 6px; font-size:0.78rem; font-weight:700; border-radius:7px; text-align:center;" />
+              <button class="btn btn-xs" style="height:28px; padding:0 10px; white-space:nowrap;" onclick="saveMaxStatSetting('dm')">Ок</button>
             </div>
           </div>
         </div>
@@ -4124,18 +4124,27 @@
       );
     };
 
+    function showLocalFallbackNotice(reasonText) {
+      let toast = document.getElementById('localFallbackToast');
+      if (!toast) {
+        toast = document.createElement('div');
+        toast.id = 'localFallbackToast';
+        toast.style.cssText = 'position:fixed; left:14px; right:14px; top:calc(env(safe-area-inset-top, 10px) + 52px); z-index:200; background:rgba(245,158,11,0.16); border:1px solid rgba(245,158,11,0.55); color:#fde68a; border-radius:10px; padding:8px 10px; font-size:0.76rem; backdrop-filter:blur(8px); display:flex; align-items:center; justify-content:space-between; gap:8px;';
+        document.body.appendChild(toast);
+      }
+      toast.innerHTML = `<span>⚠️ <strong>Локально:</strong> ${escapeHtml(reasonText)}</span><button type="button" class="btn btn-xs" style="padding:2px 6px;" onclick="showConnectionDiagnostics()">Детали</button>`;
+    }
+
     window.addEventListener('error', (ev) => {
       const msg = ev?.message || ev?.error?.message || 'Ошибка скрипта / загрузки ресурса';
-      if (!isOnline) {
-        updateSyncUi(false, 'Локально', `Ошибка: ${msg}`);
-      }
+      updateSyncUi(false, 'Локально', `Ошибка: ${msg}`);
+      showLocalFallbackNotice(msg);
     });
 
     window.addEventListener('unhandledrejection', (ev) => {
       const reason = ev?.reason?.code || ev?.reason?.message || String(ev?.reason || 'Promise error');
-      if (!isOnline) {
-        updateSyncUi(false, 'Локально', `Сбой запроса: ${reason}`);
-      }
+      updateSyncUi(false, 'Локально', `Сбой запроса: ${reason}`);
+      showLocalFallbackNotice(reason);
     });
 
     renderBestiaryDropdown();
@@ -7245,6 +7254,20 @@
     }
 
     // ================= DM SCREEN: 4 TABS, LOOT/TAVERN GEN, CUSTOM BESTIARY & COMBAT =================
+    window.toggleDmSpawnDrawer = (which) => {
+      const bEl = document.getElementById('dmBestiaryDrawer');
+      const qEl = document.getElementById('dmQuickEnemyDrawer');
+      const bArr = document.getElementById('bestiaryDrawerArrow');
+      const qArr = document.getElementById('quickEnemyDrawerArrow');
+      if (which === 'bestiary') {
+        const opened = !bEl.classList.toggle('hidden');
+        if (bArr) bArr.textContent = opened ? '▴' : '▾';
+      } else {
+        const opened = !qEl.classList.toggle('hidden');
+        if (qArr) qArr.textContent = opened ? '▴' : '▾';
+      }
+    };
+
     window.switchDmMainTab = (tab) => {
       const map = {
         combat: ['dmMainCombatBtn', 'dmMainCombatPanel'],
@@ -8569,12 +8592,14 @@
       const heroes = Object.values(state.heroes);
 
       document.getElementById('dmCompactPartyStrip').innerHTML = heroes.length
-        ? `<div class="row" style="flex-wrap:wrap; gap:6px;">` + heroes.map((h) => `
-            <div style="background:var(--bg-card-alt); border:1px solid rgba(212,175,55,0.2); border-radius:8px; padding:5px 8px; font-size:0.78rem;">
-              <strong style="color:var(--gold);">${escapeHtml(h.name)}</strong> • ❤️${h.hpCur}/${h.hpMax}${h.tempHp ? `(+${h.tempHp})` : ''} • 🛡️${h.ac}
+        ? heroes.map((h) => `
+            <div class="dm-party-pill">
+              <strong style="color:var(--gold);">${escapeHtml(h.name)}</strong>
+              <span>❤️ ${h.hpCur}/${h.hpMax}${h.tempHp ? `<span style="color:#7dd3fc;">+${h.tempHp}</span>` : ''}</span>
+              <span class="muted">• 🛡️${h.ac}</span>
             </div>
-          `).join('') + `</div>`
-        : '<p class="muted">Игроки ещё не создали персонажей.</p>';
+          `).join('')
+        : '<p class="muted">Персонажей пока нет.</p>';
 
       renderDmPassiveRadar();
 
