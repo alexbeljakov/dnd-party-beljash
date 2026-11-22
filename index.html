@@ -7391,6 +7391,26 @@
       await saveDmPatch({ showEnemyWounds: next });
       renderDmScreen();
       renderPublicCombatBoard();
+
+      let hint = document.getElementById('dmWoundsToast');
+      if (!hint) {
+        hint = document.createElement('div');
+        hint.id = 'dmWoundsToast';
+        hint.style.cssText = 'font-size:0.74rem; padding:6px 9px; border-radius:8px; margin-bottom:8px; text-align:center; font-weight:600; transition:opacity 0.25s ease;';
+        const listEl = document.getElementById('initiativeList');
+        if (listEl) listEl.parentNode.insertBefore(hint, listEl);
+      }
+      hint.style.background = next ? 'rgba(185, 28, 28, 0.18)' : 'rgba(255, 255, 255, 0.06)';
+      hint.style.border = next ? '1px solid rgba(239, 68, 68, 0.45)' : '1px solid rgba(255, 255, 255, 0.14)';
+      hint.style.color = next ? '#fca5a5' : 'var(--text-muted)';
+      hint.textContent = next
+        ? '🩸 Игроки ВИДЯТ статус «(ранен)» / «(тяжело ранен)»'
+        : '🙈 Статус ранения врагов СКРЫТ от игроков';
+      hint.style.opacity = '1';
+      clearTimeout(window._woundsToastTimer);
+      window._woundsToastTimer = setTimeout(() => {
+        if (hint) hint.style.opacity = '0';
+      }, 2600);
     };
 
     window.switchDmMainTab = (tab) => {
@@ -8722,11 +8742,9 @@
         woundsBtn.style.opacity = showWounds ? '1' : '0.45';
         woundsBtn.style.borderColor = showWounds ? 'rgba(239, 68, 68, 0.45)' : 'rgba(255, 255, 255, 0.12)';
         woundsBtn.style.background = showWounds ? 'rgba(185, 28, 28, 0.18)' : 'rgba(255, 255, 255, 0.04)';
-        woundsBtn.title = showWounds
-          ? 'Степень ранения врагов ВИДНА игрокам (нажмите, чтобы скрыть)'
-          : 'Степень ранения врагов СКРЫТА от игроков (нажмите, чтобы показать)';
+        woundsBtn.style.textDecoration = showWounds ? 'none' : 'line-through';
       }
-
+ 
       document.getElementById('dmCompactPartyStrip').innerHTML = heroes.length
         ? heroes.map((h) => `
             <div class="dm-party-chip">
