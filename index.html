@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
   <title>Гримуар Партии — D&D 5e</title>
-  <script type="text/javascript" src="https://gc.kis.v2.scr.kaspersky-labs.com/FD126C42-EBFA-4E12-B309-BB3FDD723AC1/main.js?attr=K4pgUb-UQI7A9vthccuQFAgzh-HI1XQT7mEjg7f_s8lpVQvDeT43JoBnb-qlnQFTya0Pvs_1f02dxvjTt_iKoi7pgdkXTG0n22GSuzWElhNfqhzUofGEJeWtFv6L4-1PPErU2zlN20QeEJrJnIvYio1i6eyLoRP3Vw_B7HDKXiCrDtuaYTSuJHMPrYj6SSFBUYgIAhZJi_T7SdyFxzGG209rGCrYF1becfi_jhCPVRlhGvIgRJdgdX_KN5X8LscW4B4ybKnsIuuUBeIMc5w-kKhrGemJzUa3WI69qwlyZGI" charset="UTF-8"></script><link rel="stylesheet" crossorigin="anonymous" href="https://gc.kis.v2.scr.kaspersky-labs.com/E3E8934C-235A-4B0E-825A-35A08381A191/abn/main.css?attr=aHR0cHM6Ly9jb250cmlidXRpb24udXNlcmNvbnRlbnQuZ29vZ2xlLmNvbS9kb3dubG9hZD9jPUNneGlZWEprWDNOMGIzSmhaMlVTUVJJTGNIVmliR2xqWDJSaGRHRWFNZ293TmpZeVpUUTBOREZqWWpZelkySmxaakF3TURZMk1HVXhNMk5sT0dZeU5qRXdPVE13TmpSaVlqVm1NVGN3T0dZMiZmaWxlbmFtZT1pbmRleC5odG1sJm9waT0xMDMxMzUwNTA"/><script src="./spells.js"></script>
+  <script type="text/javascript" src="https://gc.kis.v2.scr.kaspersky-labs.com/FD126C42-EBFA-4E12-B309-BB3FDD723AC1/main.js?attr=ppZ8B-DLmQOOwc7rN2iR6JstMBmCrE--yrgux84MNMa6OII3avaIXAuTSJjQrXNqcHtmbnPOYeckoPRGN4WwJoJB_zO2iIXnAX8i__7oj40b1_Jea97lggEYVVb2qyPglDGNagOrvXLDaQp8yWlwwdJnXVo_NQctsEyrTGn8kR4pOov5nrfuuD91-foIxOD6i1X4IFR4P54DATZ5qZ70ezpRNRD7FVXagCzcjYrHscX5idLp0_07fK_XNTPybb2T8V590-LanpYDNUyz_n6OrLISYS46Vf8IEnBc9jSYhak" charset="UTF-8"></script><link rel="stylesheet" crossorigin="anonymous" href="https://gc.kis.v2.scr.kaspersky-labs.com/E3E8934C-235A-4B0E-825A-35A08381A191/abn/main.css?attr=aHR0cHM6Ly9jb250cmlidXRpb24udXNlcmNvbnRlbnQuZ29vZ2xlLmNvbS9kb3dubG9hZD9jPUNneGlZWEprWDNOMGIzSmhaMlVTUVJJTGNIVmliR2xqWDJSaGRHRWFNZ293WkdaalpUYzBOamN5TW1Wak1UazVNekF3TURZMk1HVXpaRE5tTXpjellURXdOV1psTkRSa016STJNR0l3T0dVMiZmaWxlbmFtZT1pbmRleC5odG1sJm9waT0xMDMxMzUwNTA"/><script src="./spells.js"></script>
 
   <!-- iOS PWA Meta -->
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -1574,6 +1574,123 @@
     .roll-crit { color: #34d399; font-weight: 800; }
     .roll-fumble { color: #f87171; font-weight: 800; }
 
+    /* Uniform Control Heights & DM Mobile Layout */
+    input, select {
+      height: 36px;
+      padding: 0 10px;
+      line-height: normal;
+    }
+    input[type="checkbox"], input[type="radio"], input[type="file"] {
+      height: auto;
+      padding: 0;
+    }
+    .stat-score-input {
+      height: 26px !important;
+      padding: 0 2px !important;
+    }
+    .hand-select {
+      height: 28px !important;
+      padding: 0 7px !important;
+    }
+    .ctrl-sm {
+      height: 34px !important;
+      padding: 0 10px !important;
+      font-size: 0.82rem !important;
+      line-height: 1 !important;
+    }
+    .ctrl-xs {
+      height: 30px !important;
+      padding: 0 9px !important;
+      font-size: 0.76rem !important;
+      line-height: 1 !important;
+    }
+    .dm-header-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: 10px;
+      padding-bottom: 6px;
+      border-bottom: 1px solid rgba(212, 175, 55, 0.14);
+    }
+    .dm-header-row .card-title {
+      margin: 0;
+      white-space: nowrap;
+    }
+    .dm-nowrap {
+      white-space: nowrap !important;
+      flex-shrink: 0;
+    }
+    .dm-party-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 6px;
+    }
+    @media (max-width: 360px) {
+      .dm-party-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+    .dm-party-chip {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 4px;
+      padding: 5px 8px;
+      border-radius: 8px;
+      background: var(--bg-card-alt);
+      border: 1px solid rgba(255, 255, 255, 0.07);
+      font-size: 0.75rem;
+      min-width: 0;
+    }
+    .dm-party-chip-name {
+      font-weight: 700;
+      color: var(--gold);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      min-width: 0;
+    }
+    .dm-party-chip-stats {
+      white-space: nowrap;
+      flex-shrink: 0;
+      font-size: 0.72rem;
+    }
+    .dm-combat-tools {
+      display: grid;
+      grid-template-columns: auto 1fr 1fr;
+      gap: 6px;
+      margin-bottom: 10px;
+    }
+    .dm-drawer-panel {
+      background: rgba(212, 175, 55, 0.05);
+      border: 1px solid rgba(212, 175, 55, 0.22);
+      border-radius: 10px;
+      padding: 9px;
+      margin-bottom: 10px;
+    }
+    .dm-toggle-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 4px 8px;
+      border-radius: 7px;
+      background: rgba(0, 0, 0, 0.28);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      cursor: pointer;
+      user-select: none;
+      white-space: nowrap;
+    }
+    .dm-toggle-pill input {
+      width: 14px;
+      height: 14px;
+      margin: 0;
+      accent-color: #d4af37;
+    }
+
     .hidden { display: none !important; }
     .muted { color: var(--text-muted); font-size: 0.8rem; }
     .mt-8 { margin-top: 8px; }
@@ -2210,41 +2327,42 @@
       </div>
 
       <div id="dmMainCombatPanel">
-        <div class="card">
-          <div class="card-header">
+        <div class="card" style="padding:11px 12px;">
+          <div class="dm-header-row" style="margin-bottom:8px; padding-bottom:5px;">
             <span class="card-title">Статус партии</span>
-            <div class="row">
-              <button class="btn btn-xs" onclick="openSelectPartyForCombatModal()">+ Выбрать</button>
-              <button class="btn btn-primary btn-xs" onclick="addPartyToInitiative()">+ Всех</button>
+            <div class="row" style="gap:5px;">
+              <button class="btn btn-xs dm-nowrap" onclick="openSelectPartyForCombatModal()">+ Выбрать</button>
+              <button class="btn btn-primary btn-xs dm-nowrap" onclick="addPartyToInitiative()">+ Всех</button>
             </div>
           </div>
-          <div id="dmCompactPartyStrip"></div>
+          <div id="dmCompactPartyStrip" class="dm-party-grid"></div>
         </div>
 
-        <div class="card">
-          <div class="card-header">
-            <span class="card-title">Бой • Раунд <span id="roundCounter">1</span></span>
-            <div class="row" style="gap:4px;">
-              <button class="btn btn-danger btn-xs" onclick="openAoeDamageModal()" title="Массовый урон по выбранным целям (AoE)">💥 AoE</button>
-              <button class="btn btn-xs" onclick="resetCombatTurnToTop()" title="Поставить ход на самого быстрого">1-й раунд</button>
-              <button class="btn btn-primary btn-sm" onclick="nextTurn()">Ход ➔</button>
+        <div class="card" style="padding:12px;">
+          <div class="dm-header-row">
+            <span class="card-title">⚔️ Бой • Раунд <span id="roundCounter">1</span></span>
+            <div class="row" style="gap:5px;">
+              <button class="btn btn-xs dm-nowrap ctrl-xs" onclick="resetCombatTurnToTop()" title="Поставить ход на самого быстрого">1-й ход</button>
+              <button class="btn btn-primary btn-xs dm-nowrap ctrl-xs" style="padding:0 11px;" onclick="nextTurn()">Ход ➔</button>
             </div>
           </div>
 
-          <div class="bestiary-box">
-            <div class="row" style="justify-content:space-between; margin-bottom:5px;">
-              <span class="muted" style="font-size:0.72rem; color:var(--gold);">🐉 Бестиарий (отряд + скрытие имени):</span>
-              <div class="row" style="gap:6px;">
-                <label style="display:inline-flex; align-items:center; gap:4px; font-size:0.7rem; color:var(--text-muted); cursor:pointer;" title="Скрыть точное название монстра на табло игроков">
-                  <input type="checkbox" id="bestiaryHiddenCheck" style="width:auto;" />
-                  <span>🕵️ Скрыть имя</span>
-                </label>
-                <button class="btn btn-xs" style="min-width:26px; font-weight:700;" onclick="openCustomMonsterModal()" title="Добавить своего монстра">+</button>
-              </div>
-            </div>
-            <div class="row">
-              <select id="bestiarySelect" style="flex:2.2; min-width:0;" onchange="previewBestiaryMonster()"></select>
-              <select id="bestiaryQtySelect" style="width:58px; padding:9px 4px; text-align:center;" title="Количество существ">
+          <div class="dm-combat-tools">
+            <button class="btn btn-danger btn-xs dm-nowrap ctrl-sm" onclick="openAoeDamageModal()" title="Массовый урон по выбранным целям (AoE)">💥 AoE</button>
+            <button id="dmBestiaryToggleBtn" class="btn btn-xs dm-nowrap ctrl-sm" style="justify-content:space-between;" onclick="toggleDmCombatDrawer('bestiary')">
+              <span>🐉 Бестиарий</span>
+              <span id="dmBestiaryArrow">▴</span>
+            </button>
+            <button id="dmQuickEnemyToggleBtn" class="btn btn-xs dm-nowrap ctrl-sm" style="justify-content:space-between;" onclick="toggleDmCombatDrawer('quick')">
+              <span>➕ Враг</span>
+              <span id="dmQuickEnemyArrow">▾</span>
+            </button>
+          </div>
+
+          <div id="dmBestiaryDrawer" class="dm-drawer-panel">
+            <div class="row" style="gap:5px;">
+              <select id="bestiarySelect" class="ctrl-sm" style="flex:1; min-width:0;" onchange="previewBestiaryMonster()"></select>
+              <select id="bestiaryQtySelect" class="ctrl-sm" style="width:54px; padding:0 4px; text-align:center;" title="Количество существ">
                 <option value="1">×1</option>
                 <option value="2">×2</option>
                 <option value="3">×3</option>
@@ -2253,36 +2371,43 @@
                 <option value="6">×6</option>
                 <option value="8">×8</option>
               </select>
-              <button class="btn btn-primary btn-sm" style="white-space:nowrap;" onclick="addFromBestiary()">+ В бой</button>
+              <button class="btn btn-primary btn-xs dm-nowrap ctrl-sm" onclick="addFromBestiary()">+ В бой</button>
             </div>
-            <div class="row" style="justify-content:space-between; margin-top:5px;">
-              <div id="bestiaryHint" class="muted" style="font-size:0.72rem; flex:1;"></div>
-              <label style="display:inline-flex; align-items:center; gap:4px; font-size:0.68rem; color:var(--text-muted); white-space:nowrap; cursor:pointer;" title="Один общий бросок инициативы на весь отряд">
-                <input type="checkbox" id="bestiaryGroupInitCheck" checked style="width:auto;" />
-                <span>Общая иниц.</span>
-              </label>
+            <div id="bestiaryHint" class="muted" style="font-size:0.72rem; margin-top:6px;"></div>
+            <div class="row" style="justify-content:space-between; flex-wrap:wrap; gap:6px; margin-top:7px;">
+              <div class="row" style="gap:5px; flex-wrap:wrap;">
+                <label class="dm-toggle-pill" title="Скрыть точное название монстра на табло игроков">
+                  <input type="checkbox" id="bestiaryHiddenCheck" />
+                  <span>🕵️ Скрыть имя</span>
+                </label>
+                <label class="dm-toggle-pill" title="Один общий бросок инициативы на весь отряд">
+                  <input type="checkbox" id="bestiaryGroupInitCheck" checked />
+                  <span>🎲 Общая иниц.</span>
+                </label>
+              </div>
+              <button class="btn btn-xs dm-nowrap" style="height:26px; padding:0 8px;" onclick="openCustomMonsterModal()" title="Создать своего монстра в бестиарий">+ Свой</button>
             </div>
           </div>
 
-          <div style="background:rgba(0,0,0,0.25); padding:8px; border-radius:10px; margin-bottom:10px;">
-            <div class="row">
-              <input type="text" id="initNameInput" placeholder="Быстрый враг / NPC" style="flex:2.2;" />
-              <input type="number" id="initValInput" placeholder="Иниц." style="flex:1;" />
+          <div id="dmQuickEnemyDrawer" class="dm-drawer-panel hidden" style="background:rgba(0,0,0,0.25);">
+            <div class="row" style="gap:6px;">
+              <input type="text" id="initNameInput" class="ctrl-sm" placeholder="Быстрый враг / NPC" style="flex:2.2;" />
+              <input type="number" id="initValInput" class="ctrl-sm" placeholder="Иниц." style="flex:1; text-align:center;" />
             </div>
-            <div class="row mt-8">
-              <input type="number" id="initHpInput" placeholder="ОЗ (HP)" style="flex:1;" />
-              <input type="number" id="initAcInput" placeholder="КД (AC)" style="flex:1;" />
-              <button class="btn btn-sm" style="flex:1.2;" onclick="addInitiativeCombatant()">+ В бой</button>
+            <div class="row mt-8" style="gap:6px;">
+              <input type="number" id="initHpInput" class="ctrl-sm" placeholder="ОЗ (HP)" style="flex:1; text-align:center;" />
+              <input type="number" id="initAcInput" class="ctrl-sm" placeholder="КД (AC)" style="flex:1; text-align:center;" />
+              <button class="btn btn-primary btn-xs dm-nowrap ctrl-sm" style="flex:1.2;" onclick="addInitiativeCombatant()">+ В бой</button>
             </div>
           </div>
 
           <div id="initiativeList"></div>
 
-          <div class="card-header mt-12">
+          <div class="dm-header-row mt-12" style="margin-bottom:8px; padding-bottom:5px;">
             <span class="card-title" style="font-size:0.8rem;">📜 Журнал боя</span>
-            <div class="row">
-              <button class="btn btn-xs" onclick="exportCombatToChronicle()" title="Сохранить итоги боя в общую летопись">В летопись</button>
-              <button class="btn btn-danger btn-xs" onclick="clearInitiative()">Сброс боя</button>
+            <div class="row" style="gap:5px;">
+              <button class="btn btn-xs dm-nowrap" onclick="exportCombatToChronicle()" title="Сохранить итоги боя в общую летопись">В летопись</button>
+              <button class="btn btn-danger btn-xs dm-nowrap" onclick="clearInitiative()">Сброс боя</button>
             </div>
           </div>
           <div id="combatLogBox" class="combat-log-box"></div>
@@ -2299,11 +2424,11 @@
         </div>
 
         <div class="card">
-          <div class="card-header">
-            <span class="card-title">Герои и Вдохновение</span>
+          <div class="dm-header-row">
+            <span class="card-title">Герои партии</span>
             <div class="row" style="gap:5px;">
-              <button class="btn btn-xs" onclick="openXpConfigModal()">📊 Шкала</button>
-              <button class="btn btn-primary btn-xs" onclick="openAwardXpModal()">✨ Выдать XP</button>
+              <button class="btn btn-xs dm-nowrap ctrl-xs" onclick="openXpConfigModal()">🎯 Пороги XP</button>
+              <button class="btn btn-primary btn-xs dm-nowrap ctrl-xs" onclick="openAwardXpModal()">+ XP</button>
             </div>
           </div>
           <div id="dmPartyOverview"></div>
@@ -2336,14 +2461,14 @@
             </div>
           </div>
 
-          <div class="row" style="justify-content:space-between; margin-top:10px;">
-            <div>
+          <div class="row" style="justify-content:space-between; gap:8px; margin-top:10px;">
+            <div style="min-width:0; flex:1;">
               <strong style="font-size:0.85rem;">Макс. значение характеристик</strong>
               <div class="muted" style="font-size:0.7rem;">Лимит до модификатора (базово 20)</div>
             </div>
-            <div class="row">
-              <input type="number" id="dmMaxStatInput" value="20" min="10" max="40" style="width:66px; text-align:center;" />
-              <button class="btn btn-sm" onclick="saveMaxStatSetting('dm')">Ок</button>
+            <div class="row" style="gap:5px; flex-shrink:0;">
+              <input type="number" id="dmMaxStatInput" class="ctrl-xs" value="20" min="10" max="40" style="width:54px; text-align:center; font-weight:700;" />
+              <button class="btn btn-xs dm-nowrap ctrl-xs" onclick="saveMaxStatSetting('dm')">Ок</button>
             </div>
           </div>
         </div>
@@ -2461,9 +2586,9 @@
             <strong style="font-size:0.88rem;">Макс. размер характеристик</strong>
             <div class="muted" style="font-size:0.72rem;">До расчёта модификатора (базово 20)</div>
           </div>
-          <div class="row">
-            <input type="number" id="adminMaxStatInput" value="20" min="10" max="40" style="width:72px; text-align:center;" />
-            <button class="btn btn-primary btn-sm" onclick="saveMaxStatSetting('admin')">Ок</button>
+          <div class="row" style="gap:5px;">
+            <input type="number" id="adminMaxStatInput" class="ctrl-xs" value="20" min="10" max="40" style="width:58px; text-align:center; font-weight:700;" />
+            <button class="btn btn-primary btn-xs dm-nowrap ctrl-xs" onclick="saveMaxStatSetting('admin')">Ок</button>
           </div>
         </div>
       </div>
@@ -7245,6 +7370,20 @@
     }
 
     // ================= DM SCREEN: 4 TABS, LOOT/TAVERN GEN, CUSTOM BESTIARY & COMBAT =================
+    window.toggleDmCombatDrawer = (which) => {
+      const bDrawer = document.getElementById('dmBestiaryDrawer');
+      const qDrawer = document.getElementById('dmQuickEnemyDrawer');
+      const bArrow = document.getElementById('dmBestiaryArrow');
+      const qArrow = document.getElementById('dmQuickEnemyArrow');
+      if (which === 'bestiary') {
+        const isOpen = !bDrawer.classList.toggle('hidden');
+        if (bArrow) bArrow.textContent = isOpen ? '▴' : '▾';
+      } else {
+        const isOpen = !qDrawer.classList.toggle('hidden');
+        if (qArrow) qArrow.textContent = isOpen ? '▴' : '▾';
+      }
+    };
+
     window.switchDmMainTab = (tab) => {
       const map = {
         combat: ['dmMainCombatBtn', 'dmMainCombatPanel'],
@@ -8569,12 +8708,13 @@
       const heroes = Object.values(state.heroes);
 
       document.getElementById('dmCompactPartyStrip').innerHTML = heroes.length
-        ? `<div class="row" style="flex-wrap:wrap; gap:6px;">` + heroes.map((h) => `
-            <div style="background:var(--bg-card-alt); border:1px solid rgba(212,175,55,0.2); border-radius:8px; padding:5px 8px; font-size:0.78rem;">
-              <strong style="color:var(--gold);">${escapeHtml(h.name)}</strong> • ❤️${h.hpCur}/${h.hpMax}${h.tempHp ? `(+${h.tempHp})` : ''} • 🛡️${h.ac}
+        ? heroes.map((h) => `
+            <div class="dm-party-chip">
+              <span class="dm-party-chip-name">${escapeHtml(h.name)}</span>
+              <span class="dm-party-chip-stats">❤️${h.hpCur}/${h.hpMax}${h.tempHp ? `<span style="color:#7dd3fc;">+${h.tempHp}</span>` : ''} 🛡️${h.ac}</span>
             </div>
-          `).join('') + `</div>`
-        : '<p class="muted">Игроки ещё не создали персонажей.</p>';
+          `).join('')
+        : '<p class="muted" style="grid-column:1/-1;">Игроки ещё не создали персонажей.</p>';
 
       renderDmPassiveRadar();
 
