@@ -7373,19 +7373,33 @@
     }
 
     // ================= DM SCREEN: 4 TABS, LOOT/TAVERN GEN, CUSTOM BESTIARY & COMBAT =================
-    window.toggleDmCombatDrawer = (which) => {
+    function setDmCombatDrawers(openWhich) {
       const bDrawer = document.getElementById('dmBestiaryDrawer');
       const qDrawer = document.getElementById('dmQuickEnemyDrawer');
       const bArrow = document.getElementById('dmBestiaryArrow');
       const qArrow = document.getElementById('dmQuickEnemyArrow');
+
+      const openBestiary = openWhich === 'bestiary';
+      const openQuick = openWhich === 'quick';
+
+      if (bDrawer) bDrawer.classList.toggle('hidden', !openBestiary);
+      if (qDrawer) qDrawer.classList.toggle('hidden', !openQuick);
+      if (bArrow) bArrow.textContent = openBestiary ? '▴' : '▾';
+      if (qArrow) qArrow.textContent = openQuick ? '▴' : '▾';
+    }
+
+    window.toggleDmCombatDrawer = (which) => {
+      const bDrawer = document.getElementById('dmBestiaryDrawer');
+      const qDrawer = document.getElementById('dmQuickEnemyDrawer');
       if (which === 'bestiary') {
-        const isOpen = !bDrawer.classList.toggle('hidden');
-        if (bArrow) bArrow.textContent = isOpen ? '▴' : '▾';
+        const currentlyOpen = bDrawer && !bDrawer.classList.contains('hidden');
+        setDmCombatDrawers(currentlyOpen ? null : 'bestiary');
       } else {
-        const isOpen = !qDrawer.classList.toggle('hidden');
-        if (qArrow) qArrow.textContent = isOpen ? '▴' : '▾';
+        const currentlyOpen = qDrawer && !qDrawer.classList.contains('hidden');
+        setDmCombatDrawers(currentlyOpen ? null : 'quick');
       }
     };
+
     window.toggleShowEnemyWounds = async () => {
       const next = state.dm.showEnemyWounds === false;
       await saveDmPatch({ showEnemyWounds: next });
@@ -7396,21 +7410,22 @@
       if (!hint) {
         hint = document.createElement('div');
         hint.id = 'dmWoundsToast';
-        hint.style.cssText = 'font-size:0.74rem; padding:6px 9px; border-radius:8px; margin-bottom:8px; text-align:center; font-weight:600; transition:opacity 0.25s ease;';
+        hint.style.cssText = 'font-size:0.74rem; padding:6px 9px; border-radius:8px; margin-bottom:8px; text-align:center; font-weight:600;';
         const listEl = document.getElementById('initiativeList');
         if (listEl) listEl.parentNode.insertBefore(hint, listEl);
       }
+      hint.classList.remove('hidden');
       hint.style.background = next ? 'rgba(185, 28, 28, 0.18)' : 'rgba(255, 255, 255, 0.06)';
       hint.style.border = next ? '1px solid rgba(239, 68, 68, 0.45)' : '1px solid rgba(255, 255, 255, 0.14)';
       hint.style.color = next ? '#fca5a5' : 'var(--text-muted)';
       hint.textContent = next
         ? '🩸 Игроки ВИДЯТ статус «(ранен)» / «(тяжело ранен)»'
         : '🙈 Статус ранения врагов СКРЫТ от игроков';
-      hint.style.opacity = '1';
+
       clearTimeout(window._woundsToastTimer);
       window._woundsToastTimer = setTimeout(() => {
-        if (hint) hint.style.opacity = '0';
-      }, 2600);
+        if (hint) hint.classList.add('hidden');
+      }, 2400);
     };
 
     window.switchDmMainTab = (tab) => {
@@ -8248,6 +8263,9 @@
         ? `[Р${round}] ▶ Ход: ${activeName} (💀 спасбросок от смерти)`
         : `[Р${round}] ▶ Ход: ${activeName}`;
       const combatLog = [line, ...(state.dm.combatLog || [])].slice(0, 60);
+            if (!state.dm.combatStarted) {
+        setDmCombatDrawers(null);
+      }
       saveDmPatch({ turnIndex: foundIdx, round, combatStarted: true, combatLog });
     };
 
@@ -8515,10 +8533,22 @@
       if (!h) return;
       const nextVal = !Boolean(h.inspiration);
       await saveHeroPatchById(heroId, { inspiration: nextVal });
-      const combatLog = appendCombatLog(
-        nextVal ? `★ Мастер даровал Героическое вдохновение: ${h.name}` : `☆ ${h.name} потратил Героическое вдохновение`
-      );
-      await saveDmPatch({ combatLog });
+
+      if (nextVal) {
+        const entry = {
+          text: `★ Мастер даровал Героическое вдохновение: ${h.name}`,
+          tags: ['вдохновение'],
+          author: 'Мастер',
+          ownerId: 'dm',
+          createdAt: Date.now()
+        };
+        if (isOnline) {
+          await addDoc(collection(db, 'chronicle'), entry);
+        } else {
+          state.chronicle.unshift({ id: 'chr_' + Date.now(), ...entry });
+          saveLocalState();
+        }
+      }
       renderDmScreen();
     };
 
