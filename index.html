@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
   <title>Гримуар Партии — D&D 5e</title>
-  <script type="text/javascript" src="https://gc.kis.v2.scr.kaspersky-labs.com/FD126C42-EBFA-4E12-B309-BB3FDD723AC1/main.js?attr=ppZ8B-DLmQOOwc7rN2iR6JstMBmCrE--yrgux84MNMa6OII3avaIXAuTSJjQrXNqcHtmbnPOYeckoPRGN4WwJoJB_zO2iIXnAX8i__7oj40b1_Jea97lggEYVVb2qyPglDGNagOrvXLDaQp8yWlwwdJnXVo_NQctsEyrTGn8kR4pOov5nrfuuD91-foIxOD6i1X4IFR4P54DATZ5qZ70ezpRNRD7FVXagCzcjYrHscX5idLp0_07fK_XNTPybb2T8V590-LanpYDNUyz_n6OrLISYS46Vf8IEnBc9jSYhak" charset="UTF-8"></script><link rel="stylesheet" crossorigin="anonymous" href="https://gc.kis.v2.scr.kaspersky-labs.com/E3E8934C-235A-4B0E-825A-35A08381A191/abn/main.css?attr=aHR0cHM6Ly9jb250cmlidXRpb24udXNlcmNvbnRlbnQuZ29vZ2xlLmNvbS9kb3dubG9hZD9jPUNneGlZWEprWDNOMGIzSmhaMlVTUVJJTGNIVmliR2xqWDJSaGRHRWFNZ293WkdaalpUYzBOamN5TW1Wak1UazVNekF3TURZMk1HVXpaRE5tTXpjellURXdOV1psTkRSa016STJNR0l3T0dVMiZmaWxlbmFtZT1pbmRleC5odG1sJm9waT0xMDMxMzUwNTA"/><script src="./spells.js"></script>
+  <script type="text/javascript" src="https://gc.kis.v2.scr.kaspersky-labs.com/FD126C42-EBFA-4E12-B309-BB3FDD723AC1/main.js?attr=5tb3LY14eGaMEPpSKhgx_P2p-gaMzpykm6kVDzkIrU4GMYqVr70txCxeD1SGRky4Y8wRmLh8QSd2aZ1sG1rZT7LazaM4jjwgCpKeKUSQDay0SD_ub0BrHIjZ3wuZcNNU3HWlYNqT5HLd03qtcU-yauE2OYqlfRYNAAvfkjW1919l5QkMvcTzaV7sCPl1wMNHqglfLI_brgyAft4rtpzY_MHcf29juCPN3ete42p-PWjUHyGpYUOBQgDAps_iVUcJcFXCSOj6YQkf6fzEPEvFHG9yPBIngoQVU4KGaP_FWZk" charset="UTF-8"></script><link rel="stylesheet" crossorigin="anonymous" href="https://gc.kis.v2.scr.kaspersky-labs.com/E3E8934C-235A-4B0E-825A-35A08381A191/abn/main.css?attr=aHR0cHM6Ly9jb250cmlidXRpb24udXNlcmNvbnRlbnQuZ29vZ2xlLmNvbS9kb3dubG9hZD9jPUNneGlZWEprWDNOMGIzSmhaMlVTUVJJTGNIVmliR2xqWDJSaGRHRWFNZ293TURsa05EZ3dNbVV3WVdSa1kyRTBOREF3TURZMk1HWTBOR0V4TVRnMk4yRXdPVE13Tm1KalpUTTVNekpsTWpBNCZmaWxlbmFtZT1pbmRleC5odG1sJm9waT0xMDMxMzUwNTA"/><script src="./spells.js"></script>
 
   <!-- iOS PWA Meta -->
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -1659,8 +1659,8 @@
     }
     .dm-combat-tools {
       display: grid;
-      grid-template-columns: auto auto 1fr 1fr;
-      gap: 5px;
+      grid-template-columns: auto 1fr 1fr;
+      gap: 6px;
       margin-bottom: 10px;
     }
     .dm-drawer-panel {
@@ -1689,6 +1689,54 @@
       height: 14px;
       margin: 0;
       accent-color: #d4af37;
+    }
+
+    details.dm-cheat-acc {
+      background: var(--bg-card-alt);
+      border: 1px solid rgba(212, 175, 55, 0.2);
+      border-radius: 10px;
+      margin-bottom: 8px;
+      overflow: hidden;
+    }
+    details.dm-cheat-acc > summary {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 9px 11px;
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--gold);
+      cursor: pointer;
+      list-style: none;
+      user-select: none;
+      background: rgba(0, 0, 0, 0.22);
+    }
+    details.dm-cheat-acc > summary::-webkit-details-marker {
+      display: none;
+    }
+    details.dm-cheat-acc > summary::after {
+      content: '▾';
+      font-size: 0.9rem;
+      color: var(--gold);
+      transition: transform 0.16s ease;
+    }
+    details.dm-cheat-acc:not([open]) > summary::after {
+      transform: rotate(-90deg);
+    }
+    .dm-cheat-body {
+      padding: 8px 10px 10px;
+      border-top: 1px solid rgba(255, 255, 255, 0.06);
+      font-size: 0.76rem;
+      line-height: 1.4;
+    }
+    .dm-cheat-mini-note {
+      margin-top: 6px;
+      padding: 6px 8px;
+      border-left: 2.5px solid var(--gold);
+      background: rgba(0, 0, 0, 0.28);
+      border-radius: 0 7px 7px 0;
+      font-size: 0.73rem;
+      color: var(--text-muted);
     }
 
     .hidden { display: none !important; }
@@ -2349,7 +2397,6 @@
 
           <div class="dm-combat-tools">
             <button class="btn btn-danger btn-xs dm-nowrap ctrl-sm" onclick="openAoeDamageModal()" title="Массовый урон по выбранным целям (AoE)">💥 AoE</button>
-            <button id="dmWoundsToggleBtn" class="btn btn-xs dm-nowrap ctrl-sm" style="padding:0 8px;" onclick="toggleShowEnemyWounds()" title="Показывать/скрывать степень ранения врагов у игроков в Летописи">🩸</button>
             <button id="dmBestiaryToggleBtn" class="btn btn-xs dm-nowrap ctrl-sm" style="justify-content:space-between;" onclick="toggleDmCombatDrawer('bestiary')">
               <span>🐉 Бестиарий</span>
               <span id="dmBestiaryArrow">▴</span>
@@ -2432,6 +2479,7 @@
               <button class="btn btn-primary btn-xs dm-nowrap ctrl-xs" onclick="openAwardXpModal()">+ XP</button>
             </div>
           </div>
+          <div id="dmInspFeedbackToast" class="hidden" style="font-size:0.74rem; padding:6px 9px; border-radius:8px; margin-bottom:8px; text-align:center; font-weight:600;"></div>
           <div id="dmPartyOverview"></div>
         </div>
 
@@ -2541,6 +2589,95 @@
           </div>
         </div>
       </div>
+
+        <div class="card">
+          <div class="dm-header-row">
+            <span class="card-title">🛡️ Ширма правил ДМ (5e)</span>
+            <span class="muted" style="font-size:0.7rem;">Быстрый справочник</span>
+          </div>
+
+          <details class="dm-cheat-acc" open>
+            <summary>🎯 Сложности проверок (СЛ) и Состояния</summary>
+            <div class="dm-cheat-body">
+              <table class="guide-table">
+                <thead>
+                  <tr><th>СЛ</th><th>Сложность</th><th>Пример</th></tr>
+                </thead>
+                <tbody>
+                  <tr><td><strong>5</strong></td><td>Очень лёгкая</td><td>Вскарабкаться по верёвочной лестнице</td></tr>
+                  <tr><td><strong>10</strong></td><td>Лёгкая</td><td>Заметить свежий след, удержать равновесие</td></tr>
+                  <tr><td><strong>15</strong></td><td>Средняя</td><td>Взломать ржавый замок, убедить стражника</td></tr>
+                  <tr><td><strong>20</strong></td><td>Сложная</td><td>Плыть против бурного течения, обезвредить капкан</td></tr>
+                  <tr><td><strong>25</strong></td><td>Очень сложная</td><td>Взобраться на отвесную мокрую скалу</td></tr>
+                  <tr><td><strong>30</strong></td><td>Почти невозможная</td><td>Выстрелить в белку с 500 футов в бурю</td></tr>
+                </tbody>
+              </table>
+              <div class="dm-cheat-mini-note">
+                <strong>Ключевые состояния:</strong> <strong>Сбит с ног</strong> — атаки по цели в 5 фт с <em>преим.</em>, дальние с <em>помехой</em>, встать = полдвижения. <strong>Ослеплён / Невидим</strong> — атаки цели с <em>помехой</em>, по цели с <em>преим.</em> <strong>Опутан</strong> — скорость 0, атаки цели с <em>помехой</em>, по цели с <em>преим.</em>, спас Лов с <em>помехой</em>. <strong>Парализован / Оглушён</strong> — недееспособен, провал спас Сил/Лов, атаки с <em>преим.</em> (в 5 фт от парализованного крит!).
+              </div>
+            </div>
+          </details>
+
+          <details class="dm-cheat-acc">
+            <summary>🛡️ Укрытия, Обзор и Освещение</summary>
+            <div class="dm-cheat-body">
+              <table class="guide-table">
+                <thead>
+                  <tr><th>Укрытие</th><th>Эффект</th><th>Пример</th></tr>
+                </thead>
+                <tbody>
+                  <tr><td><strong>Полуукрытие (½)</strong></td><td><strong>+2 КД</strong> и <strong>+2</strong> к спасброскам Ловкости</td><td>Низкая стена, ствол дерева, союзник</td></tr>
+                  <tr><td><strong>Три четверти (¾)</strong></td><td><strong>+5 КД</strong> и <strong>+5</strong> к спасброскам Ловкости</td><td>Бойница, решётка, толстый столб</td></tr>
+                  <tr><td><strong>Полное</strong></td><td>Нельзя выбрать целью напрямую (кроме AoE за угол)</td><td>Сплошная стена, закрытая дверь</td></tr>
+                </tbody>
+              </table>
+              <div class="dm-cheat-mini-note">
+                <strong>Свет и обзор:</strong> <strong>Тусклый свет</strong> (сумерки, факел в 20–40 фт) = <em>помеха</em> на Внимательность по зрению. <strong>Темнота</strong> = ослепление (без тёмного зрения/света). <strong>Тёмное зрение</strong> видит темноту как тусклый свет (в ч/б), но в полной темноте всё равно <em>помеха</em> на пассивное/активное Внимание.
+              </div>
+            </div>
+          </details>
+
+          <details class="dm-cheat-acc">
+            <summary>⚠️ Падение, Ловушки и Концентрация</summary>
+            <div class="dm-cheat-body">
+              <table class="guide-table">
+                <thead>
+                  <tr><th>Угроза / Ур.</th><th>Опасный</th><th>Смертельный</th></tr>
+                </thead>
+                <tbody>
+                  <tr><td><strong>1–4 ур.</strong></td><td>1d10</td><td>2d10</td></tr>
+                  <tr><td><strong>5–10 ур.</strong></td><td>2d10</td><td>4d10</td></tr>
+                  <tr><td><strong>11–16 ур.</strong></td><td>4d10</td><td>10d10</td></tr>
+                  <tr><td><strong>17–20 ур.</strong></td><td>10d10</td><td>20d10</td></tr>
+                </tbody>
+              </table>
+              <div class="dm-cheat-mini-note">
+                <strong>Падение:</strong> <code>1d6</code> дробящего за каждые 10 фт (макс. 20d6), приземление ничком при уроне &gt; 0. <strong>Концентрация:</strong> спас Телосложения при уроне, СЛ = <code>max(10, floor(урон / 2))</code>. Можно держать только 1 заклинание концентрации одновременно.
+              </div>
+            </div>
+          </details>
+
+          <details class="dm-cheat-acc">
+            <summary>🛏️ Цены, Услуги и Путешествия</summary>
+            <div class="dm-cheat-body">
+              <table class="guide-table">
+                <thead>
+                  <tr><th>Позиция</th><th>Стоимость</th><th>Примечание</th></tr>
+                </thead>
+                <tbody>
+                  <tr><td><strong>Ночлег / еда (бедный)</strong></td><td>1–2 мм / день</td><td>Сеновал, каша, вода</td></tr>
+                  <tr><td><strong>Ночлег / еда (скромный)</strong></td><td>5 мм / день</td><td>Комната, горячий ужин</td></tr>
+                  <tr><td><strong>Ночлег / еда (богатый)</strong></td><td>2–4 зм / день</td><td>Хорошие покои, вино, мясо</td></tr>
+                  <tr><td><strong>Повозка / переправа</strong></td><td>3 см / миля (паром 1 мм–5 см)</td><td>Аренда повозки с возницей</td></tr>
+                  <tr><td><strong>Наёмник (разнорабочий)</strong></td><td>2 см–2 зм / день</td><td>Зависит от квалификации</td></tr>
+                </tbody>
+              </table>
+              <div class="dm-cheat-mini-note">
+                <strong>Темп похода (8 ч/день):</strong> Медленный (18 миль/день, 2 мил/ч) — можно идти скрытно; Обычный (24 мили/день, 3 мил/ч); Быстрый (30 миль/день, 4 мил/ч) — <em>−5</em> к пассивному Вниманию. Форсированный марш сверх 8 ч: спас Тел (СЛ 10 + 1 за каждый лишний час) или 1 уровень истощения.
+              </div>
+            </div>
+          </details>
+        </div>
 
       <div id="dmMainGenPanel" class="hidden">
         <div class="card">
@@ -7071,10 +7208,8 @@
         const hpMax = heroData ? (heroData.hpMax ?? 10) : (c.hpMax ?? 10);
         const isFallen = hpCur === 0;
         let woundTag = '';
-        if (state.dm.showEnemyWounds !== false && !isHero && !isFallen && hpCur < hpMax) {
-          woundTag = hpCur <= hpMax * 0.4
-            ? ' <span style="color:#fca5a5; font-size:0.7rem;">(тяжело ранен)</span>'
-            : ' <span style="color:#fcd34d; font-size:0.7rem;">(ранен)</span>';
+        if (!isHero && !isFallen && hpCur < hpMax) {
+          woundTag = hpCur <= hpMax * 0.4 ? ' <span style="color:#fca5a5; font-size:0.7rem;">(тяжело ранен)</span>' : ' <span style="color:#fcd34d; font-size:0.7rem;">(ранен)</span>';
         }
         const conds = (c.conditions || []).map((cond) =>
           `<span class="cond-pill" style="cursor:default;">${escapeHtml(cond)}</span>`
@@ -7373,59 +7508,18 @@
     }
 
     // ================= DM SCREEN: 4 TABS, LOOT/TAVERN GEN, CUSTOM BESTIARY & COMBAT =================
-    function setDmCombatDrawers(openWhich) {
+    window.toggleDmCombatDrawer = (which) => {
       const bDrawer = document.getElementById('dmBestiaryDrawer');
       const qDrawer = document.getElementById('dmQuickEnemyDrawer');
       const bArrow = document.getElementById('dmBestiaryArrow');
       const qArrow = document.getElementById('dmQuickEnemyArrow');
-
-      const openBestiary = openWhich === 'bestiary';
-      const openQuick = openWhich === 'quick';
-
-      if (bDrawer) bDrawer.classList.toggle('hidden', !openBestiary);
-      if (qDrawer) qDrawer.classList.toggle('hidden', !openQuick);
-      if (bArrow) bArrow.textContent = openBestiary ? '▴' : '▾';
-      if (qArrow) qArrow.textContent = openQuick ? '▴' : '▾';
-    }
-
-    window.toggleDmCombatDrawer = (which) => {
-      const bDrawer = document.getElementById('dmBestiaryDrawer');
-      const qDrawer = document.getElementById('dmQuickEnemyDrawer');
       if (which === 'bestiary') {
-        const currentlyOpen = bDrawer && !bDrawer.classList.contains('hidden');
-        setDmCombatDrawers(currentlyOpen ? null : 'bestiary');
+        const isOpen = !bDrawer.classList.toggle('hidden');
+        if (bArrow) bArrow.textContent = isOpen ? '▴' : '▾';
       } else {
-        const currentlyOpen = qDrawer && !qDrawer.classList.contains('hidden');
-        setDmCombatDrawers(currentlyOpen ? null : 'quick');
+        const isOpen = !qDrawer.classList.toggle('hidden');
+        if (qArrow) qArrow.textContent = isOpen ? '▴' : '▾';
       }
-    };
-
-    window.toggleShowEnemyWounds = async () => {
-      const next = state.dm.showEnemyWounds === false;
-      await saveDmPatch({ showEnemyWounds: next });
-      renderDmScreen();
-      renderPublicCombatBoard();
-
-      let hint = document.getElementById('dmWoundsToast');
-      if (!hint) {
-        hint = document.createElement('div');
-        hint.id = 'dmWoundsToast';
-        hint.style.cssText = 'font-size:0.74rem; padding:6px 9px; border-radius:8px; margin-bottom:8px; text-align:center; font-weight:600;';
-        const listEl = document.getElementById('initiativeList');
-        if (listEl) listEl.parentNode.insertBefore(hint, listEl);
-      }
-      hint.classList.remove('hidden');
-      hint.style.background = next ? 'rgba(185, 28, 28, 0.18)' : 'rgba(255, 255, 255, 0.06)';
-      hint.style.border = next ? '1px solid rgba(239, 68, 68, 0.45)' : '1px solid rgba(255, 255, 255, 0.14)';
-      hint.style.color = next ? '#fca5a5' : 'var(--text-muted)';
-      hint.textContent = next
-        ? '🩸 Игроки ВИДЯТ статус «(ранен)» / «(тяжело ранен)»'
-        : '🙈 Статус ранения врагов СКРЫТ от игроков';
-
-      clearTimeout(window._woundsToastTimer);
-      window._woundsToastTimer = setTimeout(() => {
-        if (hint) hint.classList.add('hidden');
-      }, 2400);
     };
 
     window.switchDmMainTab = (tab) => {
@@ -8263,9 +8357,6 @@
         ? `[Р${round}] ▶ Ход: ${activeName} (💀 спасбросок от смерти)`
         : `[Р${round}] ▶ Ход: ${activeName}`;
       const combatLog = [line, ...(state.dm.combatLog || [])].slice(0, 60);
-            if (!state.dm.combatStarted) {
-        setDmCombatDrawers(null);
-      }
       saveDmPatch({ turnIndex: foundIdx, round, combatStarted: true, combatLog });
     };
 
@@ -8534,6 +8625,21 @@
       const nextVal = !Boolean(h.inspiration);
       await saveHeroPatchById(heroId, { inspiration: nextVal });
 
+      const badge = document.getElementById('dmInspFeedbackToast');
+      if (badge) {
+        badge.classList.remove('hidden');
+        badge.style.background = nextVal ? 'rgba(212, 175, 55, 0.18)' : 'rgba(255, 255, 255, 0.06)';
+        badge.style.border = nextVal ? '1px solid rgba(212, 175, 55, 0.5)' : '1px solid rgba(255, 255, 255, 0.14)';
+        badge.style.color = nextVal ? '#fde68a' : 'var(--text-muted)';
+        badge.textContent = nextVal
+          ? `★ Выдано Героическое вдохновение: ${h.name} (записано в Летопись)`
+          : `☆ Героическое вдохновение снято / потрачено: ${h.name}`;
+        clearTimeout(window._inspToastTimer);
+        window._inspToastTimer = setTimeout(() => {
+          if (badge) badge.classList.add('hidden');
+        }, 2500);
+      }
+
       if (nextVal) {
         const entry = {
           text: `★ Мастер даровал Героическое вдохновение: ${h.name}`,
@@ -8766,15 +8872,6 @@
 
       const heroes = Object.values(state.heroes);
 
-      const woundsBtn = document.getElementById('dmWoundsToggleBtn');
-      if (woundsBtn) {
-        const showWounds = state.dm.showEnemyWounds !== false;
-        woundsBtn.style.opacity = showWounds ? '1' : '0.45';
-        woundsBtn.style.borderColor = showWounds ? 'rgba(239, 68, 68, 0.45)' : 'rgba(255, 255, 255, 0.12)';
-        woundsBtn.style.background = showWounds ? 'rgba(185, 28, 28, 0.18)' : 'rgba(255, 255, 255, 0.04)';
-        woundsBtn.style.textDecoration = showWounds ? 'none' : 'line-through';
-      }
- 
       document.getElementById('dmCompactPartyStrip').innerHTML = heroes.length
         ? heroes.map((h) => `
             <div class="dm-party-chip">
@@ -8804,7 +8901,7 @@
                   ❤️ <strong>${h.hpCur}/${h.hpMax}</strong>${h.tempHp ? ` <span style="color:#7dd3fc;">(+${h.tempHp})</span>` : ''} • 🛡️ <strong>${h.ac}</strong>
                 </span>
                 <button class="insp-btn ${hasInsp ? 'is-active' : ''}" onclick="toggleHeroInspirationByDm('${h.id}')" title="${hasInsp ? 'Вдохновение активно (нажмите, чтобы снять)' : 'Выдать Героическое вдохновение'}">
-                  ${hasInsp ? '★' : '☆'}
+                  ${hasInsp ? '★ Вдохн.' : '☆ Вдохн.'}
                 </button>
               </div>
             </div>
