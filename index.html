@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
   <title>Гримуар Партии — D&D 5e</title>
-  <script type="text/javascript" src="https://gc.kis.v2.scr.kaspersky-labs.com/FD126C42-EBFA-4E12-B309-BB3FDD723AC1/main.js?attr=NpTVLK16pmz1y_AB6TADH71NLI5HMKyDWdxoNiwtyFskinYHntac2Aok6U8FQJ5_e-IKq-_z7rhl9LN_vMArWCqTsqJby4_OWrnpqkFmpAqd0DgrgUDqGraRHOYTveYF-TxluGAQsc2MhedmRb6OVJVyOw8UzqnZB9Hje90dkp4V0nhD6CrRsRl5bNuOaHDIBDMSwfx1z6xOmWyXo3ccU_NWTaGmI393H8M42hdm3cB4AdbsJPbYSHNtRnd7Y89Mi__A4h3KGa3bPr6N7NiWtwbOOpM87AldMYMUEqsOWRo" charset="UTF-8"></script><link rel="stylesheet" crossorigin="anonymous" href="https://gc.kis.v2.scr.kaspersky-labs.com/E3E8934C-235A-4B0E-825A-35A08381A191/abn/main.css?attr=aHR0cHM6Ly9jb250cmlidXRpb24udXNlcmNvbnRlbnQuZ29vZ2xlLmNvbS9kb3dubG9hZD9jPUNneGlZWEprWDNOMGIzSmhaMlVTUVJJTGNIVmliR2xqWDJSaGRHRWFNZ293TXpBeE5qazBOemxtT1RBeVptWmlZakF3TURZMk1HWTBOMkZtTlRZMFpEVXdOV1psTlRWaE16ZzBNelptTTJJeiZmaWxlbmFtZT1pbmRleC5odG1sJm9waT0xMDMxMzUwNTA"/><script src="./spells.js"></script>
+  <script type="text/javascript" src="https://gc.kis.v2.scr.kaspersky-labs.com/FD126C42-EBFA-4E12-B309-BB3FDD723AC1/main.js?attr=ktKb1NiaVSTfiigjZV_qVTxYAKVZfkfkF5H47fMT75cYY0Y0Hn3rbte_3rb-1glzkDabnjALUtUmsy5CSS9RNgNAmgH6ZSN8ELcoIreM-viywSnKAYCknaiDJDhlIYqw5Iw2UNMnDZfIbdGvHn6VcRm1e5UcDAeBzyQnkPqzQUh4ljeYk2r6wx5GLi_J4f3F49EldTD5pD5-T6nlIyZS4Ej_g4ViagFN8Z44_UNz-IYiPAJXIEq1UiBNpgkHGjOQfuadg7Wbm86V6_M628Q0DvNg2EEtdoQWXOnW8lDNx4c" charset="UTF-8"></script><link rel="stylesheet" crossorigin="anonymous" href="https://gc.kis.v2.scr.kaspersky-labs.com/E3E8934C-235A-4B0E-825A-35A08381A191/abn/main.css?attr=aHR0cHM6Ly9jb250cmlidXRpb24udXNlcmNvbnRlbnQuZ29vZ2xlLmNvbS9kb3dubG9hZD9jPUNneGlZWEprWDNOMGIzSmhaMlVTUVJJTGNIVmliR2xqWDJSaGRHRWFNZ293TnpsbVpXWXpNVFZsTm1ZM1pqaGpNakF3TURZMk1UQmlaREJpTVRFNE1Ea3dPVE13Tm1FME16WTNNamRrTW1JNCZmaWxlbmFtZT1pbmRleC5odG1sJm9waT0xMDMxMzUwNTA"/><script src="./spells.js"></script>
 
   <!-- iOS PWA Meta -->
   <meta name="apple-mobile-web-app-capable" content="yes" />
@@ -14,10 +14,65 @@
   <link rel="manifest" href="./manifest.json" />
   <link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 512 512'%3E%3Crect width='512' height='512' fill='%23141118'/%3E%3Cpolygon points='256,56 436,160 436,352 256,456 76,352 76,160' fill='none' stroke='%23d4af37' stroke-width='22'/%3E%3Ctext x='256' y='282' font-family='Georgia,serif' font-size='90' font-weight='bold' fill='%23d4af37' text-anchor='middle'%3E20%3C/text%3E%3C/svg%3E" />
 
-  <!-- Fonts -->
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600;700;800&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <!-- Self-Hosted D&D 5e Fonts (No Google Fonts dependency) -->
+  <style>
+    @font-face {
+      font-family: 'Nodesto Cyrillic';
+      src: url('./fonts/NodestoCyrillic.woff2') format('woff2');
+      font-weight: 400 800;
+      font-style: normal;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'Alegreya SC';
+      src: url('./fonts/AlegreyaSC-Regular.woff2') format('woff2');
+      font-weight: 400;
+      font-style: normal;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'Alegreya SC';
+      src: url('./fonts/AlegreyaSC-Bold.woff2') format('woff2');
+      font-weight: 700 800;
+      font-style: normal;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'Alegreya Sans';
+      src: url('./fonts/AlegreyaSans-Regular.woff2') format('woff2');
+      font-weight: 400;
+      font-style: normal;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'Alegreya Sans';
+      src: url('./fonts/AlegreyaSans-Bold.woff2') format('woff2');
+      font-weight: 700;
+      font-style: normal;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'Open Sans';
+      src: url('./fonts/OpenSans-Regular.woff2') format('woff2');
+      font-weight: 400;
+      font-style: normal;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'Open Sans';
+      src: url('./fonts/OpenSans-SemiBold.woff2') format('woff2');
+      font-weight: 600;
+      font-style: normal;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'Open Sans';
+      src: url('./fonts/OpenSans-Bold.woff2') format('woff2');
+      font-weight: 700 800;
+      font-style: normal;
+      font-display: swap;
+    }
+  </style>
 
   <style>
     :root {
@@ -46,7 +101,7 @@
     }
 
     body {
-      font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-family: 'Open Sans', -apple-system, BlinkMacSystemFont, sans-serif;
       background-color: var(--bg-obsidian);
       background-image:
         radial-gradient(circle at 50% 0%, rgba(212, 175, 55, 0.08), transparent 55%),
@@ -59,7 +114,7 @@
     }
 
     h1, h2, h3, .fantasy-font {
-      font-family: 'Cinzel', Georgia, serif;
+      font-family: 'Nodesto Cyrillic', 'Alegreya SC', Georgia, serif;
       letter-spacing: 0.04em;
     }
 
@@ -85,9 +140,10 @@
       display: flex;
       align-items: center;
       gap: 6px;
-      font-family: 'Cinzel', serif;
+      font-family: 'Nodesto Cyrillic', 'Alegreya SC', Georgia, serif;
       font-weight: 700;
-      font-size: 0.96rem;
+      font-size: 1.18rem;
+      letter-spacing: 0.05em;
       color: var(--gold);
       white-space: nowrap;
     }
@@ -127,11 +183,11 @@
     }
 
     .card-title {
-      font-family: 'Cinzel', serif;
-      font-size: 0.92rem;
+      font-family: 'Alegreya SC', Georgia, serif;
+      font-size: 1.02rem;
       font-weight: 700;
+      letter-spacing: 0.03em;
       color: var(--gold);
-      text-transform: uppercase;
     }
 
     input, select, textarea {
@@ -548,22 +604,24 @@
 
     /* Guide & Primer Styles */
     .primer-banner {
+      font-family: 'Alegreya Sans', 'Open Sans', sans-serif;
       background: rgba(212, 175, 55, 0.1);
       border: 1px solid rgba(212, 175, 55, 0.35);
       border-radius: 10px;
       padding: 8px 10px;
-      font-size: 0.76rem;
+      font-size: 0.82rem;
       color: #fde68a;
       margin-bottom: 10px;
       line-height: 1.38;
     }
     .example-callout {
+      font-family: 'Alegreya Sans', 'Open Sans', sans-serif;
       margin-top: 8px;
       padding: 8px 10px;
       border-left: 3px solid var(--gold);
       background: rgba(0, 0, 0, 0.32);
       border-radius: 0 8px 8px 0;
-      font-size: 0.78rem;
+      font-size: 0.82rem;
       line-height: 1.4;
     }
     .guide-table {
@@ -668,7 +726,7 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      font-family: 'Cinzel', serif;
+      font-family: 'Alegreya SC', Georgia, serif;
       font-size: 1.35rem;
       color: var(--gold);
       margin-bottom: 6px;
@@ -980,7 +1038,7 @@
       margin-bottom: 8px;
     }
     .name-text {
-      font-family: 'Cinzel', serif;
+      font-family: 'Alegreya SC', Georgia, serif;
       font-size: 1.02rem;
       font-weight: 700;
       color: var(--gold);
@@ -1367,7 +1425,7 @@
     .die-poly .die-value {
       position: relative;
       z-index: 2;
-      font-family: 'Cinzel', serif;
+      font-family: 'Alegreya SC', Georgia, serif;
       font-size: 1.55rem;
       font-weight: 800;
       color: var(--text-main);
@@ -1461,7 +1519,7 @@
       color: #110e09;
       border: 2px solid #fff3c4;
       box-shadow: 0 6px 20px rgba(0, 0, 0, 0.65);
-      font-family: 'Cinzel', serif;
+      font-family: 'Alegreya SC', Georgia, serif;
       font-weight: 800;
       font-size: 0.95rem;
       display: flex;
@@ -4787,7 +4845,7 @@
 
       out.innerHTML = `
         <div class="item-card">
-          <div style="font-family:'Cinzel', serif; font-size:1rem; font-weight:700; color:var(--gold); margin-bottom:4px;">
+          <div style="font-family:'Alegreya SC', Georgia, serif; font-size:1rem; font-weight:700; color:var(--gold); margin-bottom:4px;">
             ${escapeHtml(rInfo.name)} — ${escapeHtml(cInfo.name)}
           </div>
           <div class="muted" style="font-size:0.75rem; margin-bottom:8px;">
@@ -7771,7 +7829,7 @@
 
       document.getElementById('dmTavernOutput').innerHTML = `
         <div class="item-card">
-          <div style="font-family:'Cinzel', serif; font-size:1rem; font-weight:700; color:var(--gold); margin-bottom:4px;">
+          <div style="font-family:'Alegreya SC', Georgia, serif; font-size:1rem; font-weight:700; color:var(--gold); margin-bottom:4px;">
             🍺 Таверна ${escapeHtml(tName)}
           </div>
           <div class="muted" style="font-size:0.78rem; margin-bottom:6px;">${escapeHtml(vibe)}</div>
@@ -7999,7 +8057,7 @@
           <div class="item-card">
             <div class="row" style="justify-content:space-between; align-items:flex-start;">
               <div style="min-width:0; flex:1;">
-                <strong style="color:var(--gold); font-family:'Cinzel', serif;">${hl(c.title)}</strong>
+                <strong style="color:var(--gold); font-family:'Alegreya SC', Georgia, serif;">${hl(c.title)}</strong>
                 ${c.shared ? `<span class="muted" style="font-size:0.68rem; color:#6ee7b7; margin-left:5px;">✓ у игроков</span>` : ''}
               </div>
               <div class="row">
@@ -8093,7 +8151,7 @@
         return `
           <div style="background:var(--bg-card-alt); border:1px solid rgba(212,175,55,0.22); border-radius:10px; padding:10px; margin-bottom:8px;">
             <div class="row" style="justify-content:space-between;">
-              <strong style="color:var(--gold); font-family:'Cinzel', serif;">${escapeHtml(n.name)}</strong>
+              <strong style="color:var(--gold); font-family:'Alegreya SC', Georgia, serif;">${escapeHtml(n.name)}</strong>
               <div class="row">
                 <button class="btn btn-xs" onclick="editDmNpc('${n.id}')" title="Редактировать NPC">✏️</button>
                 <button class="btn btn-danger btn-xs" onclick="deleteDmNpc('${n.id}')" title="Удалить NPC">✕</button>
